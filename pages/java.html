@@ -42,7 +42,9 @@
   <a href="#collections">Collections Basics</a>
   <a href="#coding-patterns">Coding Patterns</a>
   <a href="#practice">Practice Questions</a>
-  <a href="#fa-walkthrough">FA Subjective Walkthrough</a>
+  <a href="#fa-walkthrough">FA Walkthrough 1 — Search</a>
+  <a href="#fa-walkthrough-2">FA Walkthrough 2 — Count + Max</a>
+  <a href="#fa-walkthrough-3">FA Walkthrough 3 — Filter Array</a>
 </nav>
 
 <div class="main">
@@ -3346,6 +3348,344 @@ Headset</pre>
     <tr><td>Safe Scanner input</td><td><code>Integer.parseInt(sc.nextLine().trim())</code></td></tr>
     <tr><td>Exact output format</td><td><code>55000.0</code> not <code>55000</code>, exact "No Gadget Found"</td></tr>
   </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="fa-walkthrough-2">FA Subjective Question 2 — Filter + Count Pattern</h3>
+<p>This variation tests <strong>filtering with a numeric condition</strong> and <strong>counting matches</strong>. Instead of returning one object, you return a count.</p>
+
+<div class="box box-example">
+  <div class="label">Full Problem Statement</div>
+  <p><strong>Create a class Employee</strong> with the following attributes:</p>
+  <ul>
+    <li><code>empId</code> – int</li>
+    <li><code>name</code> – String</li>
+    <li><code>department</code> – String</li>
+    <li><code>salary</code> – double</li>
+  </ul>
+  <p>Write appropriate getters and setters for all attributes, along with a parameterized constructor.</p>
+  <p>Create a class <code>Solution</code> with the main method. Implement the following static methods:</p>
+  <p><strong>1. countEmployeesByDepartment:</strong> Takes an array of Employee objects and a department (String). Returns the <strong>count</strong> of employees belonging to that department.</p>
+  <p><strong>2. getEmployeeWithMaxSalary:</strong> Takes an array of Employee objects. Returns the Employee object with the <strong>highest salary</strong>. If the array is empty, return null.</p>
+  <p>Take necessary inputs, call both methods, and print results. For countEmployeesByDepartment, print the count. For getEmployeeWithMaxSalary, print the employee's name and salary on separate lines.</p>
+  <p><strong>Note:</strong> All String comparisons must be case-insensitive.</p>
+
+  <h4>Sample Input:</h4>
+<pre>4
+101
+Amit
+Engineering
+75000
+102
+Priya
+Sales
+60000
+103
+Rahul
+Engineering
+82000
+104
+Sara
+Marketing
+55000
+engineering</pre>
+
+  <h4>Sample Output:</h4>
+<pre>2
+Rahul
+82000.0</pre>
+
+  <p><strong>Explanation:</strong> "engineering" matches "Engineering" case-insensitively — 2 employees found (Amit, Rahul). Max salary across ALL employees is Rahul at 82000.0.</p>
+</div>
+
+<h4>Complete Solution:</h4>
+
+<div class="ide">
+  <div class="ide-header">
+    <div class="ide-dots"><span></span><span></span><span></span></div>
+    <div class="ide-filename">Solution.java</div>
+    <button class="ide-explain-btn">Explain this ↓</button>
+  </div>
+  <pre><span class="kw">import</span> java.util.<span class="type">Scanner</span>;
+
+<span class="kw">class</span> <span class="type">Employee</span> {
+    <span class="kw">private</span> <span class="type">int</span> empId;
+    <span class="kw">private</span> <span class="type">String</span> name;
+    <span class="kw">private</span> <span class="type">String</span> department;
+    <span class="kw">private</span> <span class="type">double</span> salary;
+
+    <span class="kw">public</span> <span class="fn">Employee</span>(<span class="type">int</span> empId, <span class="type">String</span> name, <span class="type">String</span> department, <span class="type">double</span> salary) {
+        <span class="kw">this</span>.empId = empId;
+        <span class="kw">this</span>.name = name;
+        <span class="kw">this</span>.department = department;
+        <span class="kw">this</span>.salary = salary;
+    }
+
+    <span class="kw">public</span> <span class="type">int</span> <span class="fn">getEmpId</span>() { <span class="kw">return</span> empId; }
+    <span class="kw">public</span> <span class="type">String</span> <span class="fn">getName</span>() { <span class="kw">return</span> name; }
+    <span class="kw">public</span> <span class="type">String</span> <span class="fn">getDepartment</span>() { <span class="kw">return</span> department; }
+    <span class="kw">public</span> <span class="type">double</span> <span class="fn">getSalary</span>() { <span class="kw">return</span> salary; }
+}
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+
+    <span class="kw">public static</span> <span class="type">int</span> <span class="fn">countEmployeesByDepartment</span>(<span class="type">Employee</span>[] employees, <span class="type">String</span> department) {
+        <span class="type">int</span> count = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="type">Employee</span> e : employees) {
+            <span class="kw">if</span> (e.<span class="fn">getDepartment</span>().<span class="fn">equalsIgnoreCase</span>(department)) {
+                count++;
+            }
+        }
+        <span class="kw">return</span> count;
+    }
+
+    <span class="kw">public static</span> <span class="type">Employee</span> <span class="fn">getEmployeeWithMaxSalary</span>(<span class="type">Employee</span>[] employees) {
+        <span class="kw">if</span> (employees.length == <span class="num">0</span>) <span class="kw">return</span> <span class="kw">null</span>;
+        <span class="type">Employee</span> max = employees[<span class="num">0</span>];
+        <span class="kw">for</span> (<span class="type">Employee</span> e : employees) {
+            <span class="kw">if</span> (e.<span class="fn">getSalary</span>() > max.<span class="fn">getSalary</span>()) {
+                max = e;
+            }
+        }
+        <span class="kw">return</span> max;
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(<span class="type">System</span>.in);
+        <span class="type">int</span> n = <span class="type">Integer</span>.<span class="fn">parseInt</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());
+
+        <span class="type">Employee</span>[] employees = <span class="kw">new</span> <span class="type">Employee</span>[n];
+        <span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+            <span class="type">int</span> id = <span class="type">Integer</span>.<span class="fn">parseInt</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());
+            <span class="type">String</span> name = sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>();
+            <span class="type">String</span> dept = sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>();
+            <span class="type">double</span> salary = <span class="type">Double</span>.<span class="fn">parseDouble</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());
+            employees[i] = <span class="kw">new</span> <span class="type">Employee</span>(id, name, dept, salary);
+        }
+
+        <span class="type">String</span> searchDept = sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>();
+
+        <span class="type">int</span> count = <span class="fn">countEmployeesByDepartment</span>(employees, searchDept);
+        System.out.<span class="fn">println</span>(count);
+
+        <span class="type">Employee</span> topEarner = <span class="fn">getEmployeeWithMaxSalary</span>(employees);
+        <span class="kw">if</span> (topEarner != <span class="kw">null</span>) {
+            System.out.<span class="fn">println</span>(topEarner.<span class="fn">getName</span>());
+            System.out.<span class="fn">println</span>(topEarner.<span class="fn">getSalary</span>());
+        }
+    }
+}</pre>
+  <div class="ide-explanation">
+    <h4>What's Different From the Gadget Question?</h4>
+    <p>This question has <strong>two methods</strong> instead of one, and tests two different patterns:</p>
+
+    <h4>Pattern 1: Count Matches (countEmployeesByDepartment)</h4>
+    <p><strong><code>int count = 0;</code></strong> — Start a counter at zero. For every match, increment. This is the "count" pattern — simpler than returning an object because you just need a number at the end.</p>
+    <p><strong><code>equalsIgnoreCase</code></strong> — Same as Gadget question. "engineering" must match "Engineering". If you use <code>.equals()</code>, you'll miss the match and return 0.</p>
+
+    <h4>Pattern 2: Find Maximum (getEmployeeWithMaxSalary)</h4>
+    <p><strong><code>Employee max = employees[0];</code></strong> — The "assume first is max" pattern. You can't start with <code>max = 0</code> because you need the whole Employee object, not just the salary number. Start with the first employee, then check if anyone has a higher salary.</p>
+    <p><strong><code>if (e.getSalary() > max.getSalary())</code></strong> — Compare using getter, NOT the field directly (fields are private). If someone's salary beats the current max, they become the new max. After the full loop, <code>max</code> holds the highest-paid employee.</p>
+    <p><strong><code>if (employees.length == 0) return null;</code></strong> — Edge case guard. If the array is empty, there's no employee[0] to start with — accessing it would throw <code>ArrayIndexOutOfBoundsException</code>.</p>
+
+    <h4>The main Method</h4>
+    <p><strong>Same input pattern as Gadget</strong> — <code>Integer.parseInt(sc.nextLine().trim())</code> for every line. This is the safe pattern that avoids the Scanner buffer bug. You'll use this exact pattern in every FA question.</p>
+    <p><strong>Two method calls, two outputs</strong> — The question asks you to call both methods and print both results. Read the problem carefully — if it says "print count" and "print name and salary", that's exactly what you print. Nothing more, nothing less.</p>
+  </div>
+</div>
+
+<div class="box box-key">
+  <div class="label">New concepts tested (vs Gadget question)</div>
+  <table>
+    <tr><th>Concept</th><th>Where in the code</th></tr>
+    <tr><td>Counter pattern</td><td><code>int count = 0; count++;</code></td></tr>
+    <tr><td>Find-max pattern</td><td><code>Employee max = employees[0]; if (e.getSalary() > max.getSalary())</code></td></tr>
+    <tr><td>Two static methods</td><td>Both called from main, different return types</td></tr>
+    <tr><td>Edge case (empty array)</td><td><code>if (employees.length == 0) return null;</code></td></tr>
+    <tr><td>double salary output</td><td><code>82000.0</code> — double always prints with .0</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="fa-walkthrough-3">FA Subjective Question 3 — Filter + Aggregate Pattern</h3>
+<p>This variation tests <strong>filtering objects that meet a condition</strong> and <strong>collecting them into a new array</strong>. Instead of count or single object, you return multiple matching objects.</p>
+
+<div class="box box-example">
+  <div class="label">Full Problem Statement</div>
+  <p><strong>Create a class Product</strong> with the following attributes:</p>
+  <ul>
+    <li><code>productId</code> – int</li>
+    <li><code>productName</code> – String</li>
+    <li><code>price</code> – double</li>
+    <li><code>category</code> – String</li>
+  </ul>
+  <p>Write appropriate getters, setters, and a parameterized constructor.</p>
+  <p>Create a class <code>Solution</code> with the main method. Implement the following static method:</p>
+  <p><strong>getProductsByPriceRange:</strong> Takes an array of Product objects, a <code>minPrice</code> (double), and a <code>maxPrice</code> (double). Returns an <strong>array of Product objects</strong> whose price falls within the range (inclusive). If no products match, return null.</p>
+  <p>Take the necessary inputs, call the method, and print results. If products are found, print each product's name and price on separate lines (name first, then price). If null is returned, print <strong>"No Products Found"</strong>.</p>
+
+  <h4>Sample Input:</h4>
+<pre>3
+1001
+Keyboard
+1500.0
+Electronics
+1002
+Mouse
+800.0
+Electronics
+1003
+Monitor
+25000.0
+Electronics
+500.0
+2000.0</pre>
+
+  <h4>Sample Output:</h4>
+<pre>Keyboard
+1500.0
+Mouse
+800.0</pre>
+
+  <p><strong>Explanation:</strong> Price range is 500.0 to 2000.0. Keyboard (1500.0) and Mouse (800.0) fall in range. Monitor (25000.0) does not. Print matching products' name and price.</p>
+</div>
+
+<h4>Complete Solution:</h4>
+
+<div class="ide">
+  <div class="ide-header">
+    <div class="ide-dots"><span></span><span></span><span></span></div>
+    <div class="ide-filename">Solution.java</div>
+    <button class="ide-explain-btn">Explain this ↓</button>
+  </div>
+  <pre><span class="kw">import</span> java.util.<span class="type">Scanner</span>;
+
+<span class="kw">class</span> <span class="type">Product</span> {
+    <span class="kw">private</span> <span class="type">int</span> productId;
+    <span class="kw">private</span> <span class="type">String</span> productName;
+    <span class="kw">private</span> <span class="type">double</span> price;
+    <span class="kw">private</span> <span class="type">String</span> category;
+
+    <span class="kw">public</span> <span class="fn">Product</span>(<span class="type">int</span> productId, <span class="type">String</span> productName, <span class="type">double</span> price, <span class="type">String</span> category) {
+        <span class="kw">this</span>.productId = productId;
+        <span class="kw">this</span>.productName = productName;
+        <span class="kw">this</span>.price = price;
+        <span class="kw">this</span>.category = category;
+    }
+
+    <span class="kw">public</span> <span class="type">int</span> <span class="fn">getProductId</span>() { <span class="kw">return</span> productId; }
+    <span class="kw">public</span> <span class="type">String</span> <span class="fn">getProductName</span>() { <span class="kw">return</span> productName; }
+    <span class="kw">public</span> <span class="type">double</span> <span class="fn">getPrice</span>() { <span class="kw">return</span> price; }
+    <span class="kw">public</span> <span class="type">String</span> <span class="fn">getCategory</span>() { <span class="kw">return</span> category; }
+}
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+
+    <span class="kw">public static</span> <span class="type">Product</span>[] <span class="fn">getProductsByPriceRange</span>(<span class="type">Product</span>[] products, <span class="type">double</span> minPrice, <span class="type">double</span> maxPrice) {
+        <span class="cmt">// First pass: count how many match (need this to size the result array)</span>
+        <span class="type">int</span> count = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="type">Product</span> p : products) {
+            <span class="kw">if</span> (p.<span class="fn">getPrice</span>() >= minPrice &amp;&amp; p.<span class="fn">getPrice</span>() &lt;= maxPrice) {
+                count++;
+            }
+        }
+
+        <span class="kw">if</span> (count == <span class="num">0</span>) <span class="kw">return</span> <span class="kw">null</span>;
+
+        <span class="cmt">// Second pass: fill the result array</span>
+        <span class="type">Product</span>[] result = <span class="kw">new</span> <span class="type">Product</span>[count];
+        <span class="type">int</span> index = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="type">Product</span> p : products) {
+            <span class="kw">if</span> (p.<span class="fn">getPrice</span>() >= minPrice &amp;&amp; p.<span class="fn">getPrice</span>() &lt;= maxPrice) {
+                result[index++] = p;
+            }
+        }
+        <span class="kw">return</span> result;
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(<span class="type">System</span>.in);
+        <span class="type">int</span> n = <span class="type">Integer</span>.<span class="fn">parseInt</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());
+
+        <span class="type">Product</span>[] products = <span class="kw">new</span> <span class="type">Product</span>[n];
+        <span class="kw">for</span> (<span class="type">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+            <span class="type">int</span> id = <span class="type">Integer</span>.<span class="fn">parseInt</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());
+            <span class="type">String</span> name = sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>();
+            <span class="type">double</span> price = <span class="type">Double</span>.<span class="fn">parseDouble</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());
+            <span class="type">String</span> category = sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>();
+            products[i] = <span class="kw">new</span> <span class="type">Product</span>(id, name, price, category);
+        }
+
+        <span class="type">double</span> minPrice = <span class="type">Double</span>.<span class="fn">parseDouble</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());
+        <span class="type">double</span> maxPrice = <span class="type">Double</span>.<span class="fn">parseDouble</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());
+
+        <span class="type">Product</span>[] result = <span class="fn">getProductsByPriceRange</span>(products, minPrice, maxPrice);
+
+        <span class="kw">if</span> (result != <span class="kw">null</span>) {
+            <span class="kw">for</span> (<span class="type">Product</span> p : result) {
+                System.out.<span class="fn">println</span>(p.<span class="fn">getProductName</span>());
+                System.out.<span class="fn">println</span>(p.<span class="fn">getPrice</span>());
+            }
+        } <span class="kw">else</span> {
+            System.out.<span class="fn">println</span>(<span class="str">"No Products Found"</span>);
+        }
+    }
+}</pre>
+  <div class="ide-explanation">
+    <h4>The Hardest Part: Returning an Array of Objects</h4>
+    <p>This is the trickiest FA pattern. You can't just <code>return p;</code> inside the loop — you need ALL matching products. But Java arrays have a fixed size, so you can't just "add" to them. The solution: <strong>two-pass approach</strong>.</p>
+
+    <h4>Two-Pass Pattern (MEMORIZE THIS)</h4>
+    <p><strong>Pass 1: Count matches</strong> — Loop through, count how many products fall in the price range. Now you know the exact size of the result array.</p>
+    <p><strong>Pass 2: Fill the array</strong> — Create <code>new Product[count]</code>, loop again, fill matching products using a separate <code>index</code> variable.</p>
+    <p><strong>Why not use ArrayList?</strong> You could, and it's simpler — but FA questions typically ask you to return an array, not an ArrayList. The two-pass pattern works with plain arrays which is what the question specifies.</p>
+
+    <h4>The Range Check</h4>
+    <p><strong><code>p.getPrice() >= minPrice && p.getPrice() <= maxPrice</code></strong> — "Inclusive" means the boundaries count. Price of exactly 500.0 or exactly 2000.0 would match. If the problem said "exclusive", you'd use <code>></code> and <code><</code> instead of <code>>=</code> and <code><=</code>. Read the problem statement carefully.</p>
+
+    <h4>The index++ Trick</h4>
+    <p><strong><code>result[index++] = p;</code></strong> — This does two things in one line: assigns <code>p</code> to <code>result[index]</code>, then increments <code>index</code> for the next match. Without <code>index</code>, you'd overwrite the same slot every time.</p>
+
+    <h4>Printing Multiple Objects</h4>
+    <p><strong><code>for (Product p : result)</code></strong> — Loop through the result array and print each product's details. The problem says "name first, then price" — so that's the order. Don't add extra labels like "Name: Keyboard" unless the problem says to.</p>
+  </div>
+</div>
+
+<div class="box box-key">
+  <div class="label">New concepts tested (vs previous questions)</div>
+  <table>
+    <tr><th>Concept</th><th>Where in the code</th></tr>
+    <tr><td>Return array of objects</td><td><code>Product[] result = new Product[count];</code></td></tr>
+    <tr><td>Two-pass pattern</td><td>Count first, then fill — because arrays are fixed-size</td></tr>
+    <tr><td>Range comparison</td><td><code>price >= min && price <= max</code></td></tr>
+    <tr><td>index++ for filling</td><td><code>result[index++] = p;</code></td></tr>
+    <tr><td>Double input parsing</td><td><code>Double.parseDouble(sc.nextLine().trim())</code></td></tr>
+    <tr><td>Loop to print results</td><td><code>for (Product p : result) { print... }</code></td></tr>
+  </table>
+</div>
+
+<div class="box box-tip">
+  <div class="label">FA Subjective — The Universal Template</div>
+  <p>After solving three questions, notice the pattern. <strong>Every FA Java question follows this exact skeleton:</strong></p>
+<pre>
+<span class="cmt">// 1. Create the class with private fields + constructor + getters</span>
+<span class="kw">class</span> <span class="type">ClassName</span> { <span class="cmt">/* private fields, constructor, getters */</span> }
+
+<span class="cmt">// 2. Write the static method(s) in Solution class</span>
+<span class="kw">public static</span> <span class="type">ReturnType</span> <span class="fn">methodName</span>(<span class="type">ClassName</span>[] arr, <span class="cmt">/* search params */</span>) {
+    <span class="cmt">// Loop through array → check condition → return result</span>
+}
+
+<span class="cmt">// 3. main: Scanner input → create array → call method → print output</span>
+<span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+    <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(<span class="type">System</span>.in);
+    <span class="type">int</span> n = <span class="type">Integer</span>.<span class="fn">parseInt</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());
+    <span class="cmt">// Build array of objects in loop</span>
+    <span class="cmt">// Read search parameter(s)</span>
+    <span class="cmt">// Call method → check null → print</span>
+}
+</pre>
+  <p><strong>The only things that change are:</strong> the class name, the field types, the method logic (search/count/max/filter), and the output format. The skeleton is always the same. If you can write this skeleton from memory in under 2 minutes, you're already halfway done.</p>
 </div>
 
 <div class="box box-exam">
