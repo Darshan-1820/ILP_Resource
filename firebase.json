@@ -10,7 +10,8 @@
       "CLAUDE.md",
       "ILP_Video_transcript.md",
       "Important_FA.md",
-      "node_modules"
+      "node_modules",
+      "backend"
     ]
   }
 }
