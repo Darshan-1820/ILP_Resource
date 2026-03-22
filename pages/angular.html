@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angular — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#what-is-angular">What is Angular?</a>
+  <a href="#angular-cli">Angular CLI</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#components">Components</a>
+  <a href="#data-binding">Data Binding (4 Types)</a>
+  <a href="#directives">Directives</a>
+  <a href="#services-di">Services & DI</a>
+  <a href="#routing">Routing</a>
+  <a href="#http-client">HTTP Client</a>
+  <a href="#pipes">Pipes</a>
+  <a href="#forms">Forms</a>
+  <a href="#modules">Modules</a>
+  <a href="#angular-vs-react">Angular vs React</a>
+  <a href="#practice-mcqs">Practice MCQs</a>
+</nav>
+
+<div class="main">
+
+<section class="sec-angular">
+<h2>Angular — Frontend Framework by Google</h2>
+<p>Angular is the full-stack frontend framework used in TCS ILP PRA and Sprint 4. It is a <strong>component-based</strong> framework written in <strong>TypeScript</strong> that builds <strong>Single Page Applications (SPAs)</strong>. You will build a complete Angular frontend that connects to your Spring Boot backend.</p>
+
+<div class="box box-key">
+  <div class="label">Exam Weight</div>
+  <strong>PRA:</strong> Angular is tested in Phase 4 — expect questions on components, data binding, directives, services, and routing.<br>
+  <strong>Sprint 4:</strong> You build a full Angular frontend with routing, forms, HTTP calls to your REST API.
+</div>
+
+<div class="box box-warn">
+  <div class="label">Angular vs AngularJS — Do NOT confuse them</div>
+  <strong>AngularJS</strong> = version 1.x (2010, JavaScript, dead). <strong>Angular</strong> = version 2+ (2016 onwards, TypeScript, actively maintained). When TCS says "Angular" they mean the modern version. If the exam asks "what language does Angular use?" — the answer is <strong>TypeScript</strong>, not JavaScript.
+</div>
+
+<!-- ─── WHAT IS ANGULAR ─── -->
+<h3 id="what-is-angular">1. What is Angular?</h3>
+<p>Angular is an <strong>open-source frontend framework</strong> by Google for building SPAs. An SPA loads a single HTML page and dynamically updates content without full page reloads — making apps feel fast like desktop applications.</p>
+
+<h4>SPA (Single Page Application) — What It Means</h4>
+<p>Traditional websites: click a link → browser loads a completely new page from the server. SPA: click a link → JavaScript replaces only the changed part of the page. No full reload. Gmail, Google Maps, Netflix — all SPAs.</p>
+
+<table>
+<tr><th>Feature</th><th>Traditional Website</th><th>SPA (Angular)</th></tr>
+<tr><td>Page load</td><td>Full reload on every click</td><td>One initial load, then partial updates</td></tr>
+<tr><td>Speed</td><td>Slower (server round-trip each time)</td><td>Faster after initial load</td></tr>
+<tr><td>Server role</td><td>Renders HTML</td><td>Sends JSON data via REST API</td></tr>
+<tr><td>Example</td><td>Wikipedia</td><td>Gmail, Netflix</td></tr>
+</table>
+
+<h4>Angular vs React vs Vue — Comparison</h4>
+<table>
+<tr><th>Feature</th><th>Angular</th><th>React</th><th>Vue</th></tr>
+<tr><td>Type</td><td><strong>Full framework</strong></td><td>Library (UI only)</td><td>Progressive framework</td></tr>
+<tr><td>Language</td><td><strong>TypeScript</strong></td><td>JavaScript/JSX</td><td>JavaScript</td></tr>
+<tr><td>Created by</td><td>Google</td><td>Facebook (Meta)</td><td>Evan You</td></tr>
+<tr><td>Data binding</td><td><strong>Two-way</strong></td><td>One-way</td><td>Two-way</td></tr>
+<tr><td>DOM</td><td>Real DOM + Change Detection</td><td>Virtual DOM</td><td>Virtual DOM</td></tr>
+<tr><td>CLI tool</td><td>Angular CLI</td><td>Create React App / Vite</td><td>Vue CLI / Vite</td></tr>
+<tr><td>Learning curve</td><td>Steeper</td><td>Moderate</td><td>Easiest</td></tr>
+</table>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  "Angular is a library" — <strong>FALSE</strong>. Angular is a <strong>framework</strong>. React is a library. This distinction is a classic exam trap.
+</div>
+
+<!-- ─── ANGULAR CLI ─── -->
+<h3 id="angular-cli">2. Angular CLI</h3>
+<p>The <strong>Angular CLI (Command Line Interface)</strong> is a tool that creates projects, generates code, runs dev servers, and builds your app. You will use it every day in Sprint 4.</p>
+
+<h4>Installation</h4>
+<pre><span class="cmt"># Install Angular CLI globally (needs Node.js + npm installed first)</span>
+npm install -g @angular/cli
+
+<span class="cmt"># Check version</span>
+ng version</pre>
+
+<h4>Essential Commands</h4>
+<table>
+<tr><th>Command</th><th>What It Does</th></tr>
+<tr><td><code>ng new project-name</code></td><td>Creates a new Angular project with all files</td></tr>
+<tr><td><code>ng serve</code></td><td>Starts dev server at <strong>localhost:4200</strong></td></tr>
+<tr><td><code>ng generate component name</code></td><td>Creates a new component (4 files)</td></tr>
+<tr><td><code>ng g c name</code></td><td>Short form of above</td></tr>
+<tr><td><code>ng generate service name</code></td><td>Creates a new service</td></tr>
+<tr><td><code>ng g s name</code></td><td>Short form of above</td></tr>
+<tr><td><code>ng build</code></td><td>Builds production-ready files in <code>dist/</code> folder</td></tr>
+<tr><td><code>ng test</code></td><td>Runs unit tests</td></tr>
+</table>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  Default port for <code>ng serve</code> is <strong>4200</strong>. If exam asks "what port does Angular dev server use?" — answer is 4200.
+</div>
+
+<h4>Project Structure (What <code>ng new</code> Creates)</h4>
+<pre>my-app/
+├── src/
+│   ├── app/
+│   │   ├── app.component.ts       <span class="cmt">← root component (TypeScript)</span>
+│   │   ├── app.component.html     <span class="cmt">← root template (HTML)</span>
+│   │   ├── app.component.css      <span class="cmt">← root styles</span>
+│   │   ├── app.component.spec.ts  <span class="cmt">← root test file</span>
+│   │   └── app.module.ts          <span class="cmt">← root module</span>
+│   ├── assets/                    <span class="cmt">← images, fonts, etc.</span>
+│   ├── index.html                 <span class="cmt">← single HTML page (SPA!)</span>
+│   ├── main.ts                    <span class="cmt">← entry point — bootstraps AppModule</span>
+│   └── styles.css                 <span class="cmt">← global styles</span>
+├── angular.json                   <span class="cmt">← Angular project config</span>
+├── package.json                   <span class="cmt">← npm dependencies</span>
+├── tsconfig.json                  <span class="cmt">← TypeScript config</span>
+└── node_modules/                  <span class="cmt">← installed packages</span></pre>
+
+<div class="box box-tip">
+  <div class="label">Remember</div>
+  Every component created by CLI generates <strong>4 files</strong>: <code>.ts</code> (logic), <code>.html</code> (template), <code>.css</code> (styles), <code>.spec.ts</code> (test). This is a common exam question.
+</div>
+
+<!-- ─── ARCHITECTURE ─── -->
+<h3 id="architecture">3. Angular Architecture</h3>
+<p>Angular apps are built from a few core building blocks. Understanding how they connect is crucial for the exam.</p>
+
+<h4>The Building Blocks</h4>
+<table>
+<tr><th>Building Block</th><th>What It Does</th><th>Decorator</th></tr>
+<tr><td><strong>Module</strong></td><td>Organizes the app into chunks. Every app has at least one (AppModule).</td><td><code>@NgModule</code></td></tr>
+<tr><td><strong>Component</strong></td><td>Controls a piece of the UI (a view). Has template + logic + styles.</td><td><code>@Component</code></td></tr>
+<tr><td><strong>Template</strong></td><td>The HTML with Angular syntax (bindings, directives).</td><td>—</td></tr>
+<tr><td><strong>Service</strong></td><td>Shared business logic, data access, API calls.</td><td><code>@Injectable</code></td></tr>
+<tr><td><strong>Directive</strong></td><td>Adds behavior to DOM elements.</td><td><code>@Directive</code></td></tr>
+<tr><td><strong>Pipe</strong></td><td>Transforms data for display.</td><td><code>@Pipe</code></td></tr>
+</table>
+
+<h4>How They Connect</h4>
+<pre><span class="cmt">// Flow: Module contains Components. Components use Templates.</span>
+<span class="cmt">// Components inject Services. Templates use Directives and Pipes.</span>
+
+     ┌──────────────┐
+     │  @NgModule    │  ← organizes everything
+     │  (AppModule)  │
+     └──────┬───────┘
+            │ declares
+     ┌──────▼───────┐
+     │  @Component   │  ← controls a view
+     │  (AppComp)    │
+     └──┬───────┬───┘
+        │       │
+  ┌─────▼──┐ ┌─▼──────────┐
+  │Template │ │ @Injectable │  ← injected via constructor
+  │ (HTML)  │ │  (Service)  │
+  └────┬────┘ └─────────────┘
+       │ uses
+  ┌────▼──────────────┐
+  │ Directives, Pipes │
+  └───────────────────┘</pre>
+
+<div class="box box-key">
+  <div class="label">Key Concept — Dependency Injection (DI)</div>
+  <strong>Dependency Injection</strong> means Angular gives (injects) a service into your component automatically. You don't create services with <code>new</code>. You declare the service in the constructor, and Angular provides the instance. This makes code testable and reusable.
+</div>
+
+<!-- ─── COMPONENTS ─── -->
+<h3 id="components">4. Components (CORE TOPIC)</h3>
+<p>Components are the <strong>most important building block</strong> of Angular. Every piece of UI is a component — the header, sidebar, product card, login form — everything. A component = <strong>TypeScript class</strong> + <strong>HTML template</strong> + <strong>CSS styles</strong>.</p>
+
+<h4>Creating a Component</h4>
+<pre><span class="cmt">// Terminal: generates component files</span>
+ng generate component user-profile
+<span class="cmt">// Short form:</span>
+ng g c user-profile</pre>
+
+<p>This creates 4 files:</p>
+<pre>src/app/user-profile/
+├── user-profile.component.ts        <span class="cmt">← component class</span>
+├── user-profile.component.html      <span class="cmt">← template</span>
+├── user-profile.component.css       <span class="cmt">← styles</span>
+└── user-profile.component.spec.ts   <span class="cmt">← test</span></pre>
+
+<h4>Component Anatomy (The @Component Decorator)</h4>
+<pre><span class="cmt">// user-profile.component.ts</span>
+<span class="kw">import</span> { <span class="type">Component</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+@<span class="fn">Component</span>({
+  <span class="str">selector</span>: <span class="str">'app-user-profile'</span>,       <span class="cmt">// ← HTML tag name to use this component</span>
+  <span class="str">templateUrl</span>: <span class="str">'./user-profile.component.html'</span>,  <span class="cmt">// ← path to HTML</span>
+  <span class="str">styleUrls</span>: [<span class="str">'./user-profile.component.css'</span>]    <span class="cmt">// ← path to CSS</span>
+})
+<span class="kw">export class</span> <span class="type">UserProfileComponent</span> {
+  name: <span class="type">string</span> = <span class="str">'Darshan'</span>;      <span class="cmt">// ← data property</span>
+  age: <span class="type">number</span> = <span class="num">22</span>;
+
+  <span class="fn">greet</span>(): <span class="type">string</span> {             <span class="cmt">// ← method</span>
+    <span class="kw">return</span> <span class="str">`Hello, ${this.name}!`</span>;
+  }
+}</pre>
+
+<pre><span class="cmt">&lt;!-- user-profile.component.html --&gt;</span>
+&lt;h2&gt;{{ name }}&lt;/h2&gt;             <span class="cmt">&lt;!-- interpolation: shows "Darshan" --&gt;</span>
+&lt;p&gt;Age: {{ age }}&lt;/p&gt;
+&lt;p&gt;{{ greet() }}&lt;/p&gt;            <span class="cmt">&lt;!-- can call methods too --&gt;</span></pre>
+
+<pre><span class="cmt">&lt;!-- Using the component in another template --&gt;</span>
+&lt;app-user-profile&gt;&lt;/app-user-profile&gt;   <span class="cmt">&lt;!-- the selector becomes a custom HTML tag --&gt;</span></pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  <strong>@Component decorator properties to memorize:</strong><br>
+  <code>selector</code> — the custom HTML tag name<br>
+  <code>templateUrl</code> — path to the HTML file (or <code>template</code> for inline HTML)<br>
+  <code>styleUrls</code> — array of CSS file paths (or <code>styles</code> for inline CSS)
+</div>
+
+<h4>Component Lifecycle Hooks</h4>
+<p>Angular calls special methods (hooks) at different stages of a component's life. You don't call these — Angular calls them automatically.</p>
+
+<table>
+<tr><th>Hook</th><th>When It Runs</th><th>Common Use</th></tr>
+<tr><td><code>constructor()</code></td><td>When component class is created (before Angular does anything)</td><td>Inject services only — no logic here</td></tr>
+<tr><td><code>ngOnChanges()</code></td><td>When an <code>@Input()</code> property value changes</td><td>React to input changes</td></tr>
+<tr><td><strong><code>ngOnInit()</code></strong></td><td><strong>After first ngOnChanges — component is ready</strong></td><td><strong>Fetch data, initialize logic — MOST USED</strong></td></tr>
+<tr><td><code>ngDoCheck()</code></td><td>Every change detection cycle</td><td>Custom change detection</td></tr>
+<tr><td><code>ngAfterContentInit()</code></td><td>After projected content is initialized</td><td>Rarely used</td></tr>
+<tr><td><code>ngAfterContentChecked()</code></td><td>After projected content is checked</td><td>Rarely used</td></tr>
+<tr><td><code>ngAfterViewInit()</code></td><td>After component's view is initialized</td><td>Access DOM elements</td></tr>
+<tr><td><code>ngAfterViewChecked()</code></td><td>After component's view is checked</td><td>Rarely used</td></tr>
+<tr><td><code>ngOnDestroy()</code></td><td>Just before component is removed</td><td>Unsubscribe, cleanup timers</td></tr>
+</table>
+
+<div class="box box-warn">
+  <div class="label">Lifecycle Order — Memorize This</div>
+  <strong>constructor → ngOnChanges → ngOnInit → ngDoCheck → ngAfterContentInit → ngAfterContentChecked → ngAfterViewInit → ngAfterViewChecked → ngOnDestroy</strong><br><br>
+  Mnemonic: <strong>C</strong>onstruct → <strong>C</strong>hanges → <strong>I</strong>nit → <strong>D</strong>oCheck → <strong>C</strong>ontent(Init/Checked) → <strong>V</strong>iew(Init/Checked) → <strong>D</strong>estroy
+</div>
+
+<h4>Using ngOnInit (Most Important Hook)</h4>
+<pre><span class="kw">import</span> { <span class="type">Component</span>, <span class="type">OnInit</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+@<span class="fn">Component</span>({
+  <span class="str">selector</span>: <span class="str">'app-user-list'</span>,
+  <span class="str">templateUrl</span>: <span class="str">'./user-list.component.html'</span>
+})
+<span class="kw">export class</span> <span class="type">UserListComponent</span> <span class="kw">implements</span> <span class="type">OnInit</span> {
+  users: <span class="type">string</span>[] = [];
+
+  <span class="cmt">// Angular calls this automatically after component initializes</span>
+  <span class="fn">ngOnInit</span>(): <span class="type">void</span> {
+    <span class="cmt">// Fetch data, set up initial values</span>
+    <span class="kw">this</span>.users = [<span class="str">'Alice'</span>, <span class="str">'Bob'</span>, <span class="str">'Charlie'</span>];
+    console.<span class="fn">log</span>(<span class="str">'Component initialized!'</span>);
+  }
+}</pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  "Where should you make API calls — constructor or ngOnInit?" — Always <strong>ngOnInit()</strong>. The constructor is only for dependency injection. This is asked almost every time.
+</div>
+
+<!-- ─── DATA BINDING ─── -->
+<h3 id="data-binding">5. Data Binding (4 Types — VERY IMPORTANT)</h3>
+<p><strong>Data binding</strong> is how your TypeScript component class communicates with the HTML template. Angular has 4 types. This is one of the most tested topics.</p>
+
+<table>
+<tr><th>#</th><th>Type</th><th>Syntax</th><th>Direction</th><th>Example</th></tr>
+<tr><td>1</td><td><strong>Interpolation</strong></td><td><code>{{ expression }}</code></td><td>Component → Template</td><td><code>{{ name }}</code></td></tr>
+<tr><td>2</td><td><strong>Property Binding</strong></td><td><code>[property]="expr"</code></td><td>Component → Template</td><td><code>[src]="imageUrl"</code></td></tr>
+<tr><td>3</td><td><strong>Event Binding</strong></td><td><code>(event)="handler()"</code></td><td>Template → Component</td><td><code>(click)="save()"</code></td></tr>
+<tr><td>4</td><td><strong>Two-Way Binding</strong></td><td><code>[(ngModel)]="prop"</code></td><td>Both directions</td><td><code>[(ngModel)]="name"</code></td></tr>
+</table>
+
+<div class="box box-key">
+  <div class="label">Memory Trick — Binding Syntax</div>
+  <strong>Interpolation:</strong> Double curly braces <code>{{ }}</code> — "mustache syntax"<br>
+  <strong>Property:</strong> Square brackets <code>[ ]</code> — data flows IN to the element<br>
+  <strong>Event:</strong> Parentheses <code>( )</code> — data flows OUT from the element<br>
+  <strong>Two-way:</strong> Banana in a box <code>[( )]</code> — both directions! (square + round brackets)
+</div>
+
+<h4>1. Interpolation — <code>{{ expression }}</code></h4>
+<pre><span class="cmt">// Component (TypeScript)</span>
+<span class="kw">export class</span> <span class="type">AppComponent</span> {
+  title = <span class="str">'My Angular App'</span>;
+  price = <span class="num">99.5</span>;
+}
+
+<span class="cmt">&lt;!-- Template (HTML) --&gt;</span>
+&lt;h1&gt;{{ title }}&lt;/h1&gt;                   <span class="cmt">&lt;!-- Output: My Angular App --&gt;</span>
+&lt;p&gt;Price: {{ price * 1.18 }}&lt;/p&gt;       <span class="cmt">&lt;!-- Can do math: 117.41 --&gt;</span>
+&lt;p&gt;{{ title.length }}&lt;/p&gt;              <span class="cmt">&lt;!-- Can access properties: 14 --&gt;</span>
+&lt;p&gt;{{ title.toUpperCase() }}&lt;/p&gt;       <span class="cmt">&lt;!-- Can call methods --&gt;</span></pre>
+
+<h4>2. Property Binding — <code>[property]="expression"</code></h4>
+<pre><span class="cmt">// Component</span>
+<span class="kw">export class</span> <span class="type">AppComponent</span> {
+  imageUrl = <span class="str">'assets/logo.png'</span>;
+  isDisabled = <span class="kw">true</span>;
+}
+
+<span class="cmt">&lt;!-- Template --&gt;</span>
+&lt;img [src]="imageUrl"&gt;                 <span class="cmt">&lt;!-- binds src attribute --&gt;</span>
+&lt;button [disabled]="isDisabled"&gt;Click&lt;/button&gt;  <span class="cmt">&lt;!-- disables button --&gt;</span></pre>
+
+<div class="box box-tip">
+  <div class="label">Interpolation vs Property Binding</div>
+  <code>&lt;img src="{{ imageUrl }}"&gt;</code> works but <code>&lt;img [src]="imageUrl"&gt;</code> is preferred. For non-string attributes like <code>[disabled]</code>, you MUST use property binding — interpolation won't work.
+</div>
+
+<h4>3. Event Binding — <code>(event)="handler()"</code></h4>
+<pre><span class="cmt">// Component</span>
+<span class="kw">export class</span> <span class="type">AppComponent</span> {
+  counter = <span class="num">0</span>;
+
+  <span class="fn">increment</span>() {
+    <span class="kw">this</span>.counter++;
+  }
+
+  <span class="fn">onKeyPress</span>(event: <span class="type">KeyboardEvent</span>) {
+    console.<span class="fn">log</span>(event.key);
+  }
+}
+
+<span class="cmt">&lt;!-- Template --&gt;</span>
+&lt;button (click)="increment()"&gt;Count: {{ counter }}&lt;/button&gt;
+&lt;input (keyup)="onKeyPress($event)"&gt;   <span class="cmt">&lt;!-- $event = the DOM event object --&gt;</span></pre>
+
+<h4>4. Two-Way Binding — <code>[(ngModel)]="property"</code></h4>
+<pre><span class="cmt">// IMPORTANT: You must import FormsModule first!</span>
+<span class="cmt">// In app.module.ts:</span>
+<span class="kw">import</span> { <span class="type">FormsModule</span> } <span class="kw">from</span> <span class="str">'@angular/forms'</span>;
+
+@<span class="fn">NgModule</span>({
+  imports: [<span class="type">FormsModule</span>],  <span class="cmt">// ← add this!</span>
+  ...
+})
+
+<span class="cmt">// Component</span>
+<span class="kw">export class</span> <span class="type">AppComponent</span> {
+  username = <span class="str">''</span>;
+}
+
+<span class="cmt">&lt;!-- Template --&gt;</span>
+&lt;input [(ngModel)]="username"&gt;         <span class="cmt">&lt;!-- typing updates username --&gt;</span>
+&lt;p&gt;Hello, {{ username }}!&lt;/p&gt;          <span class="cmt">&lt;!-- shows what you type, live --&gt;</span></pre>
+
+<div class="box box-warn">
+  <div class="label">Common Exam Trap</div>
+  <code>[(ngModel)]</code> requires <strong>FormsModule</strong> to be imported in <code>app.module.ts</code>. Without it, you get an error. Exam often asks "what module is needed for ngModel?" — answer: <strong>FormsModule</strong>.
+</div>
+
+<!-- ─── DIRECTIVES ─── -->
+<h3 id="directives">6. Directives</h3>
+<p>Directives are instructions that tell Angular to modify the DOM. There are two main types: <strong>structural</strong> (add/remove elements) and <strong>attribute</strong> (change appearance/behavior).</p>
+
+<h4>Structural Directives (Modify the DOM Structure)</h4>
+<p>These start with an asterisk <code>*</code> — that's how you spot them. They add or remove elements from the page.</p>
+
+<h4><code>*ngIf</code> — Show/hide based on condition</h4>
+<pre><span class="cmt">&lt;!-- Only shows if isLoggedIn is true --&gt;</span>
+&lt;div *ngIf="isLoggedIn"&gt;Welcome back, user!&lt;/div&gt;
+
+<span class="cmt">&lt;!-- if-else pattern --&gt;</span>
+&lt;div *ngIf="isLoggedIn; else loginTemplate"&gt;
+  Welcome back!
+&lt;/div&gt;
+&lt;ng-template #loginTemplate&gt;
+  &lt;p&gt;Please log in.&lt;/p&gt;
+&lt;/ng-template&gt;</pre>
+
+<h4><code>*ngFor</code> — Loop through a list</h4>
+<pre><span class="cmt">// Component</span>
+fruits: <span class="type">string</span>[] = [<span class="str">'Apple'</span>, <span class="str">'Banana'</span>, <span class="str">'Cherry'</span>];
+
+<span class="cmt">&lt;!-- Template --&gt;</span>
+&lt;ul&gt;
+  &lt;li *ngFor="let fruit of fruits"&gt;{{ fruit }}&lt;/li&gt;
+&lt;/ul&gt;
+<span class="cmt">&lt;!-- Output: Apple, Banana, Cherry as list items --&gt;</span>
+
+<span class="cmt">&lt;!-- With index --&gt;</span>
+&lt;li *ngFor="let fruit of fruits; let i = index"&gt;
+  {{ i + 1 }}. {{ fruit }}
+&lt;/li&gt;</pre>
+
+<h4><code>*ngSwitch</code> — Multiple conditions</h4>
+<pre>&lt;div [ngSwitch]="color"&gt;
+  &lt;p *ngSwitchCase="'red'"&gt;Stop!&lt;/p&gt;
+  &lt;p *ngSwitchCase="'green'"&gt;Go!&lt;/p&gt;
+  &lt;p *ngSwitchCase="'yellow'"&gt;Slow down!&lt;/p&gt;
+  &lt;p *ngSwitchDefault&gt;Unknown color&lt;/p&gt;
+&lt;/div&gt;</pre>
+
+<div class="box box-warn">
+  <div class="label">Important Rule</div>
+  You <strong>cannot</strong> use two structural directives on the same element. This is WRONG:<br>
+  <code>&lt;div *ngIf="show" *ngFor="let item of items"&gt;</code> — will cause an error.<br>
+  Solution: wrap one in an <code>&lt;ng-container&gt;</code>.
+</div>
+
+<h4>Attribute Directives (Modify Appearance/Behavior)</h4>
+<p>These change how an element looks or behaves — they don't add or remove elements.</p>
+
+<h4><code>ngClass</code> — Add/remove CSS classes dynamically</h4>
+<pre><span class="cmt">&lt;!-- Add 'active' class when isActive is true --&gt;</span>
+&lt;div [ngClass]="{'active': isActive, 'disabled': !isActive}"&gt;
+  Status Box
+&lt;/div&gt;
+
+<span class="cmt">&lt;!-- Using a string --&gt;</span>
+&lt;div [ngClass]="currentClass"&gt;Styled div&lt;/div&gt;</pre>
+
+<h4><code>ngStyle</code> — Add inline styles dynamically</h4>
+<pre><span class="cmt">&lt;!-- Set color and font-size dynamically --&gt;</span>
+&lt;p [ngStyle]="{'color': textColor, 'font-size': fontSize + 'px'}"&gt;
+  Styled text
+&lt;/p&gt;</pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip — Directive Types</div>
+  <strong>Structural:</strong> <code>*ngIf</code>, <code>*ngFor</code>, <code>*ngSwitch</code> — they start with <code>*</code>, they change the DOM structure.<br>
+  <strong>Attribute:</strong> <code>ngClass</code>, <code>ngStyle</code> — they change element properties, NOT the DOM structure.<br>
+  If exam asks "which is a structural directive?" — look for the asterisk <code>*</code>.
+</div>
+
+<!-- ─── SERVICES & DI ─── -->
+<h3 id="services-di">7. Services and Dependency Injection</h3>
+<p>A <strong>service</strong> is a TypeScript class that holds business logic, data, or API calls — anything that isn't directly about the UI. Components should be thin (just UI logic); heavy work goes in services.</p>
+
+<h4>Creating a Service</h4>
+<pre><span class="cmt"># Terminal</span>
+ng generate service user
+<span class="cmt"># Creates: user.service.ts, user.service.spec.ts</span></pre>
+
+<h4>Service Code</h4>
+<pre><span class="cmt">// user.service.ts</span>
+<span class="kw">import</span> { <span class="type">Injectable</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+@<span class="fn">Injectable</span>({
+  <span class="str">providedIn</span>: <span class="str">'root'</span>   <span class="cmt">// ← makes it a singleton, available everywhere</span>
+})
+<span class="kw">export class</span> <span class="type">UserService</span> {
+
+  <span class="kw">private</span> users: <span class="type">string</span>[] = [<span class="str">'Alice'</span>, <span class="str">'Bob'</span>, <span class="str">'Charlie'</span>];
+
+  <span class="fn">getUsers</span>(): <span class="type">string</span>[] {
+    <span class="kw">return this</span>.users;
+  }
+
+  <span class="fn">addUser</span>(name: <span class="type">string</span>): <span class="type">void</span> {
+    <span class="kw">this</span>.users.<span class="fn">push</span>(name);
+  }
+}</pre>
+
+<h4>Injecting a Service into a Component</h4>
+<pre><span class="cmt">// user-list.component.ts</span>
+<span class="kw">import</span> { <span class="type">Component</span>, <span class="type">OnInit</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { <span class="type">UserService</span> } <span class="kw">from</span> <span class="str">'../user.service'</span>;
+
+@<span class="fn">Component</span>({
+  <span class="str">selector</span>: <span class="str">'app-user-list'</span>,
+  <span class="str">templateUrl</span>: <span class="str">'./user-list.component.html'</span>
+})
+<span class="kw">export class</span> <span class="type">UserListComponent</span> <span class="kw">implements</span> <span class="type">OnInit</span> {
+  users: <span class="type">string</span>[] = [];
+
+  <span class="cmt">// Service is injected via constructor — this is DI!</span>
+  <span class="kw">constructor</span>(<span class="kw">private</span> userService: <span class="type">UserService</span>) {}
+
+  <span class="fn">ngOnInit</span>(): <span class="type">void</span> {
+    <span class="kw">this</span>.users = <span class="kw">this</span>.userService.<span class="fn">getUsers</span>();
+  }
+}</pre>
+
+<div class="box box-key">
+  <div class="label">Key Concept — providedIn: 'root'</div>
+  <code>@Injectable({ providedIn: 'root' })</code> means:<br>
+  1. Angular creates <strong>one single instance</strong> (singleton) of this service for the entire app.<br>
+  2. You don't need to add it to any module's <code>providers</code> array — it's auto-registered.<br>
+  3. All components that inject it get the <strong>same instance</strong> — shared data!
+</div>
+
+<div class="box box-tip">
+  <div class="label">Why Services?</div>
+  <strong>Separation of concerns:</strong> Components handle UI, services handle data/logic.<br>
+  <strong>Reusability:</strong> Multiple components can share the same service.<br>
+  <strong>Testability:</strong> Services can be tested independently.
+</div>
+
+<!-- ─── ROUTING ─── -->
+<h3 id="routing">8. Routing</h3>
+<p><strong>Routing</strong> lets you navigate between different views (components) in your SPA without reloading the page. When you click a link, Angular swaps components — the URL changes, but the page doesn't reload.</p>
+
+<h4>Setting Up Routes</h4>
+<pre><span class="cmt">// app-routing.module.ts (or app.routes.ts)</span>
+<span class="kw">import</span> { <span class="type">NgModule</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { <span class="type">RouterModule</span>, <span class="type">Routes</span> } <span class="kw">from</span> <span class="str">'@angular/router'</span>;
+<span class="kw">import</span> { <span class="type">HomeComponent</span> } <span class="kw">from</span> <span class="str">'./home/home.component'</span>;
+<span class="kw">import</span> { <span class="type">AboutComponent</span> } <span class="kw">from</span> <span class="str">'./about/about.component'</span>;
+<span class="kw">import</span> { <span class="type">UserComponent</span> } <span class="kw">from</span> <span class="str">'./user/user.component'</span>;
+<span class="kw">import</span> { <span class="type">NotFoundComponent</span> } <span class="kw">from</span> <span class="str">'./not-found/not-found.component'</span>;
+
+<span class="kw">const</span> routes: <span class="type">Routes</span> = [
+  { path: <span class="str">''</span>, component: <span class="type">HomeComponent</span> },               <span class="cmt">// localhost:4200/</span>
+  { path: <span class="str">'about'</span>, component: <span class="type">AboutComponent</span> },         <span class="cmt">// localhost:4200/about</span>
+  { path: <span class="str">'users/:id'</span>, component: <span class="type">UserComponent</span> },     <span class="cmt">// localhost:4200/users/5</span>
+  { path: <span class="str">'**'</span>, component: <span class="type">NotFoundComponent</span> }          <span class="cmt">// any unmatched URL → 404</span>
+];
+
+@<span class="fn">NgModule</span>({
+  imports: [<span class="type">RouterModule</span>.<span class="fn">forRoot</span>(routes)],
+  exports: [<span class="type">RouterModule</span>]
+})
+<span class="kw">export class</span> <span class="type">AppRoutingModule</span> {}</pre>
+
+<h4>Using Routes in Templates</h4>
+<pre><span class="cmt">&lt;!-- app.component.html --&gt;</span>
+
+<span class="cmt">&lt;!-- Navigation links --&gt;</span>
+&lt;nav&gt;
+  &lt;a routerLink="/"&gt;Home&lt;/a&gt;
+  &lt;a routerLink="/about"&gt;About&lt;/a&gt;
+  &lt;a routerLink="/users/1"&gt;User 1&lt;/a&gt;
+&lt;/nav&gt;
+
+<span class="cmt">&lt;!-- This is where the routed component appears --&gt;</span>
+&lt;router-outlet&gt;&lt;/router-outlet&gt;</pre>
+
+<h4>Reading Route Parameters</h4>
+<pre><span class="cmt">// user.component.ts — reading :id from the URL</span>
+<span class="kw">import</span> { <span class="type">ActivatedRoute</span> } <span class="kw">from</span> <span class="str">'@angular/router'</span>;
+
+<span class="kw">export class</span> <span class="type">UserComponent</span> <span class="kw">implements</span> <span class="type">OnInit</span> {
+  userId: <span class="type">string</span> = <span class="str">''</span>;
+
+  <span class="kw">constructor</span>(<span class="kw">private</span> route: <span class="type">ActivatedRoute</span>) {}
+
+  <span class="fn">ngOnInit</span>(): <span class="type">void</span> {
+    <span class="kw">this</span>.userId = <span class="kw">this</span>.route.snapshot.params[<span class="str">'id'</span>];
+    <span class="cmt">// For URL /users/5, this.userId = "5"</span>
+  }
+}</pre>
+
+<h4>Programmatic Navigation</h4>
+<pre><span class="kw">import</span> { <span class="type">Router</span> } <span class="kw">from</span> <span class="str">'@angular/router'</span>;
+
+<span class="kw">export class</span> <span class="type">LoginComponent</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> router: <span class="type">Router</span>) {}
+
+  <span class="fn">onLoginSuccess</span>() {
+    <span class="kw">this</span>.router.<span class="fn">navigate</span>([<span class="str">'/dashboard'</span>]);  <span class="cmt">// redirect after login</span>
+  }
+}</pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  <strong>routerLink</strong> = used in templates for navigation links (replaces <code>href</code>)<br>
+  <strong>router-outlet</strong> = placeholder where the routed component gets displayed<br>
+  <strong>ActivatedRoute</strong> = service to read route parameters<br>
+  <strong>Router</strong> = service for programmatic navigation<br>
+  <strong>path: '**'</strong> = wildcard route for 404 pages (must be LAST in the array)
+</div>
+
+<!-- ─── HTTP CLIENT ─── -->
+<h3 id="http-client">9. HTTP Client</h3>
+<p>Angular's <strong>HttpClient</strong> lets you make API calls (GET, POST, PUT, DELETE) to your backend (like your Spring Boot REST API). It returns <strong>Observables</strong>, which you subscribe to.</p>
+
+<h4>Setup</h4>
+<pre><span class="cmt">// app.module.ts — import HttpClientModule</span>
+<span class="kw">import</span> { <span class="type">HttpClientModule</span> } <span class="kw">from</span> <span class="str">'@angular/common/http'</span>;
+
+@<span class="fn">NgModule</span>({
+  imports: [<span class="type">HttpClientModule</span>],  <span class="cmt">// ← add this</span>
+  ...
+})</pre>
+
+<h4>Making HTTP Calls in a Service</h4>
+<pre><span class="cmt">// user.service.ts</span>
+<span class="kw">import</span> { <span class="type">Injectable</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+<span class="kw">import</span> { <span class="type">HttpClient</span> } <span class="kw">from</span> <span class="str">'@angular/common/http'</span>;
+<span class="kw">import</span> { <span class="type">Observable</span> } <span class="kw">from</span> <span class="str">'rxjs'</span>;
+
+<span class="kw">interface</span> <span class="type">User</span> {
+  id: <span class="type">number</span>;
+  name: <span class="type">string</span>;
+  email: <span class="type">string</span>;
+}
+
+@<span class="fn">Injectable</span>({ <span class="str">providedIn</span>: <span class="str">'root'</span> })
+<span class="kw">export class</span> <span class="type">UserService</span> {
+  <span class="kw">private</span> apiUrl = <span class="str">'http://localhost:8080/api/users'</span>;
+
+  <span class="kw">constructor</span>(<span class="kw">private</span> http: <span class="type">HttpClient</span>) {}
+
+  <span class="cmt">// GET — fetch all users</span>
+  <span class="fn">getUsers</span>(): <span class="type">Observable</span>&lt;<span class="type">User</span>[]&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">get</span>&lt;<span class="type">User</span>[]&gt;(<span class="kw">this</span>.apiUrl);
+  }
+
+  <span class="cmt">// GET — fetch one user by ID</span>
+  <span class="fn">getUserById</span>(id: <span class="type">number</span>): <span class="type">Observable</span>&lt;<span class="type">User</span>&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">get</span>&lt;<span class="type">User</span>&gt;(<span class="str">`${this.apiUrl}/${id}`</span>);
+  }
+
+  <span class="cmt">// POST — create new user</span>
+  <span class="fn">createUser</span>(user: <span class="type">User</span>): <span class="type">Observable</span>&lt;<span class="type">User</span>&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">post</span>&lt;<span class="type">User</span>&gt;(<span class="kw">this</span>.apiUrl, user);
+  }
+
+  <span class="cmt">// PUT — update existing user</span>
+  <span class="fn">updateUser</span>(id: <span class="type">number</span>, user: <span class="type">User</span>): <span class="type">Observable</span>&lt;<span class="type">User</span>&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">put</span>&lt;<span class="type">User</span>&gt;(<span class="str">`${this.apiUrl}/${id}`</span>, user);
+  }
+
+  <span class="cmt">// DELETE — remove user</span>
+  <span class="fn">deleteUser</span>(id: <span class="type">number</span>): <span class="type">Observable</span>&lt;<span class="type">void</span>&gt; {
+    <span class="kw">return this</span>.http.<span class="fn">delete</span>&lt;<span class="type">void</span>&gt;(<span class="str">`${this.apiUrl}/${id}`</span>);
+  }
+}</pre>
+
+<h4>Using the Service in a Component</h4>
+<pre><span class="cmt">// user-list.component.ts</span>
+<span class="kw">export class</span> <span class="type">UserListComponent</span> <span class="kw">implements</span> <span class="type">OnInit</span> {
+  users: <span class="type">User</span>[] = [];
+
+  <span class="kw">constructor</span>(<span class="kw">private</span> userService: <span class="type">UserService</span>) {}
+
+  <span class="fn">ngOnInit</span>(): <span class="type">void</span> {
+    <span class="cmt">// subscribe() triggers the HTTP call and handles the response</span>
+    <span class="kw">this</span>.userService.<span class="fn">getUsers</span>().<span class="fn">subscribe</span>({
+      next: (data) => <span class="kw">this</span>.users = data,
+      error: (err) => console.<span class="fn">error</span>(<span class="str">'Error:'</span>, err)
+    });
+  }
+}</pre>
+
+<div class="box box-key">
+  <div class="label">Key Concept — Observables and subscribe()</div>
+  <strong>Observable</strong> = a stream of data that arrives over time (from RxJS library).<br>
+  <strong>subscribe()</strong> = tells Angular "I want the data — execute the HTTP call now."<br>
+  Without calling <code>.subscribe()</code>, the HTTP request is <strong>never sent</strong>. This is a critical difference from Promises. Observables are lazy — they only execute when subscribed to.
+</div>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  "Which module must be imported for HTTP calls?" — <strong>HttpClientModule</strong><br>
+  "HTTP methods return what?" — <strong>Observables</strong> (not Promises)<br>
+  "What happens if you don't call subscribe()?" — <strong>Nothing. The request is never made.</strong>
+</div>
+
+<!-- ─── PIPES ─── -->
+<h3 id="pipes">10. Pipes</h3>
+<p>Pipes <strong>transform data for display</strong> in templates. They don't change the actual data — just how it looks. Think of them as display formatters.</p>
+
+<h4>Syntax: <code>{{ value | pipeName }}</code></h4>
+
+<h4>Built-in Pipes</h4>
+<table>
+<tr><th>Pipe</th><th>Input</th><th>Output</th><th>Example</th></tr>
+<tr><td><code>uppercase</code></td><td><code>'hello'</code></td><td><code>'HELLO'</code></td><td><code>{{ name | uppercase }}</code></td></tr>
+<tr><td><code>lowercase</code></td><td><code>'HELLO'</code></td><td><code>'hello'</code></td><td><code>{{ name | lowercase }}</code></td></tr>
+<tr><td><code>titlecase</code></td><td><code>'hello world'</code></td><td><code>'Hello World'</code></td><td><code>{{ name | titlecase }}</code></td></tr>
+<tr><td><code>date</code></td><td>Date object</td><td>Formatted date</td><td><code>{{ today | date:'fullDate' }}</code></td></tr>
+<tr><td><code>currency</code></td><td><code>99.5</code></td><td><code>$99.50</code></td><td><code>{{ price | currency:'INR' }}</code></td></tr>
+<tr><td><code>percent</code></td><td><code>0.85</code></td><td><code>85%</code></td><td><code>{{ score | percent }}</code></td></tr>
+<tr><td><code>json</code></td><td>Object</td><td>JSON string</td><td><code>{{ user | json }}</code></td></tr>
+<tr><td><code>slice</code></td><td>Array/string</td><td>Sliced portion</td><td><code>{{ name | slice:0:5 }}</code></td></tr>
+</table>
+
+<h4>Chaining Pipes</h4>
+<pre><span class="cmt">&lt;!-- Apply multiple pipes left to right --&gt;</span>
+{{ name | uppercase | slice:0:5 }}
+<span class="cmt">&lt;!-- "darshan" → "DARSHAN" → "DARSH" --&gt;</span>
+
+{{ birthday | date:'shortDate' }}
+<span class="cmt">&lt;!-- Date object → "3/22/26" --&gt;</span>
+
+{{ salary | currency:'INR':'symbol':'1.0-0' }}
+<span class="cmt">&lt;!-- 50000 → "₹50,000" --&gt;</span></pre>
+
+<h4>Custom Pipe</h4>
+<pre><span class="cmt">// reverse.pipe.ts</span>
+<span class="kw">import</span> { <span class="type">Pipe</span>, <span class="type">PipeTransform</span> } <span class="kw">from</span> <span class="str">'@angular/core'</span>;
+
+@<span class="fn">Pipe</span>({ name: <span class="str">'reverse'</span> })
+<span class="kw">export class</span> <span class="type">ReversePipe</span> <span class="kw">implements</span> <span class="type">PipeTransform</span> {
+  <span class="fn">transform</span>(value: <span class="type">string</span>): <span class="type">string</span> {
+    <span class="kw">return</span> value.<span class="fn">split</span>(<span class="str">''</span>).<span class="fn">reverse</span>().<span class="fn">join</span>(<span class="str">''</span>);
+  }
+}
+
+<span class="cmt">&lt;!-- Usage: {{ 'hello' | reverse }} → "olleh" --&gt;</span></pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  Pipes are used with the <strong>pipe symbol <code>|</code></strong> in templates. Custom pipes need the <code>@Pipe</code> decorator and must implement <code>PipeTransform</code>. Know the built-in pipes — <code>date</code>, <code>uppercase</code>, <code>currency</code>, <code>json</code> are the exam favorites.
+</div>
+
+<!-- ─── FORMS ─── -->
+<h3 id="forms">11. Forms</h3>
+<p>Angular has two ways to build forms. Both work — they just differ in where the form logic lives.</p>
+
+<h4>Comparison</h4>
+<table>
+<tr><th>Feature</th><th>Template-Driven Forms</th><th>Reactive Forms</th></tr>
+<tr><td>Logic lives in</td><td>Template (HTML)</td><td>Component (TypeScript)</td></tr>
+<tr><td>Module needed</td><td><code>FormsModule</code></td><td><code>ReactiveFormsModule</code></td></tr>
+<tr><td>Binding</td><td><code>ngModel</code></td><td><code>formControlName</code></td></tr>
+<tr><td>Validation</td><td>HTML attributes (<code>required</code>, <code>minlength</code>)</td><td>Validators in TS code</td></tr>
+<tr><td>Best for</td><td>Simple forms</td><td>Complex, dynamic forms</td></tr>
+<tr><td>Testing</td><td>Harder to unit test</td><td>Easy to unit test</td></tr>
+</table>
+
+<h4>Template-Driven Form</h4>
+<pre><span class="cmt">&lt;!-- Import FormsModule in app.module.ts first --&gt;</span>
+
+&lt;form #myForm="ngForm" (ngSubmit)="onSubmit(myForm)"&gt;
+  &lt;input type="text" name="username" ngModel required minlength="3"&gt;
+  &lt;input type="email" name="email" ngModel required&gt;
+  &lt;button type="submit" [disabled]="myForm.invalid"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;
+
+<span class="cmt">&lt;!-- Validation message --&gt;</span>
+&lt;div *ngIf="myForm.controls['username']?.errors?.['required']"&gt;
+  Username is required
+&lt;/div&gt;</pre>
+
+<h4>Reactive Form</h4>
+<pre><span class="cmt">// Component (TypeScript)</span>
+<span class="kw">import</span> { <span class="type">FormGroup</span>, <span class="type">FormControl</span>, <span class="type">Validators</span> } <span class="kw">from</span> <span class="str">'@angular/forms'</span>;
+
+<span class="kw">export class</span> <span class="type">RegisterComponent</span> {
+  registerForm = <span class="kw">new</span> <span class="type">FormGroup</span>({
+    username: <span class="kw">new</span> <span class="type">FormControl</span>(<span class="str">''</span>, [
+      <span class="type">Validators</span>.required,
+      <span class="type">Validators</span>.minLength(<span class="num">3</span>)
+    ]),
+    email: <span class="kw">new</span> <span class="type">FormControl</span>(<span class="str">''</span>, [
+      <span class="type">Validators</span>.required,
+      <span class="type">Validators</span>.email
+    ]),
+    password: <span class="kw">new</span> <span class="type">FormControl</span>(<span class="str">''</span>, [
+      <span class="type">Validators</span>.required,
+      <span class="type">Validators</span>.minLength(<span class="num">6</span>)
+    ])
+  });
+
+  <span class="fn">onSubmit</span>() {
+    <span class="kw">if</span> (<span class="kw">this</span>.registerForm.valid) {
+      console.<span class="fn">log</span>(<span class="kw">this</span>.registerForm.value);
+      <span class="cmt">// { username: 'darshan', email: 'a@b.com', password: '123456' }</span>
+    }
+  }
+}
+
+<span class="cmt">&lt;!-- Template --&gt;</span>
+&lt;form [formGroup]="registerForm" (ngSubmit)="onSubmit()"&gt;
+  &lt;input formControlName="username" placeholder="Username"&gt;
+  &lt;input formControlName="email" placeholder="Email"&gt;
+  &lt;input formControlName="password" type="password" placeholder="Password"&gt;
+  &lt;button [disabled]="registerForm.invalid"&gt;Register&lt;/button&gt;
+&lt;/form&gt;</pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  Template-driven uses <code>FormsModule</code> + <code>ngModel</code>. Reactive uses <code>ReactiveFormsModule</code> + <code>FormGroup</code>/<code>FormControl</code>. Know which module goes with which approach — this is a common question.
+</div>
+
+<!-- ─── MODULES ─── -->
+<h3 id="modules">12. Modules (@NgModule)</h3>
+<p>Modules organize your Angular app into logical blocks. Every Angular app has at least one module — the <strong>root module</strong> (AppModule).</p>
+
+<h4>@NgModule Properties</h4>
+<pre>@<span class="fn">NgModule</span>({
+  <span class="str">declarations</span>: [          <span class="cmt">// Components, directives, pipes that BELONG to this module</span>
+    <span class="type">AppComponent</span>,
+    <span class="type">UserListComponent</span>,
+    <span class="type">UserDetailComponent</span>
+  ],
+  <span class="str">imports</span>: [               <span class="cmt">// Other modules this module NEEDS</span>
+    <span class="type">BrowserModule</span>,
+    <span class="type">FormsModule</span>,
+    <span class="type">HttpClientModule</span>,
+    <span class="type">AppRoutingModule</span>
+  ],
+  <span class="str">providers</span>: [             <span class="cmt">// Services (if not using providedIn: 'root')</span>
+    <span class="type">UserService</span>
+  ],
+  <span class="str">bootstrap</span>: [             <span class="cmt">// The root component that starts the app</span>
+    <span class="type">AppComponent</span>
+  ]
+})</pre>
+
+<table>
+<tr><th>Property</th><th>What Goes Here</th></tr>
+<tr><td><code>declarations</code></td><td>Components, directives, pipes created in THIS module</td></tr>
+<tr><td><code>imports</code></td><td>Other modules this module depends on (FormsModule, HttpClientModule, etc.)</td></tr>
+<tr><td><code>providers</code></td><td>Services (older way — prefer <code>providedIn: 'root'</code> instead)</td></tr>
+<tr><td><code>bootstrap</code></td><td>The root component (only in AppModule — usually <code>AppComponent</code>)</td></tr>
+<tr><td><code>exports</code></td><td>Components/directives/pipes available to other modules that import this one</td></tr>
+</table>
+
+<div class="box box-key">
+  <div class="label">Key Concept — Feature Modules</div>
+  Large apps split into feature modules: <code>UserModule</code>, <code>ProductModule</code>, <code>AdminModule</code>. Each has its own components, services, and routes. <strong>Lazy loading</strong> means a feature module is only loaded when the user navigates to its route — making the initial load faster.
+</div>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  "What is the bootstrap property in @NgModule?" — It specifies the <strong>root component</strong> that Angular creates and inserts into <code>index.html</code>. Only the root module (AppModule) has this. Answer is always <code>AppComponent</code>.
+</div>
+
+<!-- ─── ANGULAR VS REACT ─── -->
+<h3 id="angular-vs-react">13. Angular vs React — Quick Comparison</h3>
+<table>
+<tr><th>Feature</th><th>Angular</th><th>React</th></tr>
+<tr><td>Type</td><td><strong>Framework</strong> (full solution)</td><td><strong>Library</strong> (UI only)</td></tr>
+<tr><td>Language</td><td><strong>TypeScript</strong> (mandatory)</td><td>JavaScript (TypeScript optional)</td></tr>
+<tr><td>Data binding</td><td><strong>Two-way</strong> (ngModel)</td><td>One-way (top-down)</td></tr>
+<tr><td>DOM</td><td>Real DOM + zones</td><td>Virtual DOM</td></tr>
+<tr><td>Routing</td><td>Built-in (RouterModule)</td><td>External (React Router)</td></tr>
+<tr><td>HTTP</td><td>Built-in (HttpClient)</td><td>External (Axios/fetch)</td></tr>
+<tr><td>Forms</td><td>Built-in (FormsModule)</td><td>External (Formik, React Hook Form)</td></tr>
+<tr><td>CLI</td><td>Angular CLI (<code>ng</code>)</td><td>Create React App / Vite</td></tr>
+<tr><td>Architecture</td><td>Opinionated (one way to do things)</td><td>Flexible (many choices)</td></tr>
+<tr><td>Learning curve</td><td>Steeper</td><td>Moderate</td></tr>
+<tr><td>Created by</td><td>Google</td><td>Facebook (Meta)</td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">Why This Matters for Exam</div>
+  The key difference: Angular is a <strong>complete framework</strong> with everything built-in (routing, HTTP, forms). React is a <strong>library</strong> — it only handles the view layer, and you add other libraries for routing, HTTP, etc.
+</div>
+
+<!-- ─── PRACTICE MCQs ─── -->
+<h3 id="practice-mcqs">14. Practice MCQs</h3>
+
+<div class="practice">
+  <div class="q-label">Question 1</div>
+  <div class="question">Angular is written in which language?</div>
+  <ol class="options">
+    <li>JavaScript</li>
+    <li>TypeScript</li>
+    <li>CoffeeScript</li>
+    <li>Dart</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) TypeScript — Angular (2+) is built with TypeScript. AngularJS (1.x) was JavaScript.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 2</div>
+  <div class="question">What is the default port for <code>ng serve</code>?</div>
+  <ol class="options">
+    <li>3000</li>
+    <li>8080</li>
+    <li>4200</li>
+    <li>5000</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) 4200 — Angular CLI dev server runs at localhost:4200 by default.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 3</div>
+  <div class="question">Which lifecycle hook is called after the component is initialized and is the recommended place for API calls?</div>
+  <ol class="options">
+    <li>constructor()</li>
+    <li>ngOnChanges()</li>
+    <li>ngOnInit()</li>
+    <li>ngAfterViewInit()</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) ngOnInit() — It runs after the constructor and first ngOnChanges. The constructor should only be used for dependency injection.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 4</div>
+  <div class="question">What is the syntax for two-way data binding in Angular?</div>
+  <ol class="options">
+    <li><code>{{ property }}</code></li>
+    <li><code>[property]="value"</code></li>
+    <li><code>(event)="handler()"</code></li>
+    <li><code>[(ngModel)]="property"</code></li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="3">D) [(ngModel)]="property" — Called "banana in a box" syntax. Requires FormsModule to be imported.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 5</div>
+  <div class="question">Which module must be imported to use <code>[(ngModel)]</code>?</div>
+  <ol class="options">
+    <li>BrowserModule</li>
+    <li>HttpClientModule</li>
+    <li>FormsModule</li>
+    <li>RouterModule</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) FormsModule — Must be imported from '@angular/forms' and added to the imports array in @NgModule.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 6</div>
+  <div class="question">Which of the following is a structural directive?</div>
+  <ol class="options">
+    <li>ngClass</li>
+    <li>ngStyle</li>
+    <li>*ngFor</li>
+    <li>ngModel</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) *ngFor — Structural directives start with * and modify the DOM structure (add/remove elements). ngClass and ngStyle are attribute directives.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 7</div>
+  <div class="question">What does <code>providedIn: 'root'</code> do in an @Injectable decorator?</div>
+  <ol class="options">
+    <li>Makes the service available only in the root component</li>
+    <li>Creates a new instance for every component</li>
+    <li>Registers the service as a singleton for the entire application</li>
+    <li>Makes the service available only in the root module</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) Registers the service as a singleton for the entire application — one instance shared across all components that inject it.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 8</div>
+  <div class="question">Which Angular element acts as a placeholder where routed components are displayed?</div>
+  <ol class="options">
+    <li>routerLink</li>
+    <li>router-outlet</li>
+    <li>router-view</li>
+    <li>ng-content</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) router-outlet — <code>&lt;router-outlet&gt;&lt;/router-outlet&gt;</code> is the placeholder in the template where Angular renders the matched route's component.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 9</div>
+  <div class="question">HTTP methods in Angular's HttpClient return:</div>
+  <ol class="options">
+    <li>Promises</li>
+    <li>Callbacks</li>
+    <li>Observables</li>
+    <li>Strings</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) Observables — HttpClient returns Observable objects from RxJS. You must call .subscribe() to trigger the request.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 10</div>
+  <div class="question">What is the correct way to display a variable <code>name</code> in an Angular template?</div>
+  <ol class="options">
+    <li><code>${name}</code></li>
+    <li><code>{{ name }}</code></li>
+    <li><code><%= name %></code></li>
+    <li><code>{# name #}</code></li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) {{ name }} — This is called interpolation (or "mustache syntax"). It evaluates the expression and renders it as text.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 11</div>
+  <div class="question">What does the wildcard route <code>{ path: '**' }</code> do?</div>
+  <ol class="options">
+    <li>Matches the home page only</li>
+    <li>Matches all routes before other routes</li>
+    <li>Matches any URL that doesn't match other defined routes</li>
+    <li>Redirects to the root path</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) Matches any URL that doesn't match other defined routes — Used for 404 "not found" pages. It must be the LAST route in the routes array.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 12</div>
+  <div class="question">Which property in @Component specifies the custom HTML tag name for the component?</div>
+  <ol class="options">
+    <li>templateUrl</li>
+    <li>selector</li>
+    <li>styleUrls</li>
+    <li>tag</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) selector — It defines the custom HTML tag (e.g., <code>'app-user-profile'</code>) used to place this component in other templates.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 13</div>
+  <div class="question">Which pipe would you use to display <code>50000</code> as <code>₹50,000.00</code>?</div>
+  <ol class="options">
+    <li>number</li>
+    <li>currency</li>
+    <li>percent</li>
+    <li>decimal</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) currency — Usage: <code>{{ 50000 | currency:'INR' }}</code>. The currency pipe formats numbers with the specified currency symbol.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 14</div>
+  <div class="question">In the @NgModule decorator, where do you list the components that belong to the module?</div>
+  <ol class="options">
+    <li>imports</li>
+    <li>providers</li>
+    <li>declarations</li>
+    <li>bootstrap</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) declarations — Components, directives, and pipes that belong to this module go in declarations. imports is for other modules, providers is for services.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 15</div>
+  <div class="question">What is the correct lifecycle hook order?</div>
+  <ol class="options">
+    <li>ngOnInit → constructor → ngOnChanges → ngOnDestroy</li>
+    <li>constructor → ngOnInit → ngOnChanges → ngOnDestroy</li>
+    <li>constructor → ngOnChanges → ngOnInit → ngOnDestroy</li>
+    <li>ngOnChanges → constructor → ngOnInit → ngOnDestroy</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) constructor → ngOnChanges → ngOnInit → ngOnDestroy — The constructor runs first (class instantiation), then ngOnChanges (if there are @Input properties), then ngOnInit, and ngOnDestroy when the component is removed.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 16</div>
+  <div class="question">Angular is best described as:</div>
+  <ol class="options">
+    <li>A JavaScript library for building UIs</li>
+    <li>A backend framework for Node.js</li>
+    <li>A TypeScript-based frontend framework</li>
+    <li>A CSS preprocessor</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) A TypeScript-based frontend framework — Angular is a full framework (not a library like React) built with TypeScript by Google.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 17</div>
+  <div class="question">Which of these is NOT a valid data binding type in Angular?</div>
+  <ol class="options">
+    <li>Interpolation</li>
+    <li>Property binding</li>
+    <li>Attribute binding</li>
+    <li>Three-way binding</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="3">D) Three-way binding — There is no such thing. Angular supports 4 types: interpolation, property binding, event binding, and two-way binding.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 18</div>
+  <div class="question">How many files does <code>ng generate component user</code> create?</div>
+  <ol class="options">
+    <li>2 files</li>
+    <li>3 files</li>
+    <li>4 files</li>
+    <li>5 files</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) 4 files — .ts (component class), .html (template), .css (styles), and .spec.ts (test file).</div>
+</div>
+
+</section>
+
+  <div class="footer">
+    <a href="typescript.html">← TypeScript</a> |
+    <a href="microservices.html">Microservices →</a>
+  </div>
+</div>
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

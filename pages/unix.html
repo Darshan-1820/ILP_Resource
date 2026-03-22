@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unix / Linux — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#unix" class="sub">Overview</a>
+  <a href="#unix-what" class="sub">What is Unix/Linux?</a>
+  <a href="#unix-fs" class="sub">File System</a>
+  <a href="#unix-cmds" class="sub">Essential Commands</a>
+  <a href="#unix-perms" class="sub">File Permissions</a>
+  <a href="#unix-grep" class="sub">grep — Pattern Search</a>
+  <a href="#unix-pipes" class="sub">Pipes & Redirection</a>
+  <a href="#unix-proc" class="sub">Process Management</a>
+  <a href="#unix-tar" class="sub">tar and gzip</a>
+  <a href="#unix-sed" class="sub">sed — Stream Editor</a>
+  <a href="#unix-awk" class="sub">awk — FA Round 2 (15 marks)</a>
+  <a href="#unix-shell" class="sub">Shell Scripting</a>
+  <a href="#unix-paths" class="sub">Path Symbols</a>
+  <a href="#unix-cron" class="sub">crontab</a>
+  <a href="#unix-practice" class="sub">Practice Questions</a>
+</nav>
+<div class="main">
+<section id="unix" class="sec-unix">
+<h2>Unix / Linux</h2>
+
+<p>Unix and Linux are the backbone of every server and cloud instance. TCS ILP tests this in FA — expect 5 MCQs plus it's the minor subject in Round 2 (15-20 marks).</p>
+
+<div class="box box-exam">
+  <div class="label">📋 Exam snapshot</div>
+  <strong>FA Round 1:</strong> 5 MCQs on Unix<br>
+  <strong>FA Round 2:</strong> Minor subject — 15-20 marks<br>
+  <strong>Hot topics:</strong> chmod numeric, grep flags, pipes, redirection, permission math, shell scripts
+</div>
+
+<h3 id="unix-what">What is Unix/Linux?</h3>
+
+<p><strong>Why should you care?</strong> Every server you'll ever work with at TCS runs Linux. Every cloud instance (AWS, Azure, GCP) runs Linux. Every Android phone runs a Linux kernel. When you deploy your Java web app at work, it's going to a Linux server. You won't be clicking icons — you'll be typing commands in a terminal. That's Unix.</p>
+
+<p>Think of it like this: <strong>Windows is a car with automatic transmission</strong> — you click buttons, drag things around, the OS handles the details. <strong>Unix/Linux is a manual transmission</strong> — you tell it exactly what to do, command by command. More effort to learn, but total control once you know it.</p>
+
+<p>Unix was built at Bell Labs in 1969. Linux is a free, open-source recreation of Unix by Linus Torvalds (1991). For exam purposes, treat them as the same thing.</p>
+
+<div class="box box-key">
+  <div class="label">Three rules of Unix</div>
+  <ol>
+    <li><strong>Everything is a file.</strong> Your text documents, your keyboard, your network connection — Unix treats them ALL as files. This is why commands like <code>cat</code> work on almost anything.</li>
+    <li><strong>Case-sensitive. Always.</strong> <code>File.txt</code> and <code>file.txt</code> are two completely different files. Forget this and you'll waste hours debugging.</li>
+    <li><strong>Small tools, chained together.</strong> Instead of one giant program that does everything, Unix gives you tiny tools (grep, sort, cut, awk) that you connect with pipes. Like LEGO blocks.</li>
+  </ol>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">In Unix, <code>Report.txt</code> and <code>report.txt</code> are:</p>
+  <ol class="options"><li>The same file</li><li>Two different files</li><li>An error — you can't have both</li><li>Depends on the directory</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">Unix is case-sensitive. <code>Report.txt</code> and <code>report.txt</code> are two completely separate files. This is different from Windows where they'd be the same file.</div>
+</div>
+
+<h3 id="unix-fs">File System Hierarchy</h3>
+
+<p><strong>Why does this matter?</strong> In Windows, you dump everything into C:\Users or wherever you want. Unix is organized like a well-planned office building — every department has its floor, and if you need something, you know exactly which floor to go to.</p>
+
+<p>The entire Unix file system is one giant tree starting from <code>/</code> (root). There are no drive letters like C: or D:. Everything lives under <code>/</code>.</p>
+
+<p>Think of it as <strong>an apartment building</strong>:</p>
+
+<table>
+<tr><th>Directory</th><th>Purpose</th><th>Apartment Building Analogy</th></tr>
+<tr><td><code>/</code></td><td>Root — top of the entire tree</td><td>The building itself — everything is inside it</td></tr>
+<tr><td><code>/home</code></td><td>User home directories</td><td>Residential floors — each tenant has their own flat</td></tr>
+<tr><td><code>/etc</code></td><td>System configuration files</td><td>Building manager's office — all the rules and settings</td></tr>
+<tr><td><code>/bin</code></td><td>Essential user binaries (ls, cp, mv)</td><td>The toolbox — basic tools everyone needs</td></tr>
+<tr><td><code>/tmp</code></td><td>Temporary files — cleared on reboot</td><td>The lobby whiteboard — wiped clean every morning</td></tr>
+<tr><td><code>/var</code></td><td>Variable data — logs, mail</td><td>The mailroom — always changing, logs of who came/went</td></tr>
+<tr><td><code>/root</code></td><td>Home directory of root (admin) user</td><td>The building owner's penthouse — separate from tenants</td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  /etc = config, /tmp = temporary (wiped on reboot), /var = logs. These three come up most. Remember: <strong>E</strong>tc = <strong>E</strong>very <strong>T</strong>hing <strong>C</strong>onfigured. <strong>T</strong>mp = <strong>T</strong>e<strong>M</strong>porary. <strong>V</strong>ar = <strong>V</strong>aries (changes constantly).
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">A system administrator wants to check the configuration of a service. Which directory should they look in?</p>
+  <ol class="options"><li>/home</li><li>/tmp</li><li>/etc</li><li>/bin</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2"><code>/etc</code> stores all system configuration files. Think "Every Thing Configured." If you need to change how a service behaves, its config file is in /etc.</div>
+</div>
+
+<h3 id="unix-cmds">Essential Commands — Quick Reference</h3>
+
+<p><strong>Why learn these?</strong> In Unix, there's no "right-click > New Folder" or "drag file to trash." Everything happens through commands. Think of each command as a verb — <code>ls</code> = "look", <code>cd</code> = "go to", <code>cp</code> = "copy", <code>rm</code> = "delete". Once you learn 20 verbs, you can do anything.</p>
+
+<p>Don't memorize this table. Read through it once, then use the practice questions to test what stuck. Come back to this table as a reference.</p>
+
+<table>
+<tr><th>Command</th><th>What it does</th><th>Key flags</th></tr>
+<tr><td><code>ls</code></td><td>List directory</td><td><code>-l</code> long, <code>-a</code> hidden, <code>-la</code> both, <code>-R</code> recursive</td></tr>
+<tr><td><code>pwd</code></td><td>Print current directory</td><td>—</td></tr>
+<tr><td><code>cd</code></td><td>Change directory</td><td><code>cd ~</code> home, <code>cd ..</code> parent, <code>cd /</code> root</td></tr>
+<tr><td><code>mkdir</code></td><td>Make directory</td><td><code>-p</code> creates parents too</td></tr>
+<tr><td><code>rmdir</code></td><td>Remove empty directory</td><td>Only works if empty</td></tr>
+<tr><td><code>rm</code></td><td>Remove files/dirs</td><td><code>-r</code> recursive, <code>-f</code> force</td></tr>
+<tr><td><code>cp</code></td><td>Copy</td><td><code>-r</code> for directories</td></tr>
+<tr><td><code>mv</code></td><td>Move or rename</td><td><code>mv old.txt new.txt</code> renames</td></tr>
+<tr><td><code>touch</code></td><td>Create empty file</td><td>—</td></tr>
+<tr><td><code>cat</code></td><td>Display file contents</td><td>—</td></tr>
+<tr><td><code>head</code></td><td>First N lines</td><td><code>-n 5</code> (default 10)</td></tr>
+<tr><td><code>tail</code></td><td>Last N lines</td><td><code>-n 5</code> (default 10)</td></tr>
+<tr><td><code>echo</code></td><td>Print text</td><td><code>echo $HOME</code></td></tr>
+<tr><td><code>wc</code></td><td>Count words/lines/chars</td><td><code>-w</code> words, <code>-l</code> lines, <code>-c</code> bytes</td></tr>
+<tr><td><code>sort</code></td><td>Sort lines</td><td><code>-r</code> reverse, <code>-n</code> numeric, <code>-k 2</code> by field</td></tr>
+<tr><td><code>cut</code></td><td>Extract columns</td><td><code>-d ':'</code> delimiter, <code>-f 1</code> field</td></tr>
+<tr><td><code>grep</code></td><td>Search patterns</td><td><code>-i</code> ignore case, <code>-r</code> recursive, <code>-n</code> line nums, <code>-c</code> count, <code>-v</code> invert</td></tr>
+<tr><td><code>find</code></td><td>Search for files</td><td><code>-name</code>, <code>-type f/d</code>, <code>-size +1M</code></td></tr>
+<tr><td><code>sed</code></td><td>Stream editor</td><td><code>sed 's/old/new/g' file</code></td></tr>
+<tr><td><code>awk</code></td><td>Column processing</td><td><code>awk '{print $1}' file</code></td></tr>
+<tr><td><code>ps</code></td><td>Show processes</td><td><code>ps aux</code> all processes</td></tr>
+<tr><td><code>kill</code></td><td>Signal process</td><td><code>kill -9 PID</code> force kill</td></tr>
+<tr><td><code>chmod</code></td><td>Change permissions</td><td><code>chmod 755 file</code></td></tr>
+<tr><td><code>chown</code></td><td>Change owner</td><td><code>chown user:group file</code></td></tr>
+<tr><td><code>tar</code></td><td>Archive files</td><td><code>-cvzf</code> create, <code>-xvzf</code> extract</td></tr>
+<tr><td><code>gzip</code></td><td>Compress</td><td><code>gunzip</code> to decompress</td></tr>
+<tr><td><code>du</code></td><td>Disk usage</td><td><code>-h</code> human-readable</td></tr>
+<tr><td><code>df</code></td><td>Disk free space</td><td><code>-h</code> human-readable</td></tr>
+</table>
+
+<h3 id="unix-perms">File Permissions</h3>
+
+<p><strong>Why do permissions exist?</strong> Imagine you work in an office building. Not everyone should have access to every room. The intern shouldn't be able to edit the CEO's files. The accountant shouldn't be able to delete the codebase. Unix permissions are like <strong>security badges</strong> — they control who can open which doors and what they can do once inside.</p>
+
+<p>Every single file and folder in Unix has a permission badge attached to it. This badge answers three questions for three groups of people:</p>
+
+<div class="box box-key">
+  <div class="label">The three groups (WHO can access)</div>
+  <ul>
+    <li><strong>Owner (u)</strong> — the person who created the file. Like the author of a document.</li>
+    <li><strong>Group (g)</strong> — a team of users. Like "the marketing department" — everyone in the group gets the same access.</li>
+    <li><strong>Others (o)</strong> — everyone else on the system. Strangers.</li>
+  </ul>
+</div>
+
+<p>For each group, Unix tracks three things (WHAT they can do):</p>
+
+<table>
+<tr><th>Permission</th><th>Symbol</th><th>On a File</th><th>On a Directory</th></tr>
+<tr><td><strong>Read</strong></td><td>r</td><td>Can see the contents</td><td>Can list files inside (ls)</td></tr>
+<tr><td><strong>Write</strong></td><td>w</td><td>Can modify/edit</td><td>Can create/delete files inside</td></tr>
+<tr><td><strong>Execute</strong></td><td>x</td><td>Can run it as a program</td><td>Can enter the directory (cd)</td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">💡 Key insight</div>
+  For directories, "execute" means "can enter." This confuses everyone at first. Think of it like: read = you can peek through the window and see what's inside. Execute = you can actually walk through the door. Without x on a directory, you can see file names but can't actually open any of them.
+</div>
+
+<h4>Reading Permission Strings</h4>
+<p>When you run <code>ls -l</code>, you see something like this:</p>
+
+<pre>
+<span class="cmt"># ls -l output:</span>
+-rwxr-xr--  1  darshan  staff  1234  Mar 18  script.sh
+ ↑↑↑↑↑↑↑↑↑
+ │└──┴──┴── owner(rwx) group(r-x) others(r--)
+ └ file type: - = file, d = directory</pre>
+
+<p>Read it like a sentence: "This is a <strong>file</strong> (-). The <strong>owner</strong> (darshan) can read, write, and execute it (rwx). The <strong>group</strong> (staff) can read and execute but NOT write (r-x). <strong>Everyone else</strong> can only read (r--)."</p>
+
+<h4>Numeric (Octal) Permissions — The Math</h4>
+
+<p><strong>Why numbers?</strong> Typing <code>chmod 755</code> is faster than typing <code>chmod u=rwx,g=rx,o=rx</code>. Each permission has a number value, and you just add them up per group.</p>
+
+<table>
+<tr><th>Permission</th><th>Symbol</th><th>Value</th><th>Think of it as...</th></tr>
+<tr><td>Read</td><td>r</td><td>4</td><td>4 is the biggest — reading is the most basic access</td></tr>
+<tr><td>Write</td><td>w</td><td>2</td><td>2 is in the middle</td></tr>
+<tr><td>Execute</td><td>x</td><td>1</td><td>1 is the smallest</td></tr>
+<tr><td>No permission</td><td>-</td><td>0</td><td>Zero = nothing</td></tr>
+</table>
+
+<p><strong>How to calculate:</strong> Add the values for each group separately. Three groups = three digits.</p>
+
+<div class="box box-example">
+  <div class="label">Walkthrough: What is 754?</div>
+  <p><strong>7</strong> = 4+2+1 = r+w+x = rwx (owner can do everything)<br>
+  <strong>5</strong> = 4+0+1 = r+-+x = r-x (group can read and execute, not write)<br>
+  <strong>4</strong> = 4+0+0 = r+-+- = r-- (others can only read)</p>
+  <p>Result: <code>rwxr-xr--</code></p>
+</div>
+
+<pre>
+<span class="kw">chmod</span> <span class="num">755</span> file.sh   <span class="cmt"># rwxr-xr-x → owner:7(rwx), group:5(r-x), others:5(r-x)</span>
+<span class="kw">chmod</span> <span class="num">644</span> file.txt  <span class="cmt"># rw-r--r-- → owner:6(rw-), group:4(r--), others:4(r--)</span>
+<span class="kw">chmod</span> <span class="num">777</span> file      <span class="cmt"># rwxrwxrwx → everyone full access (DANGEROUS!)</span>
+<span class="kw">chmod</span> <span class="num">400</span> secret    <span class="cmt"># r-------- → owner read-only, nobody else can touch it</span></pre>
+
+<div class="box box-warn">
+  <div class="label">Never use 777 in real life</div>
+  <code>chmod 777</code> = everyone can read, write, and execute. It's like leaving all doors unlocked with a "please come in and take whatever you want" sign. You'll see it in exams, but in real servers, this is a security disaster.
+</div>
+
+<h4>Symbolic Permissions — The English Way</h4>
+<p>Instead of math, you can use letters. The format is: <strong>WHO (+/- WHAT)</strong></p>
+
+<pre>
+<span class="kw">chmod</span> u+x file     <span class="cmt"># u(owner) +(add) x(execute) → "give owner execute permission"</span>
+<span class="kw">chmod</span> g-w file     <span class="cmt"># g(group) -(remove) w(write) → "take write away from group"</span>
+<span class="kw">chmod</span> o+r file     <span class="cmt"># o(others) +(add) r(read) → "let others read"</span>
+<span class="kw">chmod</span> a+x file     <span class="cmt"># a(all) +(add) x(execute) → "everyone can execute"</span></pre>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  Memorize these three cold: <code>755</code> = rwxr-xr-x (typical script), <code>644</code> = rw-r--r-- (typical file), <code>777</code> = rwxrwxrwx (everything open). The math is always: r=4, w=2, x=1. Add per group.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">A file has permissions <code>-rw-r-----</code>. What is the octal value?</p>
+  <ol class="options"><li>644</li><li>640</li><li>740</li><li>620</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">Owner: rw- = 4+2+0 = <strong>6</strong>. Group: r-- = 4+0+0 = <strong>4</strong>. Others: --- = 0+0+0 = <strong>0</strong>. Answer: 640. The group can read but not write, and others have zero access.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">You want to make a shell script executable by the owner, but keep it read-only for everyone else. Which command?</p>
+  <ol class="options"><li>chmod 777 script.sh</li><li>chmod 744 script.sh</li><li>chmod 644 script.sh</li><li>chmod 700 script.sh</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">744 = Owner: rwx (7 = read+write+execute), Group: r-- (4 = read only), Others: r-- (4 = read only). The owner can execute it, everyone else can only read. Option D (700) would also make it executable for owner, but others can't even read it.</div>
+</div>
+
+<h3 id="unix-grep">grep — Pattern Searching</h3>
+
+<p><strong>Why does grep exist?</strong> Imagine you have a 10,000-line server log and something crashed at 3 AM. Are you going to read all 10,000 lines? No. You want to search for "error" or "failed" and see only those lines. That's grep — it's <strong>Ctrl+F for the terminal</strong>, but way more powerful.</p>
+
+<p>The name <code>grep</code> stands for "Global Regular Expression Print" — but just think of it as "search."</p>
+
+<pre>
+<span class="kw">grep</span> <span class="str">"error"</span> log.txt          <span class="cmt"># find lines containing "error"</span>
+<span class="kw">grep</span> -i <span class="str">"error"</span> log.txt        <span class="cmt"># case-insensitive (catches Error, ERROR, error)</span>
+<span class="kw">grep</span> -r <span class="str">"TODO"</span> ./src/          <span class="cmt"># search ALL files inside src/ folder</span>
+<span class="kw">grep</span> -n <span class="str">"main"</span> app.py          <span class="cmt"># show which LINE NUMBER each match is on</span>
+<span class="kw">grep</span> -c <span class="str">"error"</span> log.txt        <span class="cmt"># just tell me HOW MANY lines matched</span>
+<span class="kw">grep</span> -v <span class="str">"error"</span> log.txt        <span class="cmt"># show lines that DON'T contain "error"</span></pre>
+
+<div class="box box-example">
+  <div class="label">Real scenario</div>
+  <p>Your app's log file has 5000 lines. You want to know how many times "NullPointerException" appeared, ignoring case:</p>
+  <pre><span class="kw">grep</span> -ic <span class="str">"nullpointerexception"</span> server.log</pre>
+  <p>Flags combine: <code>-i</code> (ignore case) + <code>-c</code> (count) = case-insensitive count.</p>
+</div>
+
+<table>
+<tr><th>Flag</th><th>Meaning</th><th>Memory hook</th></tr>
+<tr><td><code>-i</code></td><td>Case-insensitive</td><td>i = <strong>I</strong>gnore case</td></tr>
+<tr><td><code>-r</code></td><td>Recursive (search folders)</td><td>r = <strong>R</strong>ecurse into directories</td></tr>
+<tr><td><code>-n</code></td><td>Line numbers</td><td>n = <strong>N</strong>umbers</td></tr>
+<tr><td><code>-c</code></td><td>Count matches</td><td>c = <strong>C</strong>ount</td></tr>
+<tr><td><code>-v</code></td><td>Invert match</td><td>v = in<strong>V</strong>ert (show NON-matching lines)</td></tr>
+</table>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">You want to find all lines in <code>access.log</code> that do NOT contain "200 OK". Which command?</p>
+  <ol class="options"><li>grep "200 OK" access.log</li><li>grep -c "200 OK" access.log</li><li>grep -v "200 OK" access.log</li><li>grep -n "200 OK" access.log</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2"><code>-v</code> inverts the match — it shows every line that does NOT contain the pattern. This is useful for filtering out noise and finding errors (anything that isn't "200 OK" is probably a problem).</div>
+</div>
+
+<h3 id="unix-pipes">Pipes and Redirection</h3>
+
+<p><strong>Why do pipes exist?</strong> Remember the Unix philosophy — small tools chained together? Pipes are the chains. Each command does one thing well, and the pipe (<code>|</code>) connects them like LEGO bricks snapping together.</p>
+
+<p>Think of it like a <strong>factory assembly line</strong>. Worker 1 cuts the wood, passes it to Worker 2 who sands it, who passes it to Worker 3 who paints it. Each worker is a command. The conveyor belt between them is the pipe.</p>
+
+<h4>Pipes (<code>|</code>) — The Assembly Line</h4>
+
+<p>The pipe takes whatever a command prints to the screen and feeds it as input to the next command. The data flows left to right.</p>
+
+<pre>
+<span class="kw">ls</span> -l | <span class="kw">wc</span> -l                  <span class="cmt"># ls lists files → wc counts the lines = number of files</span>
+<span class="kw">cat</span> file.txt | <span class="kw">grep</span> <span class="str">"error"</span>    <span class="cmt"># cat shows file → grep filters only "error" lines</span>
+<span class="kw">ps</span> aux | <span class="kw">grep</span> <span class="str">"nginx"</span>          <span class="cmt"># ps shows all processes → grep finds "nginx"</span>
+<span class="kw">cat</span> names.txt | <span class="kw">sort</span> | <span class="kw">uniq</span>  <span class="cmt"># show → sort alphabetically → remove duplicates</span></pre>
+
+<div class="box box-example">
+  <div class="label">Reading a pipe chain</div>
+  <p><code>cat access.log | grep "404" | wc -l</code></p>
+  <p>Read it like: "Show the log file, <strong>then</strong> keep only lines with '404', <strong>then</strong> count how many." Result: number of 404 errors.</p>
+</div>
+
+<h4>Redirection — Saving Output to Files</h4>
+
+<p><strong>Why?</strong> By default, commands print output to your screen (called "stdout"). But what if you want to save it? Redirection lets you <strong>reroute the output into a file</strong> instead of the screen. Like redirecting a river into a canal.</p>
+
+<table>
+<tr><th>Operator</th><th>What it does</th><th>Analogy</th><th>Example</th></tr>
+<tr><td><code>&gt;</code></td><td>Write to file (<strong>overwrite</strong>)</td><td>Erase the whiteboard and write new text</td><td><code>ls &gt; files.txt</code></td></tr>
+<tr><td><code>&gt;&gt;</code></td><td>Write to file (<strong>append</strong>)</td><td>Add new text at the bottom of the whiteboard</td><td><code>echo "line" &gt;&gt; log.txt</code></td></tr>
+<tr><td><code>&lt;</code></td><td>Read input from file</td><td>Read from a script instead of typing live</td><td><code>sort &lt; names.txt</code></td></tr>
+<tr><td><code>2&gt;</code></td><td>Redirect error messages</td><td>Send complaints to a separate box</td><td><code>cmd 2&gt; errors.txt</code></td></tr>
+</table>
+
+<div class="box box-warn">
+  <div class="label">The #1 exam trap: &gt; vs &gt;&gt;</div>
+  <code>&gt;</code> <strong>DESTROYS</strong> whatever was in the file and writes fresh. <code>&gt;&gt;</code> <strong>ADDS</strong> to the end without touching existing content. If you use <code>&gt;</code> on an important file by mistake, the old data is gone forever. This distinction is asked in almost every Unix exam.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What does <code>cat file1.txt file2.txt | sort | uniq > result.txt</code> do?</p>
+  <ol class="options"><li>Sorts file1 and saves to result.txt, ignoring file2</li><li>Combines both files, sorts all lines, removes duplicates, saves to result.txt</li><li>Counts unique lines in both files</li><li>Compares file1 and file2 for differences</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1"><code>cat</code> concatenates both files into one stream. <code>sort</code> alphabetizes all lines. <code>uniq</code> removes consecutive duplicate lines. <code>&gt;</code> saves the final result to result.txt (overwriting it if it existed). This is a classic Unix pipeline — four small tools doing one big job.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">You run <code>echo "hello" > greet.txt</code> three times. What does greet.txt contain?</p>
+  <ol class="options"><li>hello hello hello</li><li>hello (three lines)</li><li>hello (one line)</li><li>The file is empty</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2"><code>&gt;</code> overwrites every time. Each run erases the file and writes "hello" fresh. After three runs, you still just have one "hello". If you wanted three lines, you'd use <code>&gt;&gt;</code> (append).</div>
+</div>
+
+<h3 id="unix-proc">Process Management</h3>
+
+<p><strong>Why learn this?</strong> When your Java app hangs on a server, you can't just click the X button — there's no GUI. You need to find the frozen process and kill it from the terminal. Process management is how you become the Task Manager of a Linux server.</p>
+
+<p>Think of processes like <strong>apps running on your phone</strong>. You can see which ones are running (ps), watch them in real-time (top), close them nicely (kill), or force-close a frozen one (kill -9).</p>
+
+<p><strong>Every running program is a process.</strong> Each process gets a unique number called a <strong>PID</strong> (Process ID) — like an employee ID badge. You use the PID to target a specific process.</p>
+
+<h4>Viewing Processes</h4>
+<pre>
+<span class="kw">ps</span>               <span class="cmt"># show YOUR processes only</span>
+<span class="kw">ps</span> aux           <span class="cmt"># show ALL processes, ALL users (the one you'll use most)</span>
+<span class="kw">top</span>              <span class="cmt"># live dashboard — updates every second (press q to quit)</span></pre>
+
+<h4>Killing Processes</h4>
+<p>Unix uses "signals" to communicate with processes. Think of it as sending a message:</p>
+
+<pre>
+<span class="kw">kill</span> <span class="num">1234</span>        <span class="cmt"># SIGTERM — "please shut down gracefully" (process CAN refuse)</span>
+<span class="kw">kill</span> -9 <span class="num">1234</span>     <span class="cmt"># SIGKILL — "you're done NOW" (process CANNOT refuse)</span></pre>
+
+<div class="box box-example">
+  <div class="label">Analogy: Asking someone to leave vs. calling security</div>
+  <p><code>kill PID</code> = politely asking someone to leave. They can save their work and exit gracefully. They can also say "no."</p>
+  <p><code>kill -9 PID</code> = calling security to physically remove them. No negotiation. No saving work. Instant termination. Use this only when regular kill doesn't work.</p>
+</div>
+
+<h4>Background and Foreground</h4>
+<pre>
+./script.sh &amp;    <span class="cmt"># run in background — terminal stays free for other commands</span>
+Ctrl+C           <span class="cmt"># terminate the currently running foreground process</span>
+Ctrl+Z           <span class="cmt"># suspend (pause) the foreground process — it's still alive but frozen</span>
+<span class="kw">bg</span>               <span class="cmt"># resume a suspended process in the background</span>
+<span class="kw">fg</span>               <span class="cmt"># bring a background process to the foreground</span></pre>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  <code>kill -9</code> = SIGKILL = force kill. This is the answer to "how do you force kill a process?" Also remember: <code>&amp;</code> at the end = run in background.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">A process with PID 5678 is frozen and not responding to <code>kill 5678</code>. What should you do?</p>
+  <ol class="options"><li>kill -15 5678</li><li>kill -9 5678</li><li>stop 5678</li><li>rm 5678</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1"><code>kill -9</code> sends SIGKILL, which the process cannot catch, ignore, or refuse. It's the "nuclear option" — the OS forcefully terminates the process. Regular <code>kill</code> sends SIGTERM (signal 15), which a frozen process might ignore.</div>
+</div>
+
+<h3 id="unix-tar">tar and gzip</h3>
+
+<p><strong>Why?</strong> You know how you right-click a folder in Windows and "Send to > Compressed (zipped) folder"? Unix has two separate steps for this: <strong>tar</strong> bundles files together (like putting papers in a folder), and <strong>gzip</strong> compresses the bundle (like vacuum-sealing the folder to make it smaller). Usually you do both at once.</p>
+
+<p><strong>tar</strong> = <strong>T</strong>ape <strong>AR</strong>chive. It was originally for saving files to tape drives. Today it bundles files into one archive.</p>
+
+<pre>
+<span class="kw">tar</span> -cvf archive.tar dir/      <span class="cmt"># Bundle dir/ into archive.tar (no compression)</span>
+<span class="kw">tar</span> -xvf archive.tar           <span class="cmt"># Unpack archive.tar</span>
+<span class="kw">tar</span> -cvzf archive.tar.gz dir/  <span class="cmt"># Bundle AND compress (z = gzip)</span>
+<span class="kw">tar</span> -xvzf archive.tar.gz       <span class="cmt"># Decompress AND unpack</span>
+<span class="kw">gzip</span> file.txt                  <span class="cmt"># compress single file → file.txt.gz (original deleted!)</span>
+<span class="kw">gunzip</span> file.txt.gz             <span class="cmt"># decompress → file.txt</span></pre>
+
+<div class="box box-key">
+  <div class="label">tar flags — spell them out</div>
+  <strong>c</strong> = <strong>C</strong>reate | <strong>x</strong> = e<strong>X</strong>tract | <strong>v</strong> = <strong>V</strong>erbose (show progress) | <strong>f</strong> = <strong>F</strong>ile (always last, followed by filename) | <strong>z</strong> = g<strong>Z</strong>ip compression
+</div>
+
+<div class="box box-tip">
+  <div class="label">💡 Memory trick</div>
+  Creating: <strong>c</strong>v<strong>z</strong>f = "Create, Verbose, Zip, File" → <code>tar -cvzf name.tar.gz folder/</code><br>
+  Extracting: <strong>x</strong>v<strong>z</strong>f = "eXtract, Verbose, unZip, File" → <code>tar -xvzf name.tar.gz</code><br>
+  The only letter that changes is c (create) vs x (extract). Everything else stays the same.
+</div>
+
+<h3 id="unix-sed">sed — Stream Editor</h3>
+
+<p><strong>Why does sed exist?</strong> You need to replace "http" with "https" in 500 config files. Or delete all blank lines from a log. Or change every occurrence of a username. You're NOT going to open each file and Ctrl+H manually. <strong>sed is the "Find and Replace" of the terminal</strong> — it processes text automatically, line by line, at machine speed.</p>
+
+<p>Think of sed like a <strong>factory worker on an assembly line</strong>. Each line of the file rolls past on a conveyor belt. The worker applies one rule (replace this, delete that), and the modified line comes out the other end. The worker never sees the whole file at once — just one line at a time.</p>
+
+<h4>Substitution — The Core Operation</h4>
+<p>The most common sed command is <code>s/old/new/</code> — substitute "old" with "new":</p>
+
+<pre>
+<span class="kw">sed</span> <span class="str">'s/old/new/'</span> file.txt      <span class="cmt"># replace FIRST "old" on each line</span>
+<span class="kw">sed</span> <span class="str">'s/old/new/g'</span> file.txt     <span class="cmt"># replace ALL "old" on each line (g = global)</span>
+<span class="kw">sed</span> -i <span class="str">'s/foo/bar/g'</span> file.txt  <span class="cmt"># actually MODIFY the file (-i = in-place)</span></pre>
+
+<div class="box box-warn">
+  <div class="label">The /g trap — EXAM FAVORITE</div>
+  <p>Without <code>/g</code>: only the FIRST match on each line is replaced. If a line says "error error error", only the first "error" changes.</p>
+  <p>With <code>/g</code>: ALL matches on the line are replaced. All three "error"s change.</p>
+  <p>Also: without <code>-i</code>, sed just PRINTS the result — it does NOT modify the file. With <code>-i</code>, it edits the file directly.</p>
+</div>
+
+<h4>Deleting and Printing Lines</h4>
+<pre>
+<span class="kw">sed</span> <span class="str">'3d'</span> file.txt              <span class="cmt"># delete line 3</span>
+<span class="kw">sed</span> <span class="str">'2,5d'</span> file.txt            <span class="cmt"># delete lines 2 through 5</span>
+<span class="kw">sed</span> <span class="str">'/pattern/d'</span> file.txt     <span class="cmt"># delete lines containing "pattern"</span>
+<span class="kw">sed</span> -n <span class="str">'3p'</span> file.txt           <span class="cmt"># print ONLY line 3 (-n suppresses all other output)</span>
+<span class="kw">sed</span> -n <span class="str">'2,4p'</span> file.txt         <span class="cmt"># print only lines 2 to 4</span>
+<span class="kw">sed</span> <span class="str">'s/[0-9]//g'</span> file.txt     <span class="cmt"># remove all digits (replace each digit with nothing)</span></pre>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  Three things to remember: <code>s/old/new/</code> = substitute. <code>d</code> = delete. <code>-n</code> with <code>p</code> = print only specific lines. Add <code>/g</code> for global (all matches). Add <code>-i</code> to edit the actual file.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What does <code>sed 's/error/warning/' log.txt</code> do if a line contains "error: error occurred"?</p>
+  <ol class="options"><li>Replaces both "error" with "warning"</li><li>Replaces only the first "error" with "warning"</li><li>Deletes the line</li><li>Does nothing — you need the -i flag</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">Without <code>/g</code>, sed only replaces the FIRST match on each line. The result would be "warning: error occurred" — the second "error" is untouched. To replace both, you'd need <code>s/error/warning/g</code>.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which command deletes all lines containing "DEBUG" from a file and saves the change?</p>
+  <ol class="options"><li>sed '/DEBUG/d' file.txt</li><li>sed -i '/DEBUG/d' file.txt</li><li>sed 's/DEBUG//g' file.txt</li><li>grep -v "DEBUG" file.txt</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">Option A prints the result but doesn't save it. Option B uses <code>-i</code> (in-place) to actually modify the file. Option C removes the word "DEBUG" but keeps the rest of the line. Option D also works for filtering but doesn't modify the original file.</div>
+</div>
+
+<h3 id="unix-awk">awk — THE Most Important FA Round 2 Topic (15 marks)</h3>
+
+<div class="box box-warn">
+  <div class="label">FA Round 2 — 15-20 marks</div>
+  <strong>awk is the #1 subjective topic in FA Round 2 Unix section.</strong> Typical questions: "Given a table/file, find the max salary", "Print employees in a department", "Calculate total/average". You MUST know awk cold.
+</div>
+
+<p><strong>Why does awk exist?</strong> Imagine you have a CSV file with 10,000 employee records. You need to find everyone in the "Sales" department earning over 50,000 and calculate their average salary. In Java, that's 20+ lines of code (open file, read line by line, split by comma, check conditions...). In awk, it's ONE line. awk was built specifically for this kind of "look at data in columns, filter and calculate" work.</p>
+
+<p>Think of awk as a <strong>spreadsheet that runs in the terminal</strong>. It reads your file row by row, automatically splits each row into columns ($1, $2, $3...), and lets you filter rows, do math, and print results — all in a single command. It's grep (search) + cut (columns) + a calculator, all rolled into one.</p>
+
+<h4>Basic Syntax</h4>
+<pre>
+<span class="cmt"># awk 'pattern {action}' file</span>
+<span class="cmt"># If pattern matches → action runs. If no pattern → runs on every line.</span>
+
+<span class="kw">awk</span> <span class="str">'{print}'</span> file.txt            <span class="cmt"># print every line (like cat)</span>
+<span class="kw">awk</span> <span class="str">'{print $0}'</span> file.txt          <span class="cmt"># same — $0 = entire line</span>
+<span class="kw">awk</span> <span class="str">'{print $1}'</span> file.txt          <span class="cmt"># print 1st column only</span>
+<span class="kw">awk</span> <span class="str">'{print $1, $3}'</span> file.txt     <span class="cmt"># print 1st and 3rd columns</span>
+<span class="kw">awk</span> <span class="str">'{print $NF}'</span> file.txt         <span class="cmt"># print LAST column (NF = number of fields)</span></pre>
+
+<h4>Field Variables — Memorize These</h4>
+<table>
+<tr><th>Variable</th><th>Meaning</th><th>Example</th></tr>
+<tr><td><code>$0</code></td><td>Entire line</td><td><code>awk '{print $0}'</code> — prints full line</td></tr>
+<tr><td><code>$1, $2, $3...</code></td><td>1st, 2nd, 3rd field (column)</td><td><code>awk '{print $2}'</code> — prints 2nd column</td></tr>
+<tr><td><code>$NF</code></td><td>Last field</td><td><code>awk '{print $NF}'</code> — prints last column</td></tr>
+<tr><td><code>NF</code></td><td>Number of fields in current line</td><td><code>awk '{print NF}'</code> — how many columns</td></tr>
+<tr><td><code>NR</code></td><td>Current line number (record number)</td><td><code>awk '{print NR, $0}'</code> — numbered lines</td></tr>
+<tr><td><code>FS</code></td><td>Field separator (default: space/tab)</td><td><code>awk -F: '{print $1}'</code> — use : as separator</td></tr>
+<tr><td><code>OFS</code></td><td>Output field separator</td><td><code>awk -v OFS="," '{print $1,$2}'</code></td></tr>
+<tr><td><code>RS</code></td><td>Record separator (default: newline)</td><td>Each line is one record</td></tr>
+</table>
+
+<div class="box box-key">
+  <div class="label">Key — $NF vs NF</div>
+  <code>NF</code> = the NUMBER of fields (e.g., 5). <code>$NF</code> = the VALUE of the last field. <code>$(NF-1)</code> = second-to-last field. This distinction gets asked.
+</div>
+
+<h4>Field Separator (-F flag)</h4>
+<pre>
+<span class="cmt"># Default separator is space/tab. Use -F to change it.</span>
+
+<span class="kw">awk</span> -F<span class="str">':'</span> <span class="str">'{print $1}'</span> /etc/passwd   <span class="cmt"># colon-separated (like /etc/passwd)</span>
+<span class="kw">awk</span> -F<span class="str">','</span> <span class="str">'{print $1,$2}'</span> data.csv   <span class="cmt"># comma-separated (CSV file)</span>
+<span class="kw">awk</span> -F<span class="str">'\t'</span> <span class="str">'{print $2}'</span> file.tsv    <span class="cmt"># tab-separated</span>
+<span class="kw">awk</span> -F<span class="str">'|'</span> <span class="str">'{print $3}'</span> file.txt     <span class="cmt"># pipe-separated</span></pre>
+
+<h4>Pattern Matching — Filter Lines</h4>
+<pre>
+<span class="cmt"># Only process lines that match a condition</span>
+
+<span class="kw">awk</span> <span class="str">'/pattern/ {print}'</span> file.txt        <span class="cmt"># lines containing "pattern"</span>
+<span class="kw">awk</span> <span class="str">'$3 > 50000 {print $1, $3}'</span> emp.txt <span class="cmt"># salary (col3) > 50000</span>
+<span class="kw">awk</span> <span class="str">'$2 == "IT" {print $1}'</span> emp.txt      <span class="cmt"># department (col2) is IT</span>
+<span class="kw">awk</span> <span class="str">'NR >= 2 {print}'</span> file.txt           <span class="cmt"># skip header (line 1), print rest</span>
+<span class="kw">awk</span> <span class="str">'NR == 3 {print}'</span> file.txt           <span class="cmt"># print only line 3</span>
+<span class="kw">awk</span> <span class="str">'$1 != "Name" {print}'</span> file.txt     <span class="cmt"># skip lines where col1 is "Name"</span>
+<span class="kw">awk</span> <span class="str">'$3 > 30000 && $2 == "HR"'</span> emp.txt  <span class="cmt"># multiple conditions with &&</span>
+<span class="kw">awk</span> <span class="str">'$3 > 30000 || $2 == "HR"'</span> emp.txt  <span class="cmt"># OR condition</span></pre>
+
+<h4>BEGIN and END Blocks</h4>
+<pre>
+<span class="cmt"># BEGIN runs BEFORE processing any lines</span>
+<span class="cmt"># END runs AFTER processing all lines</span>
+
+<span class="kw">awk</span> <span class="str">'BEGIN {print "=== Report ==="} {print $0} END {print "=== Done ==="}'</span> file.txt
+
+<span class="cmt"># Calculate total salary</span>
+<span class="kw">awk</span> <span class="str">'BEGIN {total=0} {total += $3} END {print "Total:", total}'</span> emp.txt
+
+<span class="cmt"># Count lines</span>
+<span class="kw">awk</span> <span class="str">'END {print NR, "lines"}'</span> file.txt
+
+<span class="cmt"># Calculate average salary</span>
+<span class="kw">awk</span> <span class="str">'BEGIN {sum=0; count=0} {sum += $3; count++} END {print "Avg:", sum/count}'</span> emp.txt</pre>
+
+<div class="box box-exam">
+  <div class="label">FA Round 2 — This WILL be asked</div>
+  "Given a file with employee data, calculate the total/average salary" — use <code>BEGIN</code> to initialize variables, main block to accumulate, <code>END</code> to print result. This is the most common awk question pattern.
+</div>
+
+<h4>FA Exam Pattern: Employee Table Questions</h4>
+<p>Assume this file <code>emp.txt</code> (space-separated):</p>
+<pre>
+Name    Dept    Salary
+Darshan IT      45000
+Rahul   HR      38000
+Priya   IT      52000
+Amit    Finance 41000
+Sneha   HR      47000
+Kiran   IT      55000</pre>
+
+<p><strong>Q1: Print all employee names and salaries</strong></p>
+<pre><span class="kw">awk</span> <span class="str">'NR > 1 {print $1, $3}'</span> emp.txt
+<span class="cmt"># NR > 1 skips the header row</span>
+<span class="cmt"># Output: Darshan 45000, Rahul 38000, ...</span></pre>
+
+<p><strong>Q2: Print employees in IT department</strong></p>
+<pre><span class="kw">awk</span> <span class="str">'$2 == "IT" {print $1, $3}'</span> emp.txt
+<span class="cmt"># Output: Darshan 45000, Priya 52000, Kiran 55000</span></pre>
+
+<p><strong>Q3: Find the maximum salary</strong></p>
+<pre><span class="kw">awk</span> <span class="str">'NR > 1 {if ($3 > max) {max = $3; name = $1}} END {print name, max}'</span> emp.txt
+<span class="cmt"># Output: Kiran 55000</span></pre>
+
+<p><strong>Q4: Find the minimum salary</strong></p>
+<pre><span class="kw">awk</span> <span class="str">'NR == 2 {min = $3; name = $1} NR > 2 {if ($3 < min) {min = $3; name = $1}} END {print name, min}'</span> emp.txt
+<span class="cmt"># Initialize min with first data row (NR==2), then compare rest</span>
+<span class="cmt"># Output: Rahul 38000</span></pre>
+
+<p><strong>Q5: Calculate total salary</strong></p>
+<pre><span class="kw">awk</span> <span class="str">'NR > 1 {total += $3} END {print "Total:", total}'</span> emp.txt
+<span class="cmt"># Output: Total: 278000</span></pre>
+
+<p><strong>Q6: Calculate average salary</strong></p>
+<pre><span class="kw">awk</span> <span class="str">'NR > 1 {sum += $3; count++} END {print "Average:", sum/count}'</span> emp.txt
+<span class="cmt"># Output: Average: 46333.3</span></pre>
+
+<p><strong>Q7: Count employees per department</strong></p>
+<pre><span class="kw">awk</span> <span class="str">'NR > 1 {dept[$2]++} END {for (d in dept) print d, dept[d]}'</span> emp.txt
+<span class="cmt"># Output: IT 3, HR 2, Finance 1</span>
+<span class="cmt"># dept[$2]++ creates an associative array (like a HashMap) counting by department</span></pre>
+
+<p><strong>Q8: Print employees with salary above average</strong></p>
+<pre><span class="cmt"># Two-pass approach: first calculate average, then filter</span>
+<span class="kw">awk</span> <span class="str">'NR > 1 {sum += $3; count++; names[NR]=$1; sals[NR]=$3} END {avg=sum/count; for (i in names) if (sals[i] > avg) print names[i], sals[i]}'</span> emp.txt</pre>
+
+<p><strong>Q9: Print employees sorted by salary (with sort pipe)</strong></p>
+<pre><span class="kw">awk</span> <span class="str">'NR > 1 {print $3, $1}'</span> emp.txt | <span class="kw">sort</span> -n
+<span class="cmt"># Output: 38000 Rahul, 41000 Amit, 45000 Darshan, ...</span></pre>
+
+<p><strong>Q10: Department-wise total salary</strong></p>
+<pre><span class="kw">awk</span> <span class="str">'NR > 1 {dept[$2] += $3} END {for (d in dept) print d, dept[d]}'</span> emp.txt
+<span class="cmt"># Output: IT 152000, HR 85000, Finance 41000</span></pre>
+
+<div class="box box-key">
+  <div class="label">Key Patterns to Memorize</div>
+  <ul>
+    <li><strong>Skip header:</strong> <code>NR &gt; 1</code></li>
+    <li><strong>Filter by column:</strong> <code>$2 == "value"</code></li>
+    <li><strong>Sum a column:</strong> <code>{total += $3} END {print total}</code></li>
+    <li><strong>Average:</strong> <code>{sum += $3; count++} END {print sum/count}</code></li>
+    <li><strong>Max:</strong> <code>{if ($3 &gt; max) max = $3} END {print max}</code></li>
+    <li><strong>Count per group:</strong> <code>{arr[$2]++} END {for (k in arr) print k, arr[k]}</code></li>
+    <li><strong>Sum per group:</strong> <code>{arr[$2] += $3} END {for (k in arr) print k, arr[k]}</code></li>
+  </ul>
+</div>
+
+<h4>awk with printf — Formatted Output</h4>
+<pre>
+<span class="cmt"># printf gives formatted output (like C's printf)</span>
+<span class="kw">awk</span> <span class="str">'NR > 1 {printf "%-10s %-8s %d\n", $1, $2, $3}'</span> emp.txt
+<span class="cmt"># %-10s = left-aligned string, 10 chars wide</span>
+<span class="cmt"># %d = integer, %f = float, %s = string</span>
+<span class="cmt"># \n = newline (printf doesn't add one automatically)</span>
+
+<span class="cmt"># Print salary with 2 decimal places</span>
+<span class="kw">awk</span> <span class="str">'NR > 1 {printf "%s: %.2f\n", $1, $3}'</span> emp.txt</pre>
+
+<h4>awk — if/else and Loops</h4>
+<pre>
+<span class="cmt"># if/else inside awk</span>
+<span class="kw">awk</span> <span class="str">'NR > 1 {if ($3 > 45000) print $1, "HIGH"; else print $1, "LOW"}'</span> emp.txt
+
+<span class="cmt"># Ternary operator</span>
+<span class="kw">awk</span> <span class="str">'NR > 1 {print $1, ($3 > 45000 ? "HIGH" : "LOW")}'</span> emp.txt
+
+<span class="cmt"># for loop — print each field on a line</span>
+<span class="kw">awk</span> <span class="str">'{for (i = 1; i <= NF; i++) print $i}'</span> file.txt</pre>
+
+<h4>awk with Pipes — Combining Commands</h4>
+<pre>
+<span class="cmt"># awk works beautifully with pipes</span>
+
+<span class="cmt"># Find top 3 salaries</span>
+<span class="kw">awk</span> <span class="str">'NR > 1 {print $3, $1}'</span> emp.txt | <span class="kw">sort</span> -rn | <span class="kw">head</span> -3
+
+<span class="cmt"># Count unique departments</span>
+<span class="kw">awk</span> <span class="str">'NR > 1 {print $2}'</span> emp.txt | <span class="kw">sort</span> -u | <span class="kw">wc</span> -l
+
+<span class="cmt"># grep + awk combo — find IT employees and their salaries</span>
+<span class="kw">grep</span> <span class="str">"IT"</span> emp.txt | <span class="kw">awk</span> <span class="str">'{print $1, $3}'</span>
+
+<span class="cmt"># Process command output</span>
+<span class="kw">ls</span> -l | <span class="kw">awk</span> <span class="str">'{print $9, $5}'</span>  <span class="cmt"># filename and size from ls -l</span>
+<span class="kw">df</span> -h | <span class="kw">awk</span> <span class="str">'NR > 1 {print $1, $5}'</span>  <span class="cmt"># disk usage %</span></pre>
+
+<div class="box box-exam">
+  <div class="label">FA Exam — How Questions Look</div>
+  The exam gives you a file content (like emp.txt above) and asks:<br>
+  <strong>"Write an awk command to find the employee with the highest salary"</strong><br>
+  <strong>"Write an awk command to calculate total salary of IT department"</strong><br>
+  <strong>"Write an awk command to print names of employees earning more than 40000"</strong><br>
+  All of these follow the patterns above. Practice with the emp.txt examples until they're automatic.
+</div>
+
+<h4>Quick Reference — awk Cheat Sheet</h4>
+<table>
+<tr><th>Task</th><th>Command</th></tr>
+<tr><td>Print column 1</td><td><code>awk '{print $1}' file</code></td></tr>
+<tr><td>Print last column</td><td><code>awk '{print $NF}' file</code></td></tr>
+<tr><td>Custom separator</td><td><code>awk -F',' '{print $1}' file</code></td></tr>
+<tr><td>Filter rows</td><td><code>awk '$3 > 100' file</code></td></tr>
+<tr><td>String match</td><td><code>awk '$2 == "IT"' file</code></td></tr>
+<tr><td>Pattern match</td><td><code>awk '/regex/' file</code></td></tr>
+<tr><td>Skip header</td><td><code>awk 'NR > 1' file</code></td></tr>
+<tr><td>Line numbers</td><td><code>awk '{print NR, $0}' file</code></td></tr>
+<tr><td>Sum column</td><td><code>awk '{s += $3} END {print s}' file</code></td></tr>
+<tr><td>Average</td><td><code>awk '{s+=$3;c++} END {print s/c}' file</code></td></tr>
+<tr><td>Max value</td><td><code>awk '{if($3>m)m=$3} END {print m}' file</code></td></tr>
+<tr><td>Count per group</td><td><code>awk '{a[$2]++} END {for(k in a) print k,a[k]}' file</code></td></tr>
+<tr><td>Sum per group</td><td><code>awk '{a[$2]+=$3} END {for(k in a) print k,a[k]}' file</code></td></tr>
+<tr><td>Formatted output</td><td><code>awk '{printf "%-10s %d\n",$1,$3}' file</code></td></tr>
+</table>
+
+<h3 id="unix-shell">Shell Scripting Basics</h3>
+
+<p><strong>Why write shell scripts?</strong> You've been typing commands one at a time. But what if you need to run the same 10 commands every morning? Or automate a backup every night? A shell script is just a <strong>text file full of commands that run automatically</strong>, one after another. It's like recording a macro in Excel — write the steps once, run them whenever you want.</p>
+
+<p>Think of a shell script as a <strong>recipe card</strong>. The recipe lists steps in order. When you "run" the recipe (execute the script), the kitchen (the shell) follows each step from top to bottom.</p>
+
+<h4>The Shebang — Every Script Starts Here</h4>
+<p>The very first line of every shell script must be:</p>
+<pre>
+<span class="cmt">#!/bin/bash</span></pre>
+
+<p>This is called the <strong>shebang</strong> (or hashbang). It tells the OS: "Use the bash shell to run this script." Without it, the system might not know how to interpret your file. It's like writing "Language: English" at the top of a document — so the reader knows how to read it.</p>
+
+<h4>Variables — Storing Values</h4>
+<p>Variables in bash are simple but have one critical gotcha:</p>
+
+<pre>
+<span class="cmt"># CORRECT — no spaces around =</span>
+NAME=<span class="str">"Darshan"</span>
+<span class="kw">echo</span> <span class="str">"Hello $NAME"</span>    <span class="cmt"># prints: Hello Darshan</span>
+
+<span class="cmt"># WRONG — spaces around = causes an error!</span>
+<span class="cmt"># NAME = "Darshan"     ← this FAILS. Bash thinks NAME is a command.</span></pre>
+
+<div class="box box-warn">
+  <div class="label">The #1 shell scripting mistake</div>
+  <code>NAME="Darshan"</code> works. <code>NAME = "Darshan"</code> FAILS. No spaces around the <code>=</code> sign. This is the opposite of every other programming language and trips up everyone.
+</div>
+
+<pre>
+<span class="cmt"># Read user input</span>
+<span class="kw">read</span> -p <span class="str">"Enter name: "</span> USERNAME
+<span class="kw">echo</span> <span class="str">"You entered: $USERNAME"</span></pre>
+
+<h4>if-then-else — Making Decisions</h4>
+<p>Bash's if-else looks different from Java/Python. The structure is: <code>if [ condition ]; then ... elif ... else ... fi</code>. Note: <strong>fi</strong> is "if" spelled backwards — it closes the if block.</p>
+
+<pre>
+<span class="kw">if</span> [ $AGE -gt <span class="num">18</span> ]; <span class="kw">then</span>
+    <span class="kw">echo</span> <span class="str">"Adult"</span>
+<span class="kw">elif</span> [ $AGE -eq <span class="num">18</span> ]; <span class="kw">then</span>
+    <span class="kw">echo</span> <span class="str">"Just 18"</span>
+<span class="kw">else</span>
+    <span class="kw">echo</span> <span class="str">"Minor"</span>
+<span class="kw">fi</span></pre>
+
+<div class="box box-key">
+  <div class="label">Why -gt instead of > ?</div>
+  In bash, <code>&gt;</code> means "redirect to file" (remember the redirection section?). So bash uses word-based operators for number comparisons: <code>-gt</code> (greater than), <code>-lt</code> (less than), etc. Think of them as abbreviations: <strong>g</strong>reater <strong>t</strong>han, <strong>l</strong>ess <strong>t</strong>han, <strong>eq</strong>ual, <strong>n</strong>ot <strong>e</strong>qual, <strong>g</strong>reater-or-<strong>e</strong>qual, <strong>l</strong>ess-or-<strong>e</strong>qual.
+</div>
+
+<h4>Loops — Repeating Actions</h4>
+<pre>
+<span class="cmt"># for loop — iterate over a list</span>
+<span class="kw">for</span> i <span class="kw">in</span> 1 2 3 4 5; <span class="kw">do</span>
+    <span class="kw">echo</span> <span class="str">"$i"</span>
+<span class="kw">done</span>
+
+<span class="cmt"># while loop — repeat while condition is true</span>
+COUNT=<span class="num">1</span>
+<span class="kw">while</span> [ $COUNT -le <span class="num">5</span> ]; <span class="kw">do</span>
+    <span class="kw">echo</span> <span class="str">"$COUNT"</span>
+    COUNT=$((COUNT + <span class="num">1</span>))   <span class="cmt"># $(( )) does arithmetic in bash</span>
+<span class="kw">done</span></pre>
+
+<div class="box box-tip">
+  <div class="label">💡 Key syntax</div>
+  <code>$(( ))</code> is how bash does math. <code>$((5 + 3))</code> = 8. Without it, bash treats numbers as text. Also: loops end with <code>done</code>, not a closing brace.
+</div>
+
+<h4>case Statement — The Switch of Bash</h4>
+<p>Like Java's switch. Pattern matches a value and runs the matching block. <code>;;</code> is like <code>break</code>. <code>*)</code> is the default case.</p>
+
+<pre>
+<span class="kw">case</span> $1 <span class="kw">in</span>
+    start)  <span class="kw">echo</span> <span class="str">"Starting..."</span> ;;
+    stop)   <span class="kw">echo</span> <span class="str">"Stopping..."</span> ;;
+    *)      <span class="kw">echo</span> <span class="str">"Usage: $0 {start|stop}"</span> ;;
+<span class="kw">esac</span></pre>
+
+<p><code>esac</code> is "case" spelled backwards — it closes the case block. (<code>fi</code> closes <code>if</code>, <code>esac</code> closes <code>case</code>.)</p>
+
+<h4>Comparison Operators</h4>
+<p>Bash uses different operators for numbers vs. strings. This is a common exam trap.</p>
+<table>
+<tr><th>Numbers</th><th>Meaning</th><th>Strings</th><th>Meaning</th></tr>
+<tr><td><code>-eq</code></td><td>equal</td><td><code>=</code></td><td>equal</td></tr>
+<tr><td><code>-ne</code></td><td>not equal</td><td><code>!=</code></td><td>not equal</td></tr>
+<tr><td><code>-gt</code></td><td>greater than</td><td><code>-z</code></td><td>string is empty</td></tr>
+<tr><td><code>-lt</code></td><td>less than</td><td><code>-n</code></td><td>string is non-empty</td></tr>
+<tr><td><code>-ge</code></td><td>greater or equal</td><td></td><td></td></tr>
+<tr><td><code>-le</code></td><td>less or equal</td><td></td><td></td></tr>
+</table>
+
+<div class="box box-example">
+  <div class="label">Why two systems?</div>
+  <p>For numbers: <code>[ 5 -gt 3 ]</code> means "is 5 greater than 3?" (yes)</p>
+  <p>For strings: <code>[ "$NAME" = "Darshan" ]</code> means "is NAME exactly Darshan?" (yes)</p>
+  <p>You can't use <code>=</code> for number comparison or <code>-eq</code> for string comparison. The exam will try to trick you with this.</p>
+</div>
+
+<h4>File Test Operators</h4>
+<p>These check properties of files. Incredibly useful in scripts — "does this file exist before I try to read it?"</p>
+<table>
+<tr><th>Operator</th><th>True if...</th><th>Use case</th></tr>
+<tr><td><code>-f file</code></td><td>Regular file exists</td><td>Check before reading</td></tr>
+<tr><td><code>-d file</code></td><td>Directory exists</td><td>Check before cd-ing into it</td></tr>
+<tr><td><code>-e file</code></td><td>File exists (any type)</td><td>General existence check</td></tr>
+<tr><td><code>-r file</code></td><td>Readable</td><td>Check before cat/grep</td></tr>
+<tr><td><code>-w file</code></td><td>Writable</td><td>Check before writing to it</td></tr>
+<tr><td><code>-x file</code></td><td>Executable</td><td>Check before running a script</td></tr>
+<tr><td><code>-s file</code></td><td>Size > 0 (not empty)</td><td>Check if file has content</td></tr>
+</table>
+
+<div class="box box-example">
+  <div class="label">Real example: Safe script</div>
+  <pre><span class="kw">if</span> [ -f <span class="str">"data.csv"</span> ]; <span class="kw">then</span>
+    <span class="kw">echo</span> <span class="str">"Processing data..."</span>
+    <span class="kw">awk</span> -F<span class="str">','</span> <span class="str">'NR > 1 {sum += $3} END {print sum}'</span> data.csv
+<span class="kw">else</span>
+    <span class="kw">echo</span> <span class="str">"Error: data.csv not found!"</span>
+<span class="kw">fi</span></pre>
+  <p>Always check if a file exists before operating on it. This prevents ugly error messages.</p>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What is wrong with this script? <code>NAME = "Darshan"; echo $NAME</code></p>
+  <ol class="options"><li>Missing shebang line</li><li>Spaces around = in variable assignment</li><li>Should use echo "$NAME" with quotes</li><li>Nothing — it works fine</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">Spaces around <code>=</code> in variable assignment cause an error. Bash interprets <code>NAME</code> as a command name, not a variable. The correct syntax is <code>NAME="Darshan"</code> with NO spaces. This is the single most common shell scripting mistake.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which operator checks if a number is greater than or equal to another in bash?</p>
+  <ol class="options"><li>>=</li><li>-ge</li><li>-gte</li><li>-greq</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1"><code>-ge</code> = <strong>g</strong>reater-or-<strong>e</strong>qual. Bash uses <code>-eq</code>, <code>-ne</code>, <code>-gt</code>, <code>-lt</code>, <code>-ge</code>, <code>-le</code> for numeric comparisons. The <code>>=</code> operator doesn't work in <code>[ ]</code> test brackets.</div>
+</div>
+
+<h3 id="unix-paths">Special Path Symbols</h3>
+
+<p>These are shortcuts for navigating the file system. Think of them as <strong>bookmarks</strong>:</p>
+
+<table>
+<tr><th>Symbol</th><th>Meaning</th><th>Real-world analogy</th></tr>
+<tr><td><code>~</code></td><td>Home directory (<code>/home/darshan</code>)</td><td>Your house — <code>cd ~</code> always takes you home</td></tr>
+<tr><td><code>.</code></td><td>Current directory</td><td>"Right here" — where you're standing now</td></tr>
+<tr><td><code>..</code></td><td>Parent directory (one level up)</td><td>"Go upstairs" — the folder containing this one</td></tr>
+<tr><td><code>/</code></td><td>Root directory</td><td>The ground floor — the very top of the file tree</td></tr>
+<tr><td><code>-</code></td><td>Previous directory (where you just were)</td><td>"Go back" — like the back button in a browser</td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  <code>~</code> = home directory is the most commonly asked. Also remember: <code>cd ..</code> goes up one level, <code>cd ../..</code> goes up two levels.
+</div>
+
+<h3 id="unix-cron">crontab — Scheduling</h3>
+
+<p><strong>Why?</strong> You wrote a backup script. Great. Now who runs it at 2 AM every night? You're not setting an alarm to wake up and type the command. <strong>crontab is the alarm clock of Unix</strong> — it runs commands automatically on a schedule, whether you're asleep, on vacation, or doing anything else.</p>
+
+<p>The format has 5 time fields followed by the command to run:</p>
+
+<pre>
+<span class="cmt"># ┌───── minute (0-59)</span>
+<span class="cmt"># │ ┌───── hour (0-23)</span>
+<span class="cmt"># │ │ ┌───── day of month (1-31)</span>
+<span class="cmt"># │ │ │ ┌───── month (1-12)</span>
+<span class="cmt"># │ │ │ │ ┌───── day of week (0-6, 0=Sunday)</span>
+<span class="cmt"># │ │ │ │ │</span>
+<span class="cmt"># * * * * * command</span>
+
+<span class="num">0 2 * * *</span> /home/darshan/backup.sh    <span class="cmt"># 2:00 AM, every day</span>
+<span class="num">*/5 * * * *</span> /scripts/check.sh        <span class="cmt"># every 5 minutes</span>
+<span class="num">0 9 * * 1</span> /scripts/weekly.sh         <span class="cmt"># 9:00 AM every Monday (1=Monday)</span>
+<span class="num">30 18 1 * *</span> /scripts/monthly.sh      <span class="cmt"># 6:30 PM on the 1st of every month</span></pre>
+
+<div class="box box-tip">
+  <div class="label">💡 Reading crontab</div>
+  <code>*</code> = "every" (every minute, every hour, etc.). <code>*/5</code> = "every 5th." Read left to right: minute, hour, day, month, weekday. So <code>0 9 * * 1</code> = "at minute 0, hour 9, any day, any month, on Monday."
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What does the cron expression <code>0 0 * * 0</code> mean?</p>
+  <ol class="options"><li>Every minute on Sunday</li><li>Midnight every day</li><li>Midnight every Sunday</li><li>Noon every Saturday</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">Minute=0, Hour=0 (midnight), Day=* (any), Month=* (any), Weekday=0 (Sunday). So it runs at midnight every Sunday. Remember: 0 in the weekday field = Sunday.</div>
+</div>
+
+<h3 id="unix-practice">Practice Questions — Unix</h3>
+
+<div class="practice">
+  <div class="q-label">Question 1</div>
+  <div class="question">Which command lists all files including hidden files?</div>
+  <ol class="options"><li>ls -l</li><li>ls -a</li><li>ls -R</li><li>ls -h</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) <code>ls -a</code> shows ALL files including hidden ones (starting with dot).</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 2</div>
+  <div class="question">What permissions does <code>chmod 755</code> assign?</div>
+  <ol class="options"><li>rwxrwxrwx</li><li>rw-r--r--</li><li>rwxr-xr-x</li><li>rwxrwxr-x</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) rwxr-xr-x. Owner=7(rwx), Group=5(r-x), Others=5(r-x).</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 3</div>
+  <div class="question">Which command counts words in a file?</div>
+  <ol class="options"><li>wc -l file</li><li>wc -c file</li><li>wc -w file</li><li>count file</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) <code>wc -w</code> counts words. -l = lines, -c = bytes.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 4</div>
+  <div class="question">What does <code>~</code> represent?</div>
+  <ol class="options"><li>Root directory</li><li>Current directory</li><li>Parent directory</li><li>Home directory</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="3">✅ D) Home directory of the current user. Root = /, Current = ., Parent = ..</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 5</div>
+  <div class="question">How to force kill process with PID 4521?</div>
+  <ol class="options"><li>kill 4521</li><li>kill -15 4521</li><li>kill -9 4521</li><li>stop 4521</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) <code>kill -9</code> sends SIGKILL — force kill, cannot be caught or ignored.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 6</div>
+  <div class="question">What is the numeric value of <code>rw-r--r--</code>?</div>
+  <ol class="options"><li>755</li><li>644</li><li>600</li><li>666</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) 644. Owner: rw-=6, Group: r--=4, Others: r--=4.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 7</div>
+  <div class="question">What does <code>ls | wc -l</code> do?</div>
+  <ol class="options"><li>Lists files and counts characters</li><li>Counts files in current directory</li><li>Counts words in a file named ls</li><li>Lists files sorted by count</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) ls outputs filenames, pipe sends to wc -l which counts lines = number of files.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 8</div>
+  <div class="question">Which grep flag makes search case-insensitive?</div>
+  <ol class="options"><li>grep -n</li><li>grep -v</li><li>grep -i</li><li>grep -c</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) <code>-i</code> = ignore case.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 9</div>
+  <div class="question">Difference between <code>&gt;</code> and <code>&gt;&gt;</code>?</div>
+  <ol class="options"><li>> appends; >> overwrites</li><li>> reads; >> writes</li><li>> overwrites; >> appends</li><li>Both do the same</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) <code>&gt;</code> overwrites the file. <code>&gt;&gt;</code> appends to the end.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 10</div>
+  <div class="question">Output of: <code>x=5; if [ $x -gt 3 ]; then echo "yes"; else echo "no"; fi</code></div>
+  <ol class="options"><li>no</li><li>yes</li><li>5</li><li>Error</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) yes. 5 > 3 is true, so "yes" is printed.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 11</div>
+  <div class="question">Which searches recursively for "password" in /etc?</div>
+  <ol class="options"><li>grep "password" /etc</li><li>grep -r "password" /etc</li><li>find /etc -name "password"</li><li>grep -n "password" /etc</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) <code>grep -r</code> = recursive grep through all files in directory.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 12</div>
+  <div class="question">Which directory stores temporary files cleared on reboot?</div>
+  <ol class="options"><li>/var</li><li>/etc</li><li>/tmp</li><li>/home</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) <code>/tmp</code> stores temporary files cleared on reboot.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 13</div>
+  <div class="question">Output of: <code>for i in 1 2 3; do echo $i; done</code></div>
+  <ol class="options"><li>1 2 3 (one line)</li><li>1, 2, 3 on separate lines</li><li>i i i</li><li>Error</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) Each echo prints on a new line: 1, 2, 3 on separate lines.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 14</div>
+  <div class="question">Which creates a gzip-compressed tar archive of <code>project/</code>?</div>
+  <ol class="options"><li>tar -xvf project.tar.gz project/</li><li>tar -cvzf project.tar.gz project/</li><li>gzip project/</li><li>tar -tvf project.tar.gz</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) <code>tar -cvzf</code>: c=Create, v=Verbose, z=gzip, f=File.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 15</div>
+  <div class="question">Permissions <code>-rwxr-x---</code> in octal?</div>
+  <ol class="options"><li>777</li><li>754</li><li>750</li><li>755</li></ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) 750. Owner: rwx=7, Group: r-x=5, Others: ---=0.</div>
+</div>
+
+<div class="box box-warn">
+  <div class="label">HackerRank Gotchas — Unix Questions</div>
+  <ul>
+    <li><strong>Case-insensitive matching</strong> — use <code>tolower()</code> in AWK or <code>IGNORECASE=1</code>. Almost every question needs this</li>
+    <li><strong>Exact output format</strong> — <code>"Total Salary = 135000"</code> must match character for character. Copy the format from the problem</li>
+    <li><strong>"Not found" message</strong> — if no rows match, you must print the fallback message (e.g., <code>"No Employee Found"</code>)</li>
+    <li><strong>Command-line argument</strong> — filename comes as <code>$1</code> when the script runs. Use it, don't hardcode a filename</li>
+    <li><strong>Skip header row</strong> — CSV files usually have a header. Use <code>NR &gt; 1</code> in AWK to skip it</li>
+  </ul>
+</div>
+
+<h3>Real FA Subjective Question — Walkthrough</h3>
+<p>This is an actual FA Round 2 practice question from HackerRank.</p>
+
+<div class="box box-example">
+  <div class="label">Problem: Total Salary by Division</div>
+  <p>Employee data is in a CSV file: <code>EmpName,Role,Division,Salary</code></p>
+  <p>Calculate the total salary of employees in the "Sales" division (case-insensitive). Print <code>Total Salary = [sum]</code>. If no match, print <code>No Employee Found</code>.</p>
+  <p>File name is passed as command-line argument <code>$1</code>.</p>
+</div>
+
+<h4>Solution:</h4>
+<pre>awk -F<span class="str">","</span> <span class="str">'
+BEGIN { total = 0; found = 0 }
+NR &gt; 1 &amp;&amp; tolower($3) == "sales" {      # skip header, case-insensitive match
+    total += $4;                           # $4 = Salary column
+    found = 1
+}
+END {
+    if (found)
+        print "Total Salary = " total      # exact format from problem
+    else
+        print "No Employee Found"          # exact fallback message
+}
+'</span> $1                                     <span class="cmt"># $1 = filename from command-line</span></pre>
+
+<div class="box box-tip">
+  <div class="label">Key details in this solution</div>
+  <ul>
+    <li><strong><code>-F","</code></strong> — sets comma as field separator for CSV</li>
+    <li><strong><code>NR &gt; 1</code></strong> — skips the header row (line 1)</li>
+    <li><strong><code>tolower($3) == "sales"</code></strong> — case-insensitive comparison on Division column</li>
+    <li><strong><code>found</code> flag</strong> — tracks whether any match was found, for the "No Employee Found" case</li>
+    <li><strong><code>$1</code> at the end</strong> — reads the file whose name was passed as argument</li>
+    <li><strong>Exact output strings</strong> — copied from the problem statement, not typed from memory</li>
+  </ul>
+</div>
+
+<div class="box box-exam">
+  <div class="label">FA Subjective Practice</div>
+  Practice more questions like this on HackerRank:<br>
+  <a href="https://www.hackerrank.com/contests/mock-pa-1/challenges" target="_blank" style="color:var(--info);font-weight:600">→ HackerRank FA Subjective Mock Practice</a>
+</div>
+
+</section>
+
+
+  <div class="footer">
+    <a href="javascript.html">← JavaScript</a> |
+    <a href="sql.html">SQL →</a>
+  </div>
+</div>
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

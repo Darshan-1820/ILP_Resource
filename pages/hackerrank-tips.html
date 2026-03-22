@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HackerRank Tips & Strategy — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#platform">The HackerRank Platform</a>
+  <a href="#hse-format">HSE Exam Format</a>
+  <a href="#reading-questions">Reading Questions Right</a>
+  <a href="#io-handling">I/O — The #1 Killer</a>
+  <a href="#scanner-trap">The Scanner Trap</a>
+  <a href="#output-matching">Exact Output Matching</a>
+  <a href="#test-cases">Test Cases Explained</a>
+  <a href="#hidden-cases">Hidden Test Cases</a>
+  <a href="#common-mistakes">Common Mistakes</a>
+  <a href="#exam-strategy">Exam Day Strategy</a>
+  <a href="#what-not-to-do">What NOT To Do</a>
+  <a href="#checklist">Pre-Submit Checklist</a>
+</nav>
+
+<div class="main">
+
+<section class="sec-coding">
+<h2>HackerRank Tips & Strategy</h2>
+
+<p>This is not about solving logic. Most students who fail HSE can solve the problem — they fail because of <strong>how HackerRank works</strong>. Wrong output format, leftover newlines, extra spaces, debug prints left in code. This page teaches you the platform itself.</p>
+
+<div class="box box-warn">
+  <div class="label">Why students fail</div>
+  The #1 reason is <strong>I/O handling mistakes</strong> — not logic. Scanner bugs, extra spaces in output, wrong case in strings, debug prints left in code. Fix your I/O and you pass. Ignore it and you'll get 0 on hidden test cases even with correct logic.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<section id="platform">
+<h3>The HackerRank Platform</h3>
+
+<p>HackerRank is a coding assessment platform used by companies worldwide. TCS uses it for HSE and sometimes PRA coding sections. Here's how it works:</p>
+
+<ul>
+  <li><strong>Online code editor</strong> — you write code in the browser, no local IDE</li>
+  <li><strong>Language locked to Java</strong> for TCS HSE (other exams may allow more)</li>
+  <li><strong>Input comes from stdin</strong> — <code>System.in</code> in Java</li>
+  <li><strong>Output goes to stdout</strong> — <code>System.out</code> in Java</li>
+  <li><strong>Your output is compared character-by-character</strong> against expected output</li>
+  <li><strong>No partial credit per test case</strong> — each test case is pass or fail</li>
+  <li><strong>You cannot see hidden test case inputs</strong> — only pass/fail status</li>
+</ul>
+
+<div class="box box-key">
+  <div class="label">Key concept</div>
+  HackerRank is NOT an IDE. There are no prompts, no "Enter a number:" messages. Your program reads raw input and prints raw output. Nothing else. Think of it as: <strong>input in → processing → output out</strong>. That's it.
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<section id="hse-format">
+<h3>HSE Exam Format (HackerRank Software Engineering Assessment)</h3>
+
+<p>HSE stands for <strong>HackerRank Software Engineering Assessment</strong>. It is one of the toughest exams in TCS ILP.</p>
+
+<table>
+<tr><th>Detail</th><th>Info</th></tr>
+<tr><td>Platform</td><td>HackerRank</td></tr>
+<tr><td>Key Topics</td><td>REST APIs are known to be critical. Java coding is likely.</td></tr>
+<tr><td>Type</td><td>Complete programs with proper I/O — not fill-in-the-blank</td></tr>
+<tr><td>Format</td><td>Exact format may vary by batch — prepare broadly</td></tr>
+</table>
+
+<div class="box box-exam">
+  <div class="label">What we know</div>
+  <ul>
+    <li><strong>REST APIs</strong> are very important — JSON parsing, HTTP methods, API consumption</li>
+    <li><strong>Java coding</strong> is likely — OOP, collections, string handling</li>
+    <li>Exact number of problems, marks, and duration may vary by batch</li>
+    <li>You write complete programs with proper input/output on HackerRank</li>
+  </ul>
+</div>
+
+<div class="box box-tip">
+  <div class="label">Preparation strategy</div>
+  Since the exact format isn't fixed, focus on being strong in: <strong>REST API concepts</strong> (see <a href="rest-json-xml.html">REST / JSON / XML page</a>), <strong>Java I/O and OOP</strong>, and <strong>HackerRank platform mechanics</strong> (covered on this page). These will help regardless of the specific questions.
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<section id="reading-questions">
+<h3>How to Read HackerRank Questions</h3>
+
+<p>Most students start coding immediately. This is the biggest mistake. The problem statement contains <strong>critical details</strong> that determine whether your solution passes or fails.</p>
+
+<h4>Step-by-step approach:</h4>
+
+<div class="box box-tip">
+  <div class="label">The 5-minute rule</div>
+  Spend the first 5 minutes ONLY reading. Do not write a single line of code. Read the problem twice. Then trace through the sample input/output by hand. THEN start coding.
+</div>
+
+<ol>
+  <li><strong>Read the full problem statement</strong> — top to bottom, don't skim</li>
+  <li><strong>Read the "Note" section</strong> — this is where they hide critical info like "case-insensitive comparison" or exact output format</li>
+  <li><strong>Study the Input Format section</strong> — understand what each line of input contains</li>
+  <li><strong>Study the Output Format section</strong> — copy the exact string format. Letter by letter.</li>
+  <li><strong>Trace through Sample Input/Output</strong> — manually work through the example. Make sure your understanding matches</li>
+  <li><strong>Check the Constraints section</strong> — input size tells you if brute force is OK or you need optimization</li>
+  <li><strong>Plan your approach in comments</strong> — write pseudocode before real code</li>
+</ol>
+
+<h4>What to look for in the problem statement:</h4>
+<table>
+<tr><th>Look for...</th><th>Why it matters</th></tr>
+<tr><td>"case-insensitive"</td><td>Use <code>.equalsIgnoreCase()</code> — almost every TCS problem needs this</td></tr>
+<tr><td>Exact output string</td><td>"No employee found" is different from "No Employee Found" — copy exactly</td></tr>
+<tr><td>"sorted by" / "order by"</td><td>You need to sort before printing — order matters</td></tr>
+<tr><td>Return type: "null" or "not found"</td><td>You MUST handle the case where nothing matches</td></tr>
+<tr><td>Decimal places</td><td>"Display up to 2 decimal places" → use <code>String.format("%.2f", val)</code></td></tr>
+<tr><td>Constraints: N ≤ 1000</td><td>Brute force O(n²) is fine. If N ≤ 10⁶, you need O(n log n)</td></tr>
+</table>
+
+<div class="box box-warn">
+  <div class="label">The confusing question trap</div>
+  If a question feels confusing, <strong>don't panic</strong>. Focus ONLY on the sample input/output. Trace through it step by step. The sample tells you exactly what the program should do — even if the English description is unclear. Let the examples guide you, not just the text.
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<section id="io-handling">
+<h3>I/O Handling — The #1 Killer</h3>
+
+<p>On HackerRank, your program reads from <strong>stdin</strong> and writes to <strong>stdout</strong>. There are no prompts, no GUI, no file I/O. Just raw input → processing → raw output.</p>
+
+<h4>The Golden Rules:</h4>
+<ul>
+  <li><strong>Never print prompts</strong> — no "Enter a number:", no "Input:", nothing</li>
+  <li><strong>Never leave debug prints</strong> — every extra <code>System.out.println()</code> fails test cases</li>
+  <li><strong>Always trim input</strong> — <code>sc.nextLine().trim()</code> removes trailing whitespace</li>
+  <li><strong>Match output exactly</strong> — one extra space, one wrong capital letter = fail</li>
+</ul>
+
+<h4>Safe Input Pattern (recommended):</h4>
+<pre><span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(<span class="type">System</span>.in);
+
+<span class="cmt">// Reading an integer — SAFE way</span>
+<span class="type">int</span> n = <span class="type">Integer</span>.<span class="fn">parseInt</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());
+
+<span class="cmt">// Reading a string</span>
+<span class="type">String</span> name = sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>();
+
+<span class="cmt">// Reading a double</span>
+<span class="type">double</span> price = <span class="type">Double</span>.<span class="fn">parseDouble</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());
+
+<span class="cmt">// Reading multiple values on one line</span>
+<span class="type">String</span>[] parts = sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>().<span class="fn">split</span>(<span class="str">" "</span>);
+<span class="type">int</span> a = <span class="type">Integer</span>.<span class="fn">parseInt</span>(parts[<span class="num">0</span>]);
+<span class="type">int</span> b = <span class="type">Integer</span>.<span class="fn">parseInt</span>(parts[<span class="num">1</span>]);</pre>
+
+<div class="box box-key">
+  <div class="label">Why this pattern?</div>
+  Using <code>nextLine().trim()</code> for everything avoids the Scanner trap (explained below). It reads the entire line including the newline character, so there's nothing left in the buffer to cause problems. The <code>.trim()</code> removes any trailing whitespace that might exist in the input.
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<section id="scanner-trap">
+<h3>The Scanner Trap — Memorize This</h3>
+
+<p>This single bug causes more HSE failures than any other issue. If you understand nothing else on this page, understand this.</p>
+
+<h4>The Problem:</h4>
+<pre><span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(<span class="type">System</span>.in);
+
+<span class="type">int</span> n = sc.<span class="fn">nextInt</span>();          <span class="cmt">// reads "3" but leaves "\n" in buffer</span>
+<span class="type">String</span> name = sc.<span class="fn">nextLine</span>();  <span class="cmt">// reads the leftover "\n" → EMPTY STRING!</span>
+
+<span class="cmt">// name is now "" (empty), NOT the actual next line of input</span>
+<span class="cmt">// Your entire program breaks from here</span></pre>
+
+<h4>Why it happens:</h4>
+<p>When you type <code>3</code> and press Enter, the input buffer contains <code>"3\n"</code>. <code>nextInt()</code> reads <code>"3"</code> but <strong>leaves the <code>"\n"</code></strong> in the buffer. The next <code>nextLine()</code> reads that leftover <code>"\n"</code> and returns an empty string.</p>
+
+<h4>The Fix — Option 1 (consume the newline):</h4>
+<pre><span class="type">int</span> n = sc.<span class="fn">nextInt</span>();
+sc.<span class="fn">nextLine</span>();              <span class="cmt">// ← consume the leftover newline</span>
+<span class="type">String</span> name = sc.<span class="fn">nextLine</span>(); <span class="cmt">// NOW this reads the actual next line</span></pre>
+
+<h4>The Fix — Option 2 (recommended — avoid nextInt entirely):</h4>
+<pre><span class="type">int</span> n = <span class="type">Integer</span>.<span class="fn">parseInt</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());  <span class="cmt">// reads full line, no leftover</span>
+<span class="type">String</span> name = sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>();               <span class="cmt">// reads next line cleanly</span></pre>
+
+<div class="box box-warn">
+  <div class="label">Rule: never mix nextInt/nextDouble with nextLine</div>
+  Either use <code>nextLine()</code> for everything and parse manually (recommended), or always add an extra <code>sc.nextLine()</code> after every <code>nextInt()</code> / <code>nextDouble()</code> call. There is no third option.
+</div>
+
+<h4>The same trap with nextDouble:</h4>
+<pre><span class="cmt">// DANGEROUS</span>
+<span class="type">double</span> price = sc.<span class="fn">nextDouble</span>();  <span class="cmt">// leaves "\n"</span>
+<span class="type">String</span> category = sc.<span class="fn">nextLine</span>(); <span class="cmt">// reads "" (empty)</span>
+
+<span class="cmt">// SAFE</span>
+<span class="type">double</span> price = <span class="type">Double</span>.<span class="fn">parseDouble</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());
+<span class="type">String</span> category = sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>(); <span class="cmt">// works correctly</span></pre>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<section id="output-matching">
+<h3>Exact Output Matching</h3>
+
+<p>HackerRank compares your output <strong>character by character</strong> against the expected output. Here's what kills submissions:</p>
+
+<table>
+<tr><th>Mistake</th><th>Example</th><th>Result</th></tr>
+<tr><td>Extra trailing space</td><td><code>"Hello "</code> vs <code>"Hello"</code></td><td>FAIL</td></tr>
+<tr><td>Wrong case</td><td><code>"no gadget found"</code> vs <code>"No Gadget Found"</code></td><td>FAIL</td></tr>
+<tr><td>Extra blank line</td><td>Extra <code>println()</code> at end</td><td>FAIL</td></tr>
+<tr><td>Debug print left in</td><td><code>"Debug: x=5"</code> before output</td><td>FAIL</td></tr>
+<tr><td>Wrong decimal places</td><td><code>"95.5"</code> vs <code>"95.50"</code></td><td>FAIL</td></tr>
+<tr><td>Missing newline at end</td><td>Using <code>print()</code> instead of <code>println()</code></td><td>Usually FAIL</td></tr>
+</table>
+
+<h4>Output formatting patterns:</h4>
+<pre><span class="cmt">// Print a line with newline at end (use this for most output)</span>
+<span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"Result: "</span> + value);
+
+<span class="cmt">// Format decimals to exactly 2 places</span>
+<span class="type">System</span>.out.<span class="fn">println</span>(<span class="type">String</span>.<span class="fn">format</span>(<span class="str">"Average: %.2f"</span>, avg));
+<span class="cmt">// If avg = 95.5 → prints "Average: 95.50"</span>
+
+<span class="cmt">// Print object details in a specific format</span>
+<span class="type">System</span>.out.<span class="fn">println</span>(emp.<span class="fn">getName</span>() + <span class="str">" - "</span> + emp.<span class="fn">getDept</span>() + <span class="str">" - "</span> + emp.<span class="fn">getSalary</span>());
+
+<span class="cmt">// When no result found — copy the EXACT string from the problem</span>
+<span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"No employee found"</span>);  <span class="cmt">// EXACT match required</span></pre>
+
+<div class="box box-tip">
+  <div class="label">Pro tip</div>
+  Copy the exact output string from the problem statement and paste it into your code. Don't type it from memory. One wrong capital letter = fail.
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<section id="test-cases">
+<h3>How HackerRank Test Cases Work</h3>
+
+<p>Every HackerRank problem has multiple test cases. Your program runs once per test case — fresh input each time.</p>
+
+<h4>Types of test cases:</h4>
+<table>
+<tr><th>Type</th><th>Visible?</th><th>Purpose</th></tr>
+<tr><td><strong>Sample test cases</strong> (2-3)</td><td>Yes — you see input, expected output, and your output</td><td>Verify your basic understanding</td></tr>
+<tr><td><strong>Hidden test cases</strong> (5-12)</td><td>No — you only see pass/fail (lock icon)</td><td>Test edge cases, large inputs, boundary conditions</td></tr>
+</table>
+
+<h4>Scoring:</h4>
+<ul>
+  <li>Each test case has a point value (not always equal)</li>
+  <li><strong>No partial credit per test case</strong> — pass completely or get 0</li>
+  <li>Total score = sum of all passed test case points</li>
+  <li>Sample test cases may carry 0 points — they're just for you to verify</li>
+</ul>
+
+<div class="box box-key">
+  <div class="label">Important</div>
+  Passing all sample test cases does NOT mean you'll pass hidden ones. Sample cases are the easiest — they test basic flow. Hidden cases test the tricky stuff.
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<section id="hidden-cases">
+<h3>What Hidden Test Cases Check</h3>
+
+<p>You can't see these, but you can predict them. Hidden cases almost always test these scenarios:</p>
+
+<table>
+<tr><th>Scenario</th><th>What to handle</th></tr>
+<tr><td>No match found</td><td>Print the "not found" message exactly as specified</td></tr>
+<tr><td>All elements match</td><td>Return/print all of them, not just the first</td></tr>
+<tr><td>Single element</td><td>Array with 1 item — does your code handle it?</td></tr>
+<tr><td>Empty input (0 elements)</td><td>Check for n=0 before looping</td></tr>
+<tr><td>Case sensitivity</td><td><code>"Sales"</code> vs <code>"sales"</code> vs <code>"SALES"</code> — use equalsIgnoreCase</td></tr>
+<tr><td>Large input (performance)</td><td>1000+ objects — brute force O(n²) may timeout</td></tr>
+<tr><td>Boundary values</td><td>0, negative numbers, max int, very long strings</td></tr>
+<tr><td>Duplicate values</td><td>Multiple objects with same name/value — handle all of them</td></tr>
+<tr><td>Whitespace in input</td><td>Trailing spaces — use <code>.trim()</code></td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">Test yourself before submitting</div>
+  Mentally run your code against these scenarios. Ask: "What does my code do if zero elements match? What if all match? What if there's only one element?" If you can't answer, fix it before submitting.
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<section id="common-mistakes">
+<h3>Common Mistakes (and How to Avoid Them)</h3>
+
+<h4>1. The Scanner nextLine trap</h4>
+<pre><span class="cmt">// WRONG — will silently break your program</span>
+<span class="type">int</span> n = sc.<span class="fn">nextInt</span>();
+<span class="type">String</span> name = sc.<span class="fn">nextLine</span>();  <span class="cmt">// reads empty string</span>
+
+<span class="cmt">// RIGHT</span>
+<span class="type">int</span> n = <span class="type">Integer</span>.<span class="fn">parseInt</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());</pre>
+
+<h4>2. Debug prints left in code</h4>
+<pre><span class="cmt">// You wrote this while testing:</span>
+<span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"DEBUG: array size = "</span> + arr.length);  <span class="cmt">// REMOVE before submitting!</span>
+
+<span class="cmt">// This extra line WILL fail every single test case</span></pre>
+
+<h4>3. Not handling the "not found" case</h4>
+<pre><span class="cmt">// You filtered and found nothing — what now?</span>
+<span class="kw">if</span> (result == <span class="kw">null</span>) {
+    <span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"No employee found"</span>);  <span class="cmt">// MUST print this</span>
+}
+<span class="cmt">// If you don't handle null, you get NullPointerException → 0 marks</span></pre>
+
+<h4>4. Using == for String comparison</h4>
+<pre><span class="cmt">// WRONG — compares memory addresses</span>
+<span class="kw">if</span> (name == <span class="str">"Sales"</span>) { ... }
+
+<span class="cmt">// RIGHT — compares actual string content</span>
+<span class="kw">if</span> (name.<span class="fn">equals</span>(<span class="str">"Sales"</span>)) { ... }
+
+<span class="cmt">// BEST — case-insensitive (TCS problems almost always need this)</span>
+<span class="kw">if</span> (name.<span class="fn">equalsIgnoreCase</span>(<span class="str">"Sales"</span>)) { ... }</pre>
+
+<h4>5. Integer overflow on sums</h4>
+<pre><span class="cmt">// WRONG — if salaries are large, int overflows silently</span>
+<span class="type">int</span> total = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">Employee</span> e : employees) total += e.<span class="fn">getSalary</span>();
+
+<span class="cmt">// RIGHT — use long for sums</span>
+<span class="type">long</span> total = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="type">Employee</span> e : employees) total += e.<span class="fn">getSalary</span>();</pre>
+
+<h4>6. Wrong data type</h4>
+<pre><span class="cmt">// Problem says "price" — could be 99.99</span>
+<span class="type">int</span> price = ...;     <span class="cmt">// WRONG — loses decimal part</span>
+<span class="type">double</span> price = ...;  <span class="cmt">// RIGHT</span></pre>
+
+<h4>7. Hardcoded values</h4>
+<pre><span class="cmt">// Testing with sample input and accidentally leaving:</span>
+<span class="type">int</span> n = <span class="num">3</span>;  <span class="cmt">// WRONG — must READ from input</span>
+
+<span class="cmt">// RIGHT</span>
+<span class="type">int</span> n = <span class="type">Integer</span>.<span class="fn">parseInt</span>(sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>());</pre>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<section id="exam-strategy">
+<h3>Exam Day Strategy</h3>
+
+<h4>General time management:</h4>
+<table>
+<tr><th>Phase</th><th>What to do</th></tr>
+<tr><td>First 5-10 min</td><td>Read ALL problems first. Start with whichever feels easiest.</td></tr>
+<tr><td>Per problem</td><td>Plan → Code → Test with sample → Check edge cases → Remove debug prints</td></tr>
+<tr><td>Last 5-10 min</td><td>Review all output formats, recheck edge cases, remove debug prints</td></tr>
+</table>
+
+<h4>Step-by-step for a coding problem:</h4>
+<ol>
+  <li><strong>Read the problem twice</strong> — don't touch the keyboard yet</li>
+  <li><strong>Identify the class structure</strong> — what attributes, what types</li>
+  <li><strong>Write the class first</strong> — private fields, constructor, getters</li>
+  <li><strong>Write the input reading code</strong> — use the safe <code>nextLine().trim()</code> pattern</li>
+  <li><strong>Write the filtering/processing logic</strong></li>
+  <li><strong>Handle the "not found" case</strong></li>
+  <li><strong>Copy the exact output format</strong> from the problem statement</li>
+  <li><strong>Run against sample test cases</strong></li>
+  <li><strong>Mentally check edge cases</strong> — 0 matches, all matches, 1 element</li>
+  <li><strong>Remove all debug prints</strong></li>
+  <li><strong>Submit</strong></li>
+</ol>
+
+<div class="box box-key">
+  <div class="label">If you're stuck</div>
+  Don't stare at the problem. Focus on what you CAN do:<br>
+  1. Write the class — that's easy marks<br>
+  2. Write the input reading — more easy marks<br>
+  3. Write the output format — even if your logic is wrong, correct I/O structure may pass some cases<br>
+  <strong>Partial marks > 0 marks.</strong>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<section id="what-not-to-do">
+<h3>What NOT To Do</h3>
+
+<div class="box box-warn">
+  <div class="label">Avoid these at all costs</div>
+  <ul>
+    <li><strong>Don't start coding without reading the full problem</strong> — you'll miss critical details</li>
+    <li><strong>Don't print prompts</strong> — "Enter name:" will fail every test case</li>
+    <li><strong>Don't use nextInt() followed by nextLine()</strong> — Scanner trap will break your program</li>
+    <li><strong>Don't submit without removing debug prints</strong> — check every System.out line</li>
+    <li><strong>Don't assume case sensitivity</strong> — if the problem doesn't say, use equalsIgnoreCase to be safe</li>
+    <li><strong>Don't ignore the "not found" scenario</strong> — hidden test cases WILL check this</li>
+    <li><strong>Don't spend all time on one problem</strong> — if stuck after 30 min, move to the Unix problem</li>
+    <li><strong>Don't panic if hidden test cases fail</strong> — check output format, edge cases, and case sensitivity first</li>
+    <li><strong>Don't hardcode sample input values</strong> — your code must work for ANY input</li>
+    <li><strong>Don't type output strings from memory</strong> — copy-paste from the problem</li>
+  </ul>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<section id="checklist">
+<h3>Pre-Submit Checklist</h3>
+
+<p>Run through this checklist before hitting Submit. Every single item has caused students to fail:</p>
+
+<table>
+<tr><th>#</th><th>Check</th><th>Why</th></tr>
+<tr><td>1</td><td>All debug prints removed?</td><td>Extra output = all test cases fail</td></tr>
+<tr><td>2</td><td>No prompt messages? ("Enter:", "Input:")</td><td>Extra output = all test cases fail</td></tr>
+<tr><td>3</td><td>Using nextLine().trim() for input?</td><td>Avoids Scanner trap and whitespace issues</td></tr>
+<tr><td>4</td><td>Strings compared with .equals() or .equalsIgnoreCase()?</td><td>== compares addresses, not content</td></tr>
+<tr><td>5</td><td>"Not found" case handled?</td><td>Hidden test case will check this</td></tr>
+<tr><td>6</td><td>Output format matches problem exactly?</td><td>Character-by-character comparison</td></tr>
+<tr><td>7</td><td>Decimal places correct? (%.2f if needed)</td><td>95.5 vs 95.50 is a different string</td></tr>
+<tr><td>8</td><td>Using long for sums? (not int)</td><td>Integer overflow on large inputs</td></tr>
+<tr><td>9</td><td>All sample test cases passing?</td><td>If samples fail, hidden cases definitely fail</td></tr>
+<tr><td>10</td><td>No hardcoded values?</td><td>Must read all values from input</td></tr>
+</table>
+
+<div class="box box-key">
+  <div class="label">Final thought</div>
+  HSE is not about being a genius programmer. It's about being <strong>precise</strong>. Read carefully, handle I/O correctly, match the output format exactly, and cover edge cases. Do these four things and you pass.
+</div>
+
+</section>
+</section>
+
+<div class="footer">
+  <strong>TCS ILP Ultimate Study Guide</strong><br>
+  <a href="../index.html">← Back to Home</a>
+</div>
+
+</div><!-- end .main -->
+
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

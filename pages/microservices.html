@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microservices — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#what-are-microservices">What are Microservices?</a>
+  <a href="#monolith-vs-micro">Monolith vs Microservices</a>
+  <a href="#key-characteristics">Key Characteristics</a>
+  <a href="#architecture-components">Architecture Components</a>
+  <a href="#communication">Communication Between Services</a>
+  <a href="#api-gateway">API Gateway</a>
+  <a href="#service-discovery">Service Discovery</a>
+  <a href="#spring-cloud">Spring Cloud</a>
+  <a href="#circuit-breaker">Circuit Breaker Pattern</a>
+  <a href="#docker">Docker & Containers</a>
+  <a href="#design-patterns">Design Patterns</a>
+  <a href="#advantages-disadvantages">Advantages vs Disadvantages</a>
+  <a href="#real-world-example">Real-World Example</a>
+  <a href="#practice-mcqs">Practice MCQs</a>
+</nav>
+
+<div class="main">
+
+<section class="sec-micro">
+<h2>Microservices Architecture</h2>
+<p>Microservices is one of the most asked topics in PRA and Sprints 3-4. The questions are mostly conceptual — understanding the architecture, components, and when to use what. You won't be asked to build a full microservices system, but you need to know Spring Cloud annotations and the role of each component.</p>
+
+<div class="box box-key">
+  <div class="label">Exam Weight</div>
+  <strong>PRA:</strong> 3-5 MCQs on microservices concepts, monolith comparison, and architecture components.<br>
+  <strong>Sprint 3-4:</strong> You may build simple Spring Boot microservices with Eureka discovery. Know annotations cold.
+</div>
+
+<!-- ─── WHAT ARE MICROSERVICES ─── -->
+<h3 id="what-are-microservices">1. What are Microservices?</h3>
+<p>Microservices is an <strong>architectural style</strong> where an application is built as a collection of <strong>small, independent services</strong>, each running in its own process and communicating via lightweight mechanisms (usually HTTP/REST).</p>
+
+<p>Each service does <strong>ONE thing well</strong> — it has a single responsibility, its own database, and can be deployed independently.</p>
+
+<div class="box box-tip">
+  <div class="label">Think of it this way</div>
+  <strong>Monolith</strong> = one big restaurant kitchen where everyone cooks everything together. If the pizza oven breaks, the whole kitchen shuts down.<br><br>
+  <strong>Microservices</strong> = a food court with specialized stalls. The pizza stall, the burger stall, the juice stall — each operates independently. If the pizza stall has a problem, everyone else keeps running.
+</div>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  The definition question comes in many forms: "What is microservices architecture?", "Which architectural style breaks an application into small independent services?" — all the same answer.
+</div>
+
+<!-- ─── MONOLITH VS MICROSERVICES ─── -->
+<h3 id="monolith-vs-micro">2. Monolithic vs Microservices (ALWAYS ASKED)</h3>
+
+<p>This is the <strong>most frequently asked comparison</strong> in TCS ILP exams. Memorize this table — at least 1-2 questions will come from here.</p>
+
+<h4>Monolithic Architecture</h4>
+<p>The entire application is built as a <strong>single deployable unit</strong>. All features — UI, business logic, data access — are in one codebase, one project, one WAR/JAR file.</p>
+
+<h4>Microservices Architecture</h4>
+<p>Each feature is its own <strong>independently deployable service</strong>. User management is one service, payment is another, notifications is another. Each has its own codebase, database, and deployment pipeline.</p>
+
+<table>
+<tr><th>Aspect</th><th>Monolithic</th><th>Microservices</th></tr>
+<tr><td><strong>Codebase</strong></td><td>Single codebase for everything</td><td>Separate codebase per service</td></tr>
+<tr><td><strong>Deployment</strong></td><td>Deploy entire app for any change</td><td>Deploy only the changed service</td></tr>
+<tr><td><strong>Scaling</strong></td><td>Scale the entire app (vertical)</td><td>Scale individual services (horizontal)</td></tr>
+<tr><td><strong>Technology</strong></td><td>One tech stack for everything</td><td>Each service can use different tech</td></tr>
+<tr><td><strong>Team Structure</strong></td><td>One large team</td><td>Small teams per service</td></tr>
+<tr><td><strong>Failure Impact</strong></td><td>One bug can crash the whole app</td><td>Failure is isolated to one service</td></tr>
+<tr><td><strong>Database</strong></td><td>Shared database</td><td>Database per service</td></tr>
+<tr><td><strong>Communication</strong></td><td>In-process method calls</td><td>Network calls (REST, messaging)</td></tr>
+<tr><td><strong>Complexity</strong></td><td>Simple to develop initially</td><td>Complex (distributed systems)</td></tr>
+<tr><td><strong>Startup Time</strong></td><td>Slow (loads entire app)</td><td>Fast (small services)</td></tr>
+<tr><td><strong>Testing</strong></td><td>Easier (single app)</td><td>Harder (integration across services)</td></tr>
+</table>
+
+<div class="box box-warn">
+  <div class="label">Common Exam Trap</div>
+  "Microservices are always better than monolith" — <strong>FALSE</strong>. For small applications with a small team, monolith is often the better choice. Microservices add complexity that isn't worth it for simple apps. Exam loves this trick.
+</div>
+
+<h4>When to use Monolith?</h4>
+<ul>
+  <li>Small application with limited functionality</li>
+  <li>Small development team</li>
+  <li>Quick prototype / MVP</li>
+  <li>No need for independent scaling</li>
+</ul>
+
+<h4>When to use Microservices?</h4>
+<ul>
+  <li>Large, complex application</li>
+  <li>Multiple teams working in parallel</li>
+  <li>Need to scale specific features independently</li>
+  <li>Different parts need different technologies</li>
+  <li>High availability is critical</li>
+</ul>
+
+<!-- ─── KEY CHARACTERISTICS ─── -->
+<h3 id="key-characteristics">3. Key Characteristics of Microservices</h3>
+
+<p>These are the <strong>defining features</strong> of microservices architecture. Exam asks "which of the following is a characteristic of microservices?"</p>
+
+<table>
+<tr><th>Characteristic</th><th>What It Means</th></tr>
+<tr><td><strong>Single Responsibility</strong></td><td>Each service handles ONE business capability (e.g., only user management, only payments)</td></tr>
+<tr><td><strong>Independent Deployment</strong></td><td>Deploy one service without affecting others. No need to redeploy the whole app.</td></tr>
+<tr><td><strong>Decentralized Data</strong></td><td>Each service owns its own database. No shared database across services.</td></tr>
+<tr><td><strong>Lightweight Communication</strong></td><td>Services talk via REST APIs (HTTP) or message queues. Not heavy protocols like SOAP.</td></tr>
+<tr><td><strong>Technology Agnostic</strong></td><td>User Service can be in Java, Payment Service in Python, Notification Service in Node.js.</td></tr>
+<tr><td><strong>Fault Isolation</strong></td><td>If Payment Service crashes, User Service and Product Service keep working.</td></tr>
+<tr><td><strong>Independently Scalable</strong></td><td>If Order Service gets heavy traffic, scale only that service — not the entire app.</td></tr>
+<tr><td><strong>Organized Around Business</strong></td><td>Teams are organized by business domain (Order team, Payment team), not by technology layers.</td></tr>
+</table>
+
+<div class="box box-key">
+  <div class="label">Memory trick</div>
+  <strong>S-I-D-L-T-F</strong> — Single responsibility, Independent deployment, Decentralized data, Lightweight communication, Technology agnostic, Fault isolation. These six cover 90% of characteristic-based questions.
+</div>
+
+<!-- ─── ARCHITECTURE COMPONENTS ─── -->
+<h3 id="architecture-components">4. Microservices Architecture Components</h3>
+
+<p>A microservices system isn't just services — it needs supporting infrastructure. Know each component's role.</p>
+
+<div class="box box-example">
+  <div class="label">Architecture Diagram (Text)</div>
+<pre><code>
+         ┌──────────────┐
+         │    Client     │  (Browser / Mobile App)
+         └──────┬───────┘
+                │
+         ┌──────▼───────┐
+         │  API Gateway  │  (Single entry point)
+         └──────┬───────┘
+                │
+    ┌───────────┼───────────┐
+    │           │           │
+┌───▼───┐ ┌────▼────┐ ┌────▼────┐
+│ User  │ │ Order   │ │ Payment │  (Microservices)
+│Service│ │ Service │ │ Service │
+└───┬───┘ └────┬────┘ └────┬────┘
+    │          │           │
+┌───▼───┐ ┌────▼────┐ ┌────▼────┐
+│User DB│ │Order DB │ │Pay DB   │  (Each owns its DB)
+└───────┘ └─────────┘ └─────────┘
+
+    All services register with:
+    ┌────────────────────┐
+    │  Service Registry  │  (Eureka Server)
+    │  (Eureka)          │
+    └────────────────────┘
+
+    Config loaded from:
+    ┌────────────────────┐
+    │   Config Server    │  (Centralized config)
+    └────────────────────┘
+</code></pre>
+</div>
+
+<table>
+<tr><th>Component</th><th>Role</th><th>Spring Cloud Tool</th></tr>
+<tr><td><strong>API Gateway</strong></td><td>Single entry point — routes requests, handles auth, rate limiting</td><td>Spring Cloud Gateway / Zuul</td></tr>
+<tr><td><strong>Service Registry</strong></td><td>Services register themselves; other services discover them by name</td><td>Netflix Eureka</td></tr>
+<tr><td><strong>Config Server</strong></td><td>Centralized configuration for all services</td><td>Spring Cloud Config</td></tr>
+<tr><td><strong>Load Balancer</strong></td><td>Distributes incoming requests across service instances</td><td>Ribbon (client-side)</td></tr>
+<tr><td><strong>Circuit Breaker</strong></td><td>Prevents cascading failures when a service is down</td><td>Resilience4j / Hystrix</td></tr>
+<tr><td><strong>Distributed Tracing</strong></td><td>Track a request across multiple services</td><td>Sleuth + Zipkin</td></tr>
+</table>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  Exam often asks: "What is the role of API Gateway?" or "Which component handles service registration?" — know the component-to-role mapping from this table.
+</div>
+
+<!-- ─── COMMUNICATION ─── -->
+<h3 id="communication">5. Communication Between Services</h3>
+
+<p>Services need to talk to each other. There are two main approaches:</p>
+
+<h4>Synchronous Communication</h4>
+<p>Service A calls Service B and <strong>waits for the response</strong> before continuing.</p>
+<ul>
+  <li><strong>REST APIs (HTTP)</strong> — most common, uses JSON over HTTP. Service A makes a GET/POST request to Service B.</li>
+  <li><strong>gRPC</strong> — faster than REST, uses Protocol Buffers (binary format). Used for high-performance internal communication.</li>
+  <li><strong>Feign Client</strong> — Spring Cloud tool that makes REST calls between services look like simple method calls.</li>
+</ul>
+
+<h4>Asynchronous Communication</h4>
+<p>Service A sends a message and <strong>doesn't wait</strong>. Service B processes it later.</p>
+<ul>
+  <li><strong>Message Queues</strong> — RabbitMQ, ActiveMQ. Producer sends message to queue, consumer picks it up.</li>
+  <li><strong>Event Streaming</strong> — Apache Kafka. Services publish events to topics, other services subscribe.</li>
+</ul>
+
+<table>
+<tr><th>Aspect</th><th>Synchronous (REST)</th><th>Asynchronous (Messaging)</th></tr>
+<tr><td><strong>Waiting</strong></td><td>Caller waits for response</td><td>Caller doesn't wait (fire-and-forget)</td></tr>
+<tr><td><strong>Coupling</strong></td><td>Tighter — both services must be up</td><td>Looser — services are decoupled</td></tr>
+<tr><td><strong>Speed</strong></td><td>Immediate response</td><td>Eventually processed</td></tr>
+<tr><td><strong>Use Case</strong></td><td>Get user details, check inventory</td><td>Send email notification, process order</td></tr>
+<tr><td><strong>Failure Handling</strong></td><td>Fails if target is down</td><td>Message waits in queue until target is up</td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">When to use which?</div>
+  <strong>Synchronous:</strong> When you NEED the response right now (e.g., "Is this product in stock?" before placing order).<br>
+  <strong>Asynchronous:</strong> When you DON'T need an immediate response (e.g., "Send a confirmation email" after order is placed).
+</div>
+
+<!-- ─── API GATEWAY ─── -->
+<h3 id="api-gateway">6. API Gateway</h3>
+
+<p>The API Gateway is the <strong>single entry point</strong> for all client requests. Instead of clients calling individual services directly, they call the gateway, and it routes the request to the right service.</p>
+
+<div class="box box-example">
+  <div class="label">How It Works</div>
+<pre><code>
+  Without API Gateway:
+  Client → User Service    (port 8081)
+  Client → Order Service   (port 8082)
+  Client → Payment Service (port 8083)
+  (Client needs to know every service's address!)
+
+  With API Gateway:
+  Client → API Gateway (port 8080) → routes to correct service
+  Client only knows ONE address!
+</code></pre>
+</div>
+
+<h4>What API Gateway Does:</h4>
+<ul>
+  <li><strong>Request Routing</strong> — forwards <code>/api/users/**</code> to User Service, <code>/api/orders/**</code> to Order Service</li>
+  <li><strong>Authentication & Authorization</strong> — validates JWT tokens before forwarding</li>
+  <li><strong>Rate Limiting</strong> — prevents too many requests from one client</li>
+  <li><strong>Load Balancing</strong> — distributes across multiple instances of a service</li>
+  <li><strong>Request/Response Transformation</strong> — modifies headers, aggregates responses</li>
+  <li><strong>SSL Termination</strong> — handles HTTPS, forwards HTTP internally</li>
+</ul>
+
+<h4>Spring Cloud Gateway Config (Know the Format)</h4>
+<pre><code><span class="cmt"># application.yml for API Gateway</span>
+<span class="kw">spring</span>:
+  <span class="kw">cloud</span>:
+    <span class="kw">gateway</span>:
+      <span class="kw">routes</span>:
+        - <span class="kw">id</span>: <span class="str">user-service</span>
+          <span class="kw">uri</span>: <span class="str">lb://USER-SERVICE</span>
+          <span class="kw">predicates</span>:
+            - <span class="str">Path=/api/users/**</span>
+        - <span class="kw">id</span>: <span class="str">order-service</span>
+          <span class="kw">uri</span>: <span class="str">lb://ORDER-SERVICE</span>
+          <span class="kw">predicates</span>:
+            - <span class="str">Path=/api/orders/**</span></code></pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  "What is the purpose of API Gateway in microservices?" — Answer: Single entry point that handles routing, authentication, rate limiting, and load balancing. Don't confuse with Service Registry (which handles service discovery, not routing).
+</div>
+
+<!-- ─── SERVICE DISCOVERY ─── -->
+<h3 id="service-discovery">7. Service Discovery (Eureka)</h3>
+
+<h4>The Problem</h4>
+<p>In microservices, services run on <strong>dynamic IPs and ports</strong>. If Order Service needs to call User Service, how does it know where User Service is running? Hardcoding IPs breaks everything when services scale or restart.</p>
+
+<h4>The Solution: Service Registry</h4>
+<p>A <strong>Service Registry</strong> (like Netflix Eureka) acts as a phone book for services:</p>
+<ol>
+  <li><strong>Register</strong> — When a service starts, it registers itself with Eureka ("I'm User Service, running at 192.168.1.5:8081")</li>
+  <li><strong>Discover</strong> — When Order Service needs User Service, it asks Eureka ("Where is User Service?")</li>
+  <li><strong>Call</strong> — Order Service gets the address and makes the call</li>
+</ol>
+
+<h4>Client-Side vs Server-Side Discovery</h4>
+<table>
+<tr><th>Type</th><th>How It Works</th><th>Example</th></tr>
+<tr><td><strong>Client-Side</strong></td><td>Client queries registry and picks an instance itself</td><td>Netflix Eureka + Ribbon</td></tr>
+<tr><td><strong>Server-Side</strong></td><td>Client calls a load balancer, which queries registry and routes</td><td>AWS ELB, Kubernetes</td></tr>
+</table>
+
+<h4>Eureka Setup (Know These Annotations)</h4>
+<pre><code><span class="cmt">// Eureka SERVER — the registry itself</span>
+<span class="kw">@SpringBootApplication</span>
+<span class="kw">@EnableEurekaServer</span>
+<span class="kw">public class</span> <span class="type">EurekaServerApplication</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        SpringApplication.<span class="fn">run</span>(EurekaServerApplication.<span class="kw">class</span>, args);
+    }
+}
+
+<span class="cmt">// Eureka CLIENT — any microservice that registers</span>
+<span class="kw">@SpringBootApplication</span>
+<span class="kw">@EnableEurekaClient</span>
+<span class="kw">public class</span> <span class="type">UserServiceApplication</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        SpringApplication.<span class="fn">run</span>(UserServiceApplication.<span class="kw">class</span>, args);
+    }
+}</code></pre>
+
+<pre><code><span class="cmt"># Eureka Server — application.properties</span>
+server.port=<span class="num">8761</span>
+eureka.client.register-with-eureka=<span class="kw">false</span>
+eureka.client.fetch-registry=<span class="kw">false</span>
+
+<span class="cmt"># Eureka Client — application.properties</span>
+spring.application.name=<span class="str">user-service</span>
+eureka.client.service-url.defaultZone=<span class="str">http://localhost:8761/eureka/</span></code></pre>
+
+<div class="box box-warn">
+  <div class="label">Don't confuse these</div>
+  <strong>@EnableEurekaServer</strong> — goes on the REGISTRY application (the phone book itself).<br>
+  <strong>@EnableEurekaClient</strong> — goes on EACH microservice that wants to register.<br>
+  The server has <code>register-with-eureka=false</code> because the registry doesn't register itself!
+</div>
+
+<!-- ─── SPRING CLOUD ─── -->
+<h3 id="spring-cloud">8. Spring Cloud for Microservices</h3>
+
+<p><strong>Spring Cloud</strong> provides tools to implement microservices patterns on top of Spring Boot. Know the mapping:</p>
+
+<table>
+<tr><th>Pattern</th><th>Spring Cloud Tool</th><th>Annotation</th></tr>
+<tr><td>Service Discovery</td><td>Netflix Eureka</td><td><code>@EnableEurekaServer</code>, <code>@EnableEurekaClient</code></td></tr>
+<tr><td>API Gateway</td><td>Spring Cloud Gateway / Zuul</td><td><code>@EnableZuulProxy</code> (Zuul)</td></tr>
+<tr><td>Service-to-Service Calls</td><td>OpenFeign</td><td><code>@EnableFeignClients</code>, <code>@FeignClient</code></td></tr>
+<tr><td>Client-Side Load Balancing</td><td>Ribbon</td><td>Auto-configured with Eureka</td></tr>
+<tr><td>Circuit Breaker</td><td>Resilience4j / Hystrix</td><td><code>@CircuitBreaker</code></td></tr>
+<tr><td>Centralized Config</td><td>Spring Cloud Config</td><td><code>@EnableConfigServer</code></td></tr>
+<tr><td>Distributed Tracing</td><td>Sleuth + Zipkin</td><td>Auto-configured</td></tr>
+</table>
+
+<h4>Feign Client — Service-to-Service Calls</h4>
+<p>Instead of writing RestTemplate boilerplate, Feign lets you call other services like calling a local method:</p>
+
+<pre><code><span class="cmt">// Enable Feign in main class</span>
+<span class="kw">@SpringBootApplication</span>
+<span class="kw">@EnableFeignClients</span>
+<span class="kw">public class</span> <span class="type">OrderServiceApplication</span> { ... }
+
+<span class="cmt">// Define a Feign Client interface</span>
+<span class="kw">@FeignClient</span>(name = <span class="str">"USER-SERVICE"</span>)
+<span class="kw">public interface</span> <span class="type">UserClient</span> {
+
+    <span class="kw">@GetMapping</span>(<span class="str">"/api/users/{id}"</span>)
+    User <span class="fn">getUserById</span>(<span class="kw">@PathVariable</span> Long id);
+}
+
+<span class="cmt">// Use it in Order Service — just inject and call!</span>
+<span class="kw">@RestController</span>
+<span class="kw">public class</span> <span class="type">OrderController</span> {
+
+    <span class="kw">@Autowired</span>
+    <span class="kw">private</span> UserClient userClient;
+
+    <span class="kw">@GetMapping</span>(<span class="str">"/orders/{id}"</span>)
+    <span class="kw">public</span> Order <span class="fn">getOrder</span>(<span class="kw">@PathVariable</span> Long id) {
+        User user = userClient.<span class="fn">getUserById</span>(id);  <span class="cmt">// Calls User Service via Eureka!</span>
+        <span class="cmt">// ...</span>
+    }
+}</code></pre>
+
+<div class="box box-key">
+  <div class="label">Key Point</div>
+  <code>@FeignClient(name = "USER-SERVICE")</code> — the <code>name</code> must match the <code>spring.application.name</code> of the target service registered in Eureka. Feign uses Eureka to resolve the actual address.
+</div>
+
+<!-- ─── CIRCUIT BREAKER ─── -->
+<h3 id="circuit-breaker">9. Circuit Breaker Pattern</h3>
+
+<h4>The Problem</h4>
+<p>If Order Service calls Payment Service, and Payment Service is down, Order Service keeps trying and waiting. Meanwhile, requests pile up, Order Service runs out of resources, and crashes too. Now User Service calls Order Service which is also down — <strong>cascading failure</strong>. One service going down takes everything down.</p>
+
+<h4>The Solution: Circuit Breaker</h4>
+<p>Like an electrical circuit breaker — when it detects too many failures, it <strong>"opens" the circuit</strong> and stops calling the failing service. Instead, it returns a fallback response immediately.</p>
+
+<h4>Three States</h4>
+<table>
+<tr><th>State</th><th>What Happens</th><th>When It Transitions</th></tr>
+<tr><td><strong>CLOSED</strong> (Normal)</td><td>All requests pass through normally</td><td>Moves to OPEN when failure threshold is reached</td></tr>
+<tr><td><strong>OPEN</strong> (Failing)</td><td>All requests immediately return fallback response. No calls to failing service.</td><td>After a timeout period, moves to HALF-OPEN</td></tr>
+<tr><td><strong>HALF-OPEN</strong> (Testing)</td><td>Allows a few test requests through. If they succeed, back to CLOSED. If they fail, back to OPEN.</td><td>Success → CLOSED, Failure → OPEN</td></tr>
+</table>
+
+<div class="box box-example">
+  <div class="label">Circuit Breaker Flow</div>
+<pre><code>
+  CLOSED (all good)
+     │
+     │ failures exceed threshold (e.g., 5 failures in a row)
+     ▼
+  OPEN (stop calling, return fallback)
+     │
+     │ wait timeout (e.g., 30 seconds)
+     ▼
+  HALF-OPEN (try a few requests)
+     │
+     ├── success → back to CLOSED ✓
+     └── failure → back to OPEN ✗
+</code></pre>
+</div>
+
+<h4>Resilience4j Example (Know the Concept)</h4>
+<pre><code><span class="kw">@RestController</span>
+<span class="kw">public class</span> <span class="type">OrderController</span> {
+
+    <span class="kw">@GetMapping</span>(<span class="str">"/orders/{id}"</span>)
+    <span class="kw">@CircuitBreaker</span>(name = <span class="str">"paymentService"</span>, fallbackMethod = <span class="str">"paymentFallback"</span>)
+    <span class="kw">public</span> String <span class="fn">getOrder</span>(<span class="kw">@PathVariable</span> Long id) {
+        <span class="cmt">// calls Payment Service — may fail</span>
+        <span class="kw">return</span> restTemplate.<span class="fn">getForObject</span>(<span class="str">"http://PAYMENT-SERVICE/pay/"</span> + id, String.<span class="kw">class</span>);
+    }
+
+    <span class="cmt">// Fallback — runs when circuit is OPEN</span>
+    <span class="kw">public</span> String <span class="fn">paymentFallback</span>(Long id, Throwable t) {
+        <span class="kw">return</span> <span class="str">"Payment service is currently unavailable. Please try later."</span>;
+    }
+}</code></pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  The three states (Closed → Open → Half-Open) are the most asked circuit breaker question. Remember: <strong>CLOSED = normal</strong> (counterintuitive — think of it like an electrical circuit where closed = current flows).
+</div>
+
+<!-- ─── DOCKER ─── -->
+<h3 id="docker">10. Docker & Containers (Brief)</h3>
+
+<p>Docker packages your microservice + all its dependencies into a <strong>container</strong> — a lightweight, portable unit that runs the same everywhere.</p>
+
+<h4>Key Concepts</h4>
+<table>
+<tr><th>Concept</th><th>What It Is</th></tr>
+<tr><td><strong>Docker Image</strong></td><td>A blueprint/template — like a class in Java. Read-only.</td></tr>
+<tr><td><strong>Docker Container</strong></td><td>A running instance of an image — like an object. You can have multiple containers from one image.</td></tr>
+<tr><td><strong>Dockerfile</strong></td><td>A text file with instructions to build an image.</td></tr>
+<tr><td><strong>Docker Hub</strong></td><td>Public registry for images (like GitHub for Docker images).</td></tr>
+<tr><td><strong>Docker Compose</strong></td><td>Tool to run multiple containers together (e.g., all microservices + databases).</td></tr>
+</table>
+
+<h4>Dockerfile Basics</h4>
+<pre><code><span class="cmt"># Dockerfile for a Spring Boot microservice</span>
+<span class="kw">FROM</span> openjdk:<span class="num">17</span>-jdk-slim
+<span class="kw">COPY</span> target/user-service.<span class="num">0</span>.<span class="num">0</span>.<span class="num">1</span>.jar app.jar
+<span class="kw">EXPOSE</span> <span class="num">8081</span>
+<span class="kw">ENTRYPOINT</span> [<span class="str">"java"</span>, <span class="str">"-jar"</span>, <span class="str">"app.jar"</span>]</code></pre>
+
+<h4>Common Docker Commands</h4>
+<pre><code><span class="cmt"># Build an image from Dockerfile</span>
+docker build -t user-service .
+
+<span class="cmt"># Run a container from the image</span>
+docker run -p <span class="num">8081</span>:<span class="num">8081</span> user-service
+
+<span class="cmt"># List running containers</span>
+docker ps
+
+<span class="cmt"># Stop a container</span>
+docker stop &lt;container-id&gt;
+
+<span class="cmt"># List images</span>
+docker images</code></pre>
+
+<div class="box box-tip">
+  <div class="label">Image vs Container — Exam favorite</div>
+  <strong>Image</strong> = blueprint (like a Java class). Immutable, stored on disk.<br>
+  <strong>Container</strong> = running instance (like a Java object). Has its own state, can be started/stopped.
+</div>
+
+<!-- ─── DESIGN PATTERNS ─── -->
+<h3 id="design-patterns">11. Microservices Design Patterns</h3>
+
+<h4>Database Per Service</h4>
+<p>Each microservice has its own database. Order Service uses its own Order DB, User Service uses User DB. They <strong>never</strong> access each other's database directly — only through APIs.</p>
+<p><strong>Why:</strong> Loose coupling, independent deployment, each service can choose its own database type (SQL, NoSQL).</p>
+
+<h4>Saga Pattern (Distributed Transactions)</h4>
+<p>In monolith, you have one database transaction. In microservices, an "order" might involve Order Service, Payment Service, and Inventory Service — each with its own DB. How do you keep them consistent?</p>
+<p><strong>Saga</strong> = a sequence of local transactions. If one step fails, compensating transactions undo the previous steps.</p>
+
+<div class="box box-example">
+  <div class="label">Saga Example: Place Order</div>
+  <ol>
+    <li>Order Service → Create order (PENDING)</li>
+    <li>Payment Service → Charge customer</li>
+    <li>Inventory Service → Reserve stock</li>
+    <li>Order Service → Update order (CONFIRMED)</li>
+  </ol>
+  If Payment fails at step 2 → Order Service runs compensating transaction (cancel order).
+</div>
+
+<p>Two types of Saga:</p>
+<ul>
+  <li><strong>Choreography</strong> — each service publishes events, next service listens and reacts. No central controller.</li>
+  <li><strong>Orchestration</strong> — a central orchestrator tells each service what to do and when.</li>
+</ul>
+
+<h4>CQRS (Command Query Responsibility Segregation)</h4>
+<p>Separate the <strong>write model</strong> (commands: create, update, delete) from the <strong>read model</strong> (queries: get, search). Different databases or models for reads vs writes. Useful when read and write patterns are very different.</p>
+
+<h4>Event-Driven Architecture</h4>
+<p>Services communicate by publishing and subscribing to <strong>events</strong>. When Order Service creates an order, it publishes an "OrderCreated" event. Payment Service subscribes to this event and processes payment. Decouples services completely.</p>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  Know what "Database per Service" means and why it's used. Saga pattern is asked as "How do you handle distributed transactions in microservices?" CQRS is rarely asked in detail — just know the full form and one-line definition.
+</div>
+
+<!-- ─── ADVANTAGES VS DISADVANTAGES ─── -->
+<h3 id="advantages-disadvantages">12. Advantages vs Disadvantages</h3>
+
+<h4>Advantages</h4>
+<table>
+<tr><th>Advantage</th><th>Explanation</th></tr>
+<tr><td><strong>Independent Deployment</strong></td><td>Deploy one service without touching others</td></tr>
+<tr><td><strong>Independent Scaling</strong></td><td>Scale only the services that need it</td></tr>
+<tr><td><strong>Technology Freedom</strong></td><td>Each service can use different languages, frameworks, databases</td></tr>
+<tr><td><strong>Fault Isolation</strong></td><td>One service crashing doesn't take down the whole system</td></tr>
+<tr><td><strong>Faster Development</strong></td><td>Small teams work on small services — faster iterations</td></tr>
+<tr><td><strong>Easy to Understand</strong></td><td>Each service is small and focused — easier to comprehend</td></tr>
+<tr><td><strong>Reusability</strong></td><td>Services can be reused across different applications</td></tr>
+</table>
+
+<h4>Disadvantages</h4>
+<table>
+<tr><th>Disadvantage</th><th>Explanation</th></tr>
+<tr><td><strong>Complexity</strong></td><td>Distributed system = harder to develop, deploy, and debug</td></tr>
+<tr><td><strong>Network Latency</strong></td><td>Services communicate over network — slower than in-process calls</td></tr>
+<tr><td><strong>Data Consistency</strong></td><td>No shared database — ensuring consistency across services is hard</td></tr>
+<tr><td><strong>Testing Difficulty</strong></td><td>Integration testing across services is complex</td></tr>
+<tr><td><strong>Operational Overhead</strong></td><td>Need monitoring, logging, deployment pipelines for EACH service</td></tr>
+<tr><td><strong>Debugging</strong></td><td>A request goes through multiple services — tracing issues is harder</td></tr>
+</table>
+
+<div class="box box-warn">
+  <div class="label">Exam Trap</div>
+  Microservices are NOT always the answer. The exam may ask "What is a disadvantage of microservices?" — complexity and data consistency are the top answers. Don't fall for "microservices have no disadvantages."
+</div>
+
+<!-- ─── REAL WORLD EXAMPLE ─── -->
+<h3 id="real-world-example">13. Real-World Example: E-Commerce App</h3>
+
+<p>Let's see how a real e-commerce application would be split into microservices:</p>
+
+<div class="box box-example">
+  <div class="label">E-Commerce Microservices Architecture</div>
+<pre><code>
+  ┌─────────────────────────────────────────────┐
+  │              API Gateway (:8080)             │
+  └──────┬──────┬──────┬──────┬──────┬──────────┘
+         │      │      │      │      │
+    ┌────▼──┐ ┌─▼────┐ ┌▼─────┐ ┌───▼───┐ ┌────▼────────┐
+    │ User  │ │Produc│ │Order │ │Payment│ │Notification │
+    │Service│ │tServ.│ │Serv. │ │Service│ │  Service    │
+    │ :8081 │ │:8082 │ │:8083 │ │ :8084 │ │   :8085     │
+    └───┬───┘ └──┬───┘ └──┬───┘ └───┬───┘ └─────────────┘
+        │        │        │        │
+    ┌───▼───┐ ┌──▼───┐ ┌──▼───┐ ┌──▼────┐
+    │UserDB │ │Prod  │ │Order │ │PayDB  │
+    │(MySQL)│ │DB    │ │DB    │ │       │
+    └───────┘ │(Mongo│ └──────┘ └───────┘
+              │ DB)  │
+              └──────┘
+</code></pre>
+</div>
+
+<table>
+<tr><th>Service</th><th>Responsibility</th><th>Communicates With</th></tr>
+<tr><td><strong>User Service</strong></td><td>Registration, login, profile management</td><td>Auth only — mostly independent</td></tr>
+<tr><td><strong>Product Service</strong></td><td>Product catalog, search, inventory</td><td>Order Service (stock check)</td></tr>
+<tr><td><strong>Order Service</strong></td><td>Create/manage orders</td><td>User Service, Product Service, Payment Service</td></tr>
+<tr><td><strong>Payment Service</strong></td><td>Process payments, refunds</td><td>Order Service</td></tr>
+<tr><td><strong>Notification Service</strong></td><td>Send emails, SMS, push notifications</td><td>Listens to events from all services</td></tr>
+</table>
+
+<h4>How a Customer Places an Order:</h4>
+<ol>
+  <li>Client sends request to <strong>API Gateway</strong></li>
+  <li>Gateway routes to <strong>Order Service</strong></li>
+  <li>Order Service calls <strong>User Service</strong> (via Feign) to validate user</li>
+  <li>Order Service calls <strong>Product Service</strong> to check stock</li>
+  <li>Order Service calls <strong>Payment Service</strong> to process payment</li>
+  <li>Payment Service publishes <strong>"PaymentCompleted"</strong> event</li>
+  <li><strong>Notification Service</strong> listens to the event and sends confirmation email</li>
+  <li>Order status updated to CONFIRMED</li>
+</ol>
+
+<div class="box box-key">
+  <div class="label">Notice the patterns</div>
+  Steps 3-5 are <strong>synchronous</strong> (need immediate response). Steps 6-7 are <strong>asynchronous</strong> (event-driven, no waiting). The Notification Service uses a <strong>message queue</strong> — it doesn't need to respond to the Order Service.
+</div>
+
+<!-- ─── PRACTICE MCQs ─── -->
+<h3 id="practice-mcqs">14. Practice MCQs</h3>
+
+<div class="practice">
+  <span class="q-label">Q1</span>
+  <div class="question">Which architecture style breaks an application into small, independently deployable services?</div>
+  <ol class="options">
+    <li>Monolithic</li>
+    <li>Microservices</li>
+    <li>Service-Oriented Architecture (SOA)</li>
+    <li>Serverless</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1"><strong>B) Microservices</strong> — each service is independently deployable and handles one business capability.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q2</span>
+  <div class="question">In a monolithic architecture, how is the application deployed?</div>
+  <ol class="options">
+    <li>Each module is deployed separately</li>
+    <li>As a single deployable unit</li>
+    <li>Using Docker containers</li>
+    <li>Through message queues</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1"><strong>B) As a single deployable unit</strong> — monolith = one big deployment. Change anything, redeploy everything.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q3</span>
+  <div class="question">What is the primary role of an API Gateway in microservices?</div>
+  <ol class="options">
+    <li>Store data for all services</li>
+    <li>Act as a single entry point for all client requests</li>
+    <li>Compile the source code</li>
+    <li>Manage database connections</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1"><strong>B) Act as a single entry point</strong> — API Gateway routes requests, handles auth, rate limiting, and load balancing.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q4</span>
+  <div class="question">Which Netflix component is used for Service Discovery in Spring Cloud?</div>
+  <ol class="options">
+    <li>Zuul</li>
+    <li>Hystrix</li>
+    <li>Eureka</li>
+    <li>Ribbon</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2"><strong>C) Eureka</strong> — Netflix Eureka is the service registry where services register and discover each other. Zuul = gateway, Hystrix = circuit breaker, Ribbon = load balancer.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q5</span>
+  <div class="question">What are the three states of a Circuit Breaker?</div>
+  <ol class="options">
+    <li>Start, Stop, Pause</li>
+    <li>Closed, Open, Half-Open</li>
+    <li>Active, Inactive, Pending</li>
+    <li>Connected, Disconnected, Reconnecting</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1"><strong>B) Closed, Open, Half-Open</strong> — Closed = normal flow, Open = stop calling failing service, Half-Open = testing if service recovered.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q6</span>
+  <div class="question">Which annotation is used to enable a Eureka Server?</div>
+  <ol class="options">
+    <li>@EnableEurekaClient</li>
+    <li>@EnableDiscoveryClient</li>
+    <li>@EnableEurekaServer</li>
+    <li>@EnableServiceRegistry</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2"><strong>C) @EnableEurekaServer</strong> — placed on the main class of the Eureka registry application. @EnableEurekaClient goes on the microservices that register with it.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q7</span>
+  <div class="question">In microservices, how do services typically communicate synchronously?</div>
+  <ol class="options">
+    <li>Shared database</li>
+    <li>REST APIs over HTTP</li>
+    <li>File transfer</li>
+    <li>Shared memory</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1"><strong>B) REST APIs over HTTP</strong> — synchronous communication in microservices uses lightweight REST/HTTP calls. Shared database violates the "database per service" principle.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q8</span>
+  <div class="question">What is the "Database per Service" pattern?</div>
+  <ol class="options">
+    <li>All services share one large database</li>
+    <li>Each service has its own private database</li>
+    <li>Only the API Gateway has a database</li>
+    <li>Databases are not used in microservices</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1"><strong>B) Each service has its own private database</strong> — this ensures loose coupling. Services access other service's data only through APIs, never by directly querying another service's database.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q9</span>
+  <div class="question">What is a Docker container?</div>
+  <ol class="options">
+    <li>A virtual machine</li>
+    <li>A running instance of a Docker image</li>
+    <li>A type of database</li>
+    <li>A programming language</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1"><strong>B) A running instance of a Docker image</strong> — Image = blueprint (class), Container = running instance (object). A container is lightweight, not a full VM.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q10</span>
+  <div class="question">Which of the following is NOT a characteristic of microservices?</div>
+  <ol class="options">
+    <li>Single responsibility</li>
+    <li>Shared database across all services</li>
+    <li>Independent deployment</li>
+    <li>Fault isolation</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1"><strong>B) Shared database</strong> — microservices use "database per service" pattern. Shared database creates tight coupling and defeats the purpose of microservices.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q11</span>
+  <div class="question">What problem does the Saga pattern solve?</div>
+  <ol class="options">
+    <li>Service discovery</li>
+    <li>Distributed transactions across microservices</li>
+    <li>Load balancing</li>
+    <li>API routing</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1"><strong>B) Distributed transactions</strong> — Saga handles transactions that span multiple services by using a sequence of local transactions with compensating actions for rollback.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q12</span>
+  <div class="question">What does @FeignClient do in Spring Cloud?</div>
+  <ol class="options">
+    <li>Creates a database connection</li>
+    <li>Enables declarative REST client for service-to-service calls</li>
+    <li>Configures the API Gateway</li>
+    <li>Enables circuit breaker</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1"><strong>B) Declarative REST client</strong> — @FeignClient creates a proxy that lets you call another microservice as if calling a local interface method. It uses Eureka to resolve the service address.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q13</span>
+  <div class="question">In Circuit Breaker pattern, what does the "CLOSED" state mean?</div>
+  <ol class="options">
+    <li>The service is down</li>
+    <li>Requests are blocked</li>
+    <li>Everything is working normally — requests flow through</li>
+    <li>The circuit breaker is disabled</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2"><strong>C) Everything is working normally</strong> — CLOSED = circuit is complete, current (requests) flows through. Think of it like an electrical circuit. OPEN = circuit broken, no flow.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q14</span>
+  <div class="question">Which is a disadvantage of microservices architecture?</div>
+  <ol class="options">
+    <li>Independent deployment</li>
+    <li>Technology freedom</li>
+    <li>Increased complexity of distributed systems</li>
+    <li>Fault isolation</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2"><strong>C) Increased complexity</strong> — distributed systems bring challenges: network latency, data consistency, debugging across services, operational overhead for each service.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q15</span>
+  <div class="question">Which type of communication is best for sending notification emails after an order?</div>
+  <ol class="options">
+    <li>Synchronous REST call</li>
+    <li>Direct database query</li>
+    <li>Asynchronous messaging (message queue)</li>
+    <li>gRPC</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2"><strong>C) Asynchronous messaging</strong> — notifications don't need immediate response. Order Service publishes event, Notification Service picks it up from the queue and sends email. No waiting.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q16</span>
+  <div class="question">What is the difference between Docker image and Docker container?</div>
+  <ol class="options">
+    <li>They are the same thing</li>
+    <li>Image is a running process, container is a template</li>
+    <li>Image is a read-only template, container is a running instance</li>
+    <li>Container is stored in Docker Hub, image runs locally</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2"><strong>C) Image = read-only template, Container = running instance</strong> — like Class vs Object in Java. You build an image, then run containers from it.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q17</span>
+  <div class="question">Why does the Eureka Server have <code>register-with-eureka=false</code> in its configuration?</div>
+  <ol class="options">
+    <li>To disable Eureka</li>
+    <li>Because the server should not register itself as a client</li>
+    <li>To enable security</li>
+    <li>To allow only one instance</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1"><strong>B) The server should not register itself</strong> — Eureka Server IS the registry. It doesn't need to register with itself. Only client microservices register.</div>
+</div>
+
+<div class="practice">
+  <span class="q-label">Q18</span>
+  <div class="question">When should you choose monolithic architecture over microservices?</div>
+  <ol class="options">
+    <li>When building a large-scale enterprise application</li>
+    <li>When you need independent scaling of components</li>
+    <li>When building a small application with a small team</li>
+    <li>When different services need different technologies</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2"><strong>C) Small application, small team</strong> — monolith is simpler to develop, deploy, and debug. Microservices add unnecessary complexity for small projects.</div>
+</div>
+
+</section>
+
+  <div class="footer">
+    <a href="angular.html">← Angular</a> |
+    <a href="hse-coding.html">HSE Coding →</a>
+  </div>
+</div>
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

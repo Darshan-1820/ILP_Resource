@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSE Coding Patterns — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#how-hackerrank-works">How HackerRank Works</a>
+  <a href="#java-template">Java Template (Memorize)</a>
+  <a href="#input-patterns">Input Reading Patterns</a>
+  <a href="#type-conversion">Type Conversion</a>
+  <a href="#floating-point">Floating Point Precision</a>
+  <a href="#string-patterns">String Manipulation</a>
+  <a href="#array-patterns">Array Patterns</a>
+  <a href="#problem-types">Common Problem Types</a>
+  <a href="#json-api">JSON / API Processing</a>
+  <a href="#constructor-patterns">Constructor Patterns</a>
+  <a href="#exception-handling">Exception Handling</a>
+  <a href="#collections">Collections Shortcuts</a>
+  <a href="#output-formatting">Output Formatting</a>
+  <a href="#traps-gotchas">Common Traps & Gotchas</a>
+  <a href="#practice-problems">10 Practice Problems</a>
+</nav>
+
+<div class="main">
+<section class="sec-coding">
+
+<h2>HSE HackerRank Coding Patterns</h2>
+<p>HSE (HackerRank Software Engineering Assessment) is one of the <strong>toughest ILP exams</strong> — conducted on the HackerRank platform. REST APIs and Java coding are known to be important. Exact format may vary by batch. This page gives you coding templates and patterns to prepare.</p>
+
+<div class="box box-warn">
+  <div class="label">HSE Reality Check</div>
+  <strong>HackerRank platform. REST APIs are critical.</strong> You write complete programs with proper input/output. Your output must match the expected output <strong>EXACTLY</strong> — one extra space or newline and the test case fails. See <a href="hackerrank-tips.html" style="color:var(--danger)">HackerRank Tips</a> for a full guide on the platform, I/O handling, and common mistakes.
+</div>
+
+<div class="box box-key">
+  <div class="label">What This Page Gives You</div>
+  <ul>
+    <li>Ready-to-paste Java templates for every input pattern</li>
+    <li>The Scanner trap that catches 80% of students</li>
+    <li>Type conversion cheat sheet (always needed)</li>
+    <li>Output formatting for exact decimal precision</li>
+    <li>10 full practice problems with complete solutions</li>
+  </ul>
+</div>
+
+<!-- ─── HOW HACKERRANK WORKS ─── -->
+<h3 id="how-hackerrank-works">1. How HackerRank Works</h3>
+<p>HackerRank runs your Java code against multiple hidden test cases. Your job is simple:</p>
+
+<table>
+<tr><th>Step</th><th>What You Do</th></tr>
+<tr><td><strong>1. Read</strong></td><td>Read input from <code>stdin</code> using <code>Scanner</code></td></tr>
+<tr><td><strong>2. Process</strong></td><td>Apply the logic to solve the problem</td></tr>
+<tr><td><strong>3. Print</strong></td><td>Print output to <code>stdout</code> using <code>System.out.println()</code></td></tr>
+</table>
+
+<div class="box box-warn">
+  <div class="label">Critical Rules</div>
+  <ul>
+    <li><strong>Output must match EXACTLY</strong> — no extra spaces, no extra newlines, no debug prints</li>
+    <li><strong>Time limit:</strong> typically 2-10 seconds. Brute force may time out on large inputs</li>
+    <li><strong>Memory limit:</strong> typically 256 MB. Don't create unnecessary objects</li>
+    <li><strong>Class name must be <code>Solution</code></strong> — HackerRank expects this exact name</li>
+    <li><strong>No package declaration</strong> — do NOT write <code>package</code> at the top</li>
+    <li><strong>Remove all debug prints</strong> before submitting — any extra output fails the test</li>
+  </ul>
+</div>
+
+<div class="box box-tip">
+  <div class="label">Pro Tip</div>
+  Always test with the sample input first. Copy-paste the sample input, run your code, and compare output character-by-character. Then submit.
+</div>
+
+<!-- ─── JAVA TEMPLATE ─── -->
+<h3 id="java-template">2. HackerRank Java Template (MEMORIZE THIS)</h3>
+<p>This is the skeleton you type first for every HSE problem. Memorize it cold.</p>
+
+<pre><span class="kw">import</span> java.util.*;
+<span class="kw">import</span> java.io.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+
+        <span class="cmt">// Step 1: Read input</span>
+
+        <span class="cmt">// Step 2: Process / solve</span>
+
+        <span class="cmt">// Step 3: Print output</span>
+
+        sc.close();
+    }
+}</pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  The class name <strong>MUST</strong> be <code>Solution</code> (capital S). Not <code>Main</code>, not <code>solution</code>, not your name. HackerRank won't compile otherwise.
+</div>
+
+<div class="box box-key">
+  <div class="label">Why import java.util.* and java.io.*?</div>
+  <code>java.util.*</code> gives you Scanner, ArrayList, HashMap, Arrays, Collections — everything you'll need. <code>java.io.*</code> gives you BufferedReader and I/O classes for the API/JSON pattern. Just always import both. No penalty for unused imports.
+</div>
+
+<!-- ─── INPUT READING PATTERNS ─── -->
+<h3 id="input-patterns">3. Input Reading Patterns (CRITICAL)</h3>
+<p>This section alone will save you from 80% of HSE failures. Most students know the logic but can't read input correctly.</p>
+
+<h4>Read a Single Integer</h4>
+<pre><span class="kw">int</span> n = sc.<span class="fn">nextInt</span>();</pre>
+
+<h4>Read a Single Long</h4>
+<pre><span class="kw">long</span> n = sc.<span class="fn">nextLong</span>();</pre>
+
+<h4>Read a Single Double</h4>
+<pre><span class="kw">double</span> d = sc.<span class="fn">nextDouble</span>();</pre>
+
+<h4>Read a Single Word (no spaces)</h4>
+<pre><span class="type">String</span> word = sc.<span class="fn">next</span>();  <span class="cmt">// reads until whitespace</span></pre>
+
+<h4>Read an Entire Line (with spaces)</h4>
+<pre><span class="type">String</span> line = sc.<span class="fn">nextLine</span>();  <span class="cmt">// reads entire line including spaces</span></pre>
+
+<div class="box box-warn">
+  <div class="label">THE SCANNER TRAP — #1 Reason Students Fail</div>
+  <p>When you call <code>nextInt()</code>, it reads the number but leaves the <strong>newline character (\n)</strong> in the buffer. If you then call <code>nextLine()</code>, it reads that leftover newline — giving you an empty string!</p>
+  <pre><span class="cmt">// BROKEN — nextLine() reads the leftover \n</span>
+<span class="kw">int</span> n = sc.<span class="fn">nextInt</span>();
+<span class="type">String</span> name = sc.<span class="fn">nextLine</span>();  <span class="cmt">// name = "" (empty!)</span>
+
+<span class="cmt">// FIXED — consume the leftover \n first</span>
+<span class="kw">int</span> n = sc.<span class="fn">nextInt</span>();
+sc.<span class="fn">nextLine</span>();  <span class="cmt">// eat the leftover newline</span>
+<span class="type">String</span> name = sc.<span class="fn">nextLine</span>();  <span class="cmt">// now reads correctly</span></pre>
+  <p><strong>Rule:</strong> After EVERY <code>nextInt()</code>, <code>nextDouble()</code>, or <code>next()</code> that's followed by <code>nextLine()</code>, add a dummy <code>sc.nextLine();</code> to consume the leftover newline.</p>
+</div>
+
+<h4>Read N Integers into an Array</h4>
+<pre><span class="kw">int</span> n = sc.<span class="fn">nextInt</span>();
+<span class="kw">int</span>[] arr = <span class="kw">new int</span>[n];
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+    arr[i] = sc.<span class="fn">nextInt</span>();
+}</pre>
+
+<h4>Read a Line of Space-Separated Integers</h4>
+<pre><span class="type">String</span> line = sc.<span class="fn">nextLine</span>();
+<span class="type">String</span>[] parts = line.<span class="fn">split</span>(<span class="str">" "</span>);
+<span class="kw">int</span>[] arr = <span class="kw">new int</span>[parts.length];
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; parts.length; i++) {
+    arr[i] = <span class="type">Integer</span>.<span class="fn">parseInt</span>(parts[i]);
+}</pre>
+
+<h4>Read Multiple Lines of Input</h4>
+<pre><span class="kw">int</span> n = sc.<span class="fn">nextInt</span>();
+sc.<span class="fn">nextLine</span>();  <span class="cmt">// consume leftover newline!</span>
+<span class="type">String</span>[] lines = <span class="kw">new</span> <span class="type">String</span>[n];
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+    lines[i] = sc.<span class="fn">nextLine</span>();
+}</pre>
+
+<h4>Read Until End of File (EOF)</h4>
+<pre><span class="kw">while</span> (sc.<span class="fn">hasNext</span>()) {
+    <span class="type">String</span> line = sc.<span class="fn">nextLine</span>();
+    <span class="cmt">// process each line</span>
+}
+
+<span class="cmt">// Or for integers:</span>
+<span class="kw">while</span> (sc.<span class="fn">hasNextInt</span>()) {
+    <span class="kw">int</span> num = sc.<span class="fn">nextInt</span>();
+    <span class="cmt">// process each number</span>
+}</pre>
+
+<div class="box box-example">
+  <div class="label">Complete Input Example</div>
+  <p><strong>Input format:</strong> First line has N (number of students). Next N lines each have a name and a score separated by space.</p>
+  <pre><span class="cmt">// Input:
+// 3
+// Alice 85
+// Bob 92
+// Charlie 78</span>
+
+<span class="kw">int</span> n = sc.<span class="fn">nextInt</span>();
+sc.<span class="fn">nextLine</span>();  <span class="cmt">// consume newline after the integer!</span>
+
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+    <span class="type">String</span> line = sc.<span class="fn">nextLine</span>();
+    <span class="type">String</span>[] parts = line.<span class="fn">split</span>(<span class="str">" "</span>);
+    <span class="type">String</span> name = parts[<span class="num">0</span>];
+    <span class="kw">int</span> score = <span class="type">Integer</span>.<span class="fn">parseInt</span>(parts[<span class="num">1</span>]);
+}</pre>
+</div>
+
+<!-- ─── TYPE CONVERSION ─── -->
+<h3 id="type-conversion">4. Type Conversion Patterns (Always Needed)</h3>
+<p>Almost every HSE problem requires converting between types. Memorize these — you'll use them every single time.</p>
+
+<table>
+<tr><th>Conversion</th><th>Code</th><th>Watch Out</th></tr>
+<tr><td>String → int</td><td><code>Integer.parseInt(str)</code></td><td>Throws <code>NumberFormatException</code> if str is not a valid number</td></tr>
+<tr><td>String → double</td><td><code>Double.parseDouble(str)</code></td><td>Same — throws exception on invalid input</td></tr>
+<tr><td>String → long</td><td><code>Long.parseLong(str)</code></td><td>Use for large numbers that overflow int</td></tr>
+<tr><td>int → String</td><td><code>String.valueOf(n)</code></td><td>Also works: <code>Integer.toString(n)</code> or <code>"" + n</code></td></tr>
+<tr><td>double → int</td><td><code>(int) doubleVal</code></td><td><strong>TRUNCATES!</strong> 3.9 → 3, not 4. Use <code>Math.round()</code> to round.</td></tr>
+<tr><td>int → double</td><td><code>(double) intVal</code></td><td>Or just use in a double expression: <code>intVal * 1.0</code></td></tr>
+<tr><td>char → int (digit)</td><td><code>ch - '0'</code></td><td>'5' - '0' = 5. Only works for digit chars '0'-'9'</td></tr>
+<tr><td>int → char (digit)</td><td><code>(char) (n + '0')</code></td><td>5 + '0' = '5'. Only for single digits 0-9</td></tr>
+<tr><td>char → int (ASCII)</td><td><code>(int) ch</code></td><td>'A' = 65, 'a' = 97, '0' = 48</td></tr>
+<tr><td>String → char[]</td><td><code>str.toCharArray()</code></td><td>Returns a new array — modifying it doesn't change the original String</td></tr>
+<tr><td>char[] → String</td><td><code>new String(charArr)</code></td><td>Also: <code>String.valueOf(charArr)</code></td></tr>
+</table>
+
+<div class="box box-warn">
+  <div class="label">The Truncation Trap</div>
+  <pre><span class="kw">double</span> d = <span class="num">3.99</span>;
+<span class="kw">int</span> i = (<span class="kw">int</span>) d;          <span class="cmt">// i = 3 (TRUNCATED, not rounded!)</span>
+<span class="kw">int</span> j = (<span class="kw">int</span>) Math.<span class="fn">round</span>(d);  <span class="cmt">// j = 4 (rounded correctly)</span></pre>
+  <p>If the problem says "round to nearest integer", use <code>Math.round()</code>. If it says "floor" or just cast, use <code>(int)</code>.</p>
+</div>
+
+<div class="box box-warn">
+  <div class="label">Integer Division Trap</div>
+  <pre><span class="kw">int</span> a = <span class="num">7</span>, b = <span class="num">2</span>;
+System.out.<span class="fn">println</span>(a / b);         <span class="cmt">// prints 3 (NOT 3.5!)</span>
+System.out.<span class="fn">println</span>((<span class="kw">double</span>) a / b); <span class="cmt">// prints 3.5 (correct)</span>
+System.out.<span class="fn">println</span>(a * <span class="num">1.0</span> / b);    <span class="cmt">// prints 3.5 (also correct)</span></pre>
+  <p><strong>Rule:</strong> When you need decimal results from integer division, cast at least one operand to <code>double</code> BEFORE dividing.</p>
+</div>
+
+<!-- ─── FLOATING POINT ─── -->
+<h3 id="floating-point">5. Floating Point Precision (Frequently Tested)</h3>
+<p>Many HSE problems ask you to print results to a specific number of decimal places. Get this wrong and every test case fails.</p>
+
+<h4>Method 1: String.format() — RECOMMENDED</h4>
+<pre><span class="kw">double</span> value = <span class="num">3.14159265</span>;
+<span class="type">String</span> result = <span class="type">String</span>.<span class="fn">format</span>(<span class="str">"%.2f"</span>, value);  <span class="cmt">// "3.14"</span>
+System.out.<span class="fn">println</span>(result);</pre>
+
+<h4>Method 2: System.out.printf()</h4>
+<pre><span class="kw">double</span> value = <span class="num">3.14159265</span>;
+System.out.<span class="fn">printf</span>(<span class="str">"%.2f%n"</span>, value);  <span class="cmt">// prints 3.14</span>
+System.out.<span class="fn">printf</span>(<span class="str">"%.4f%n"</span>, value);  <span class="cmt">// prints 3.1416 (rounds!)</span></pre>
+
+<h4>Method 3: Math.round() for manual rounding</h4>
+<pre><span class="kw">double</span> value = <span class="num">3.14159</span>;
+<span class="kw">double</span> rounded = Math.<span class="fn">round</span>(value * <span class="num">100.0</span>) / <span class="num">100.0</span>;  <span class="cmt">// 3.14</span></pre>
+
+<table>
+<tr><th>Format</th><th>Input: 3.14159</th><th>Output</th></tr>
+<tr><td><code>%.1f</code></td><td>3.14159</td><td>3.1</td></tr>
+<tr><td><code>%.2f</code></td><td>3.14159</td><td>3.14</td></tr>
+<tr><td><code>%.3f</code></td><td>3.14159</td><td>3.142</td></tr>
+<tr><td><code>%.4f</code></td><td>3.14159</td><td>3.1416</td></tr>
+<tr><td><code>%d</code></td><td>(int) 42</td><td>42</td></tr>
+<tr><td><code>%s</code></td><td>"hello"</td><td>hello</td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">Use %n not \n in printf</div>
+  <code>%n</code> is platform-independent newline. <code>\n</code> may cause issues on some systems. In HackerRank, both usually work — but <code>%n</code> is safer.
+</div>
+
+<!-- ─── STRING PATTERNS ─── -->
+<h3 id="string-patterns">6. String Manipulation Patterns</h3>
+<p>String problems are the most common in HSE. Know these methods cold.</p>
+
+<table>
+<tr><th>Operation</th><th>Code</th><th>Returns</th></tr>
+<tr><td>Length</td><td><code>str.length()</code></td><td>int — number of characters</td></tr>
+<tr><td>Get char at index</td><td><code>str.charAt(i)</code></td><td>char at position i (0-based)</td></tr>
+<tr><td>Substring</td><td><code>str.substring(start, end)</code></td><td>Characters from start to end-1 (end is exclusive!)</td></tr>
+<tr><td>Uppercase</td><td><code>str.toUpperCase()</code></td><td>New string, all uppercase</td></tr>
+<tr><td>Lowercase</td><td><code>str.toLowerCase()</code></td><td>New string, all lowercase</td></tr>
+<tr><td>Trim spaces</td><td><code>str.trim()</code></td><td>Removes leading/trailing whitespace only</td></tr>
+<tr><td>Remove all spaces</td><td><code>str.replaceAll("\\s+", "")</code></td><td>Removes ALL whitespace</td></tr>
+<tr><td>Split</td><td><code>str.split(" ")</code></td><td>String[] array split by delimiter</td></tr>
+<tr><td>Join</td><td><code>String.join(", ", arr)</code></td><td>Joins array with delimiter</td></tr>
+<tr><td>Contains</td><td><code>str.contains("sub")</code></td><td>boolean</td></tr>
+<tr><td>Starts with</td><td><code>str.startsWith("pre")</code></td><td>boolean</td></tr>
+<tr><td>Index of</td><td><code>str.indexOf("sub")</code></td><td>int (-1 if not found)</td></tr>
+<tr><td>Replace</td><td><code>str.replace("old", "new")</code></td><td>New string with replacements</td></tr>
+<tr><td>Equals (case-sensitive)</td><td><code>str1.equals(str2)</code></td><td>boolean</td></tr>
+<tr><td>Equals (ignore case)</td><td><code>str1.equalsIgnoreCase(str2)</code></td><td>boolean</td></tr>
+</table>
+
+<h4>Reverse a String</h4>
+<pre><span class="type">String</span> reversed = <span class="kw">new</span> <span class="type">StringBuilder</span>(str).<span class="fn">reverse</span>().<span class="fn">toString</span>();</pre>
+
+<h4>Check Palindrome</h4>
+<pre><span class="type">String</span> clean = str.<span class="fn">toLowerCase</span>().<span class="fn">replaceAll</span>(<span class="str">"[^a-z0-9]"</span>, <span class="str">""</span>);
+<span class="type">String</span> reversed = <span class="kw">new</span> <span class="type">StringBuilder</span>(clean).<span class="fn">reverse</span>().<span class="fn">toString</span>();
+<span class="kw">boolean</span> isPalindrome = clean.<span class="fn">equals</span>(reversed);</pre>
+
+<h4>Count Character Occurrences</h4>
+<pre><span class="kw">int</span> count = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">char</span> c : str.<span class="fn">toCharArray</span>()) {
+    <span class="kw">if</span> (c == target) count++;
+}</pre>
+
+<h4>Count Vowels</h4>
+<pre><span class="kw">int</span> vowels = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">char</span> c : str.<span class="fn">toLowerCase</span>().<span class="fn">toCharArray</span>()) {
+    <span class="kw">if</span> (<span class="str">"aeiou"</span>.<span class="fn">indexOf</span>(c) != -<span class="num">1</span>) vowels++;
+}</pre>
+
+<div class="box box-warn">
+  <div class="label">== vs .equals() for Strings</div>
+  <pre><span class="type">String</span> a = <span class="kw">new</span> <span class="type">String</span>(<span class="str">"hello"</span>);
+<span class="type">String</span> b = <span class="kw">new</span> <span class="type">String</span>(<span class="str">"hello"</span>);
+System.out.<span class="fn">println</span>(a == b);       <span class="cmt">// false (compares references!)</span>
+System.out.<span class="fn">println</span>(a.<span class="fn">equals</span>(b));  <span class="cmt">// true (compares content)</span></pre>
+  <p><strong>ALWAYS use <code>.equals()</code> for String comparison.</strong> <code>==</code> checks if they're the same object in memory, not the same text.</p>
+</div>
+
+<!-- ─── ARRAY PATTERNS ─── -->
+<h3 id="array-patterns">7. Array Patterns</h3>
+
+<h4>Find Maximum</h4>
+<pre><span class="kw">int</span> max = arr[<span class="num">0</span>];
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt; arr.length; i++) {
+    <span class="kw">if</span> (arr[i] &gt; max) max = arr[i];
+}</pre>
+
+<h4>Find Minimum</h4>
+<pre><span class="kw">int</span> min = arr[<span class="num">0</span>];
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt; arr.length; i++) {
+    <span class="kw">if</span> (arr[i] &lt; min) min = arr[i];
+}</pre>
+
+<h4>Sum of Array</h4>
+<pre><span class="kw">int</span> sum = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> num : arr) {
+    sum += num;
+}</pre>
+
+<h4>Average of Array</h4>
+<pre><span class="kw">double</span> avg = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="kw">int</span> num : arr) avg += num;
+avg /= arr.length;  <span class="cmt">// avg is double, so no integer division issue</span></pre>
+
+<h4>Reverse an Array</h4>
+<pre><span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>, j = arr.length - <span class="num">1</span>; i &lt; j; i++, j--) {
+    <span class="kw">int</span> temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}</pre>
+
+<h4>Sort an Array</h4>
+<pre><span class="type">Arrays</span>.<span class="fn">sort</span>(arr);  <span class="cmt">// ascending order</span>
+
+<span class="cmt">// For descending, sort then reverse — or use Integer[] with Comparator:</span>
+<span class="type">Integer</span>[] boxed = <span class="type">Arrays</span>.<span class="fn">stream</span>(arr).<span class="fn">boxed</span>().<span class="fn">toArray</span>(<span class="type">Integer</span>[]::<span class="kw">new</span>);
+<span class="type">Arrays</span>.<span class="fn">sort</span>(boxed, <span class="type">Collections</span>.<span class="fn">reverseOrder</span>());</pre>
+
+<h4>Find Second Largest (Single Pass)</h4>
+<pre><span class="kw">int</span> first = <span class="type">Integer</span>.MIN_VALUE, second = <span class="type">Integer</span>.MIN_VALUE;
+<span class="kw">for</span> (<span class="kw">int</span> num : arr) {
+    <span class="kw">if</span> (num &gt; first) {
+        second = first;
+        first = num;
+    } <span class="kw">else if</span> (num &gt; second &amp;&amp; num != first) {
+        second = num;
+    }
+}</pre>
+
+<h4>Remove Duplicates (Using HashSet)</h4>
+<pre><span class="type">Set</span>&lt;<span class="type">Integer</span>&gt; unique = <span class="kw">new</span> <span class="type">LinkedHashSet</span>&lt;&gt;();
+<span class="kw">for</span> (<span class="kw">int</span> num : arr) unique.<span class="fn">add</span>(num);
+<span class="cmt">// unique now contains only distinct values in insertion order</span></pre>
+
+<!-- ─── PROBLEM TYPES ─── -->
+<h3 id="problem-types">8. Common Problem Types in HSE</h3>
+
+<div class="box box-key">
+  <div class="label">The 4 Problem Patterns</div>
+  <p>Almost every HSE problem falls into one of these categories. Know the template for each.</p>
+  <ol>
+    <li><strong>String Processing</strong> — transform, count, validate, extract from strings</li>
+    <li><strong>Array/Number Processing</strong> — find patterns, compute results from arrays</li>
+    <li><strong>JSON/API Processing</strong> — fetch data from URL, parse JSON, extract fields</li>
+    <li><strong>Math Problems</strong> — factorial, fibonacci, primes, digit manipulation</li>
+  </ol>
+</div>
+
+<h4>Pattern 1: String Processing</h4>
+<p>Input is typically a string. You transform it, count characters, validate format, or extract parts.</p>
+<pre><span class="cmt">// Template: Read string, process, print result</span>
+<span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+<span class="type">String</span> input = sc.<span class="fn">nextLine</span>();
+
+<span class="cmt">// Examples of what they ask:</span>
+<span class="cmt">// - Count vowels/consonants</span>
+<span class="cmt">// - Reverse words in a sentence</span>
+<span class="cmt">// - Check if palindrome</span>
+<span class="cmt">// - Check if two strings are anagrams</span>
+<span class="cmt">// - Find longest word</span>
+<span class="cmt">// - Remove duplicate characters</span></pre>
+
+<h4>Pattern 2: Array/Number Processing</h4>
+<p>Input is N followed by N numbers. You compute something from the array.</p>
+<pre><span class="cmt">// Template: Read array, process, print result</span>
+<span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+<span class="kw">int</span> n = sc.<span class="fn">nextInt</span>();
+<span class="kw">int</span>[] arr = <span class="kw">new int</span>[n];
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) arr[i] = sc.<span class="fn">nextInt</span>();
+
+<span class="cmt">// Examples of what they ask:</span>
+<span class="cmt">// - Find second largest</span>
+<span class="cmt">// - Find pairs that sum to target</span>
+<span class="cmt">// - Sort in custom order</span>
+<span class="cmt">// - Find duplicates</span>
+<span class="cmt">// - Compute running average</span></pre>
+
+<h4>Pattern 3: Math Problems</h4>
+<pre><span class="cmt">// Factorial</span>
+<span class="kw">long</span> <span class="fn">factorial</span>(<span class="kw">int</span> n) {
+    <span class="kw">long</span> result = <span class="num">1</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">2</span>; i &lt;= n; i++) result *= i;
+    <span class="kw">return</span> result;
+}
+
+<span class="cmt">// Fibonacci (first N terms)</span>
+<span class="kw">int</span> a = <span class="num">0</span>, b = <span class="num">1</span>;
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+    System.out.<span class="fn">print</span>(a + <span class="str">" "</span>);
+    <span class="kw">int</span> temp = a + b;
+    a = b;
+    b = temp;
+}
+
+<span class="cmt">// Prime check</span>
+<span class="kw">boolean</span> <span class="fn">isPrime</span>(<span class="kw">int</span> n) {
+    <span class="kw">if</span> (n &lt; <span class="num">2</span>) <span class="kw">return false</span>;
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">2</span>; i &lt;= Math.<span class="fn">sqrt</span>(n); i++) {
+        <span class="kw">if</span> (n % i == <span class="num">0</span>) <span class="kw">return false</span>;
+    }
+    <span class="kw">return true</span>;
+}
+
+<span class="cmt">// GCD (Euclidean algorithm)</span>
+<span class="kw">int</span> <span class="fn">gcd</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
+    <span class="kw">while</span> (b != <span class="num">0</span>) {
+        <span class="kw">int</span> temp = b;
+        b = a % b;
+        a = temp;
+    }
+    <span class="kw">return</span> a;
+}
+
+<span class="cmt">// LCM</span>
+<span class="kw">int</span> <span class="fn">lcm</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) {
+    <span class="kw">return</span> a / <span class="fn">gcd</span>(a, b) * b;  <span class="cmt">// divide first to avoid overflow</span>
+}
+
+<span class="cmt">// Sum of digits</span>
+<span class="kw">int</span> <span class="fn">sumOfDigits</span>(<span class="kw">int</span> n) {
+    <span class="kw">int</span> sum = <span class="num">0</span>;
+    n = Math.<span class="fn">abs</span>(n);  <span class="cmt">// handle negative</span>
+    <span class="kw">while</span> (n &gt; <span class="num">0</span>) {
+        sum += n % <span class="num">10</span>;
+        n /= <span class="num">10</span>;
+    }
+    <span class="kw">return</span> sum;
+}
+
+<span class="cmt">// Reverse a number</span>
+<span class="kw">int</span> <span class="fn">reverseNumber</span>(<span class="kw">int</span> n) {
+    <span class="kw">int</span> rev = <span class="num">0</span>;
+    <span class="kw">while</span> (n != <span class="num">0</span>) {
+        rev = rev * <span class="num">10</span> + n % <span class="num">10</span>;
+        n /= <span class="num">10</span>;
+    }
+    <span class="kw">return</span> rev;
+}</pre>
+
+<!-- ─── JSON/API PROCESSING ─── -->
+<h3 id="json-api">9. JSON / API Processing (VERY IMPORTANT for HSE)</h3>
+<p>This pattern catches everyone off-guard. HSE can give you a URL and ask you to fetch data from an API, parse the JSON response, and extract specific fields. Here's the complete template.</p>
+
+<div class="box box-warn">
+  <div class="label">HSE Surprise</div>
+  Many students don't prepare for API/JSON questions because they don't expect them. But TCS HSE HackerRank has asked these. If you see a URL in the problem — this is the template you need.
+</div>
+
+<h4>Complete HTTP GET + JSON Parse Template</h4>
+<pre><span class="kw">import</span> java.util.*;
+<span class="kw">import</span> java.io.*;
+<span class="kw">import</span> java.net.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) <span class="kw">throws</span> <span class="type">Exception</span> {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="type">String</span> city = sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>();
+
+        <span class="cmt">// Step 1: Build the URL</span>
+        <span class="type">String</span> urlStr = <span class="str">"https://api.example.com/data?city="</span> +
+            <span class="type">URLEncoder</span>.<span class="fn">encode</span>(city, <span class="str">"UTF-8"</span>);
+
+        <span class="cmt">// Step 2: Make HTTP GET request</span>
+        <span class="type">URL</span> url = <span class="kw">new</span> <span class="type">URL</span>(urlStr);
+        <span class="type">HttpURLConnection</span> conn = (<span class="type">HttpURLConnection</span>) url.<span class="fn">openConnection</span>();
+        conn.<span class="fn">setRequestMethod</span>(<span class="str">"GET"</span>);
+
+        <span class="cmt">// Step 3: Read the response</span>
+        <span class="type">BufferedReader</span> reader = <span class="kw">new</span> <span class="type">BufferedReader</span>(
+            <span class="kw">new</span> <span class="type">InputStreamReader</span>(conn.<span class="fn">getInputStream</span>())
+        );
+        <span class="type">StringBuilder</span> response = <span class="kw">new</span> <span class="type">StringBuilder</span>();
+        <span class="type">String</span> line;
+        <span class="kw">while</span> ((line = reader.<span class="fn">readLine</span>()) != <span class="kw">null</span>) {
+            response.<span class="fn">append</span>(line);
+        }
+        reader.<span class="fn">close</span>();
+
+        <span class="cmt">// Step 4: Parse JSON manually (no external library)</span>
+        <span class="type">String</span> json = response.<span class="fn">toString</span>();
+
+        <span class="cmt">// Extract a simple field value from JSON</span>
+        <span class="cmt">// For {"name":"Alice","age":25}</span>
+        <span class="cmt">// Find "name":"</span>
+        <span class="kw">int</span> start = json.<span class="fn">indexOf</span>(<span class="str">"\"name\":\""</span>) + <span class="num">8</span>;
+        <span class="kw">int</span> end = json.<span class="fn">indexOf</span>(<span class="str">"\""</span>, start);
+        <span class="type">String</span> name = json.<span class="fn">substring</span>(start, end);
+
+        System.out.<span class="fn">println</span>(name);
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+
+<div class="box box-tip">
+  <div class="label">JSON Parsing Without Libraries</div>
+  <p>HackerRank may or may not have <code>org.json</code> available. If it does, use <code>JSONObject</code> and <code>JSONArray</code>. If not, use manual string parsing with <code>indexOf()</code> and <code>substring()</code> as shown above.</p>
+</div>
+
+<h4>If org.json IS Available (Easier)</h4>
+<pre><span class="kw">import</span> org.json.*;
+
+<span class="cmt">// Parse a JSON object</span>
+<span class="type">JSONObject</span> json = <span class="kw">new</span> <span class="type">JSONObject</span>(response.<span class="fn">toString</span>());
+<span class="type">String</span> name = json.<span class="fn">getString</span>(<span class="str">"name"</span>);
+<span class="kw">int</span> age = json.<span class="fn">getInt</span>(<span class="str">"age"</span>);
+<span class="kw">double</span> score = json.<span class="fn">getDouble</span>(<span class="str">"score"</span>);
+
+<span class="cmt">// Parse a JSON array</span>
+<span class="type">JSONArray</span> items = json.<span class="fn">getJSONArray</span>(<span class="str">"items"</span>);
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; items.<span class="fn">length</span>(); i++) {
+    <span class="type">JSONObject</span> item = items.<span class="fn">getJSONObject</span>(i);
+    System.out.<span class="fn">println</span>(item.<span class="fn">getString</span>(<span class="str">"title"</span>));
+}
+
+<span class="cmt">// Handle nested objects</span>
+<span class="type">JSONObject</span> address = json.<span class="fn">getJSONObject</span>(<span class="str">"address"</span>);
+<span class="type">String</span> street = address.<span class="fn">getString</span>(<span class="str">"street"</span>);
+
+<span class="cmt">// Handle pagination (common pattern)</span>
+<span class="kw">int</span> page = <span class="num">1</span>;
+<span class="kw">int</span> totalPages = <span class="num">1</span>;
+<span class="kw">while</span> (page &lt;= totalPages) {
+    <span class="type">URL</span> pageUrl = <span class="kw">new</span> <span class="type">URL</span>(baseUrl + <span class="str">"&amp;page="</span> + page);
+    <span class="cmt">// ... fetch and parse ...</span>
+    totalPages = json.<span class="fn">getInt</span>(<span class="str">"total_pages"</span>);
+    page++;
+}</pre>
+
+<!-- ─── CONSTRUCTOR PATTERNS ─── -->
+<h3 id="constructor-patterns">10. Constructor Patterns (from FA, Tested in HSE)</h3>
+<p>Constructor questions in HSE usually appear as output prediction — they give you code with inheritance and constructors, and you predict what gets printed.</p>
+
+<h4>Key Rules</h4>
+<ul>
+  <li>If you don't write any constructor, Java adds a <strong>default no-arg constructor</strong> automatically</li>
+  <li>If you write ANY constructor (even parameterized), Java does NOT add the default one</li>
+  <li><code>this()</code> calls another constructor in the same class — must be the FIRST statement</li>
+  <li><code>super()</code> calls the parent constructor — must be the FIRST statement</li>
+  <li>If you don't write <code>super()</code>, Java adds <code>super()</code> (no-arg) automatically</li>
+  <li>Constructor calls go UP the chain (child → parent → grandparent) but EXECUTE top-down</li>
+</ul>
+
+<h4>Output Prediction Example</h4>
+<pre><span class="kw">class</span> <span class="type">Animal</span> {
+    <span class="type">Animal</span>() { System.out.<span class="fn">println</span>(<span class="str">"Animal"</span>); }
+}
+<span class="kw">class</span> <span class="type">Dog</span> <span class="kw">extends</span> <span class="type">Animal</span> {
+    <span class="type">Dog</span>() { System.out.<span class="fn">println</span>(<span class="str">"Dog"</span>); }
+}
+<span class="kw">class</span> <span class="type">Puppy</span> <span class="kw">extends</span> <span class="type">Dog</span> {
+    <span class="type">Puppy</span>() { System.out.<span class="fn">println</span>(<span class="str">"Puppy"</span>); }
+}
+
+<span class="cmt">// new Puppy() prints:</span>
+<span class="cmt">// Animal    (grandparent first)</span>
+<span class="cmt">// Dog       (parent second)</span>
+<span class="cmt">// Puppy     (child last)</span></pre>
+
+<div class="box box-exam">
+  <div class="label">Constructor Trap</div>
+  <pre><span class="kw">class</span> <span class="type">Parent</span> {
+    <span class="type">Parent</span>(<span class="kw">int</span> x) { System.out.<span class="fn">println</span>(<span class="str">"Parent: "</span> + x); }
+}
+<span class="kw">class</span> <span class="type">Child</span> <span class="kw">extends</span> <span class="type">Parent</span> {
+    <span class="type">Child</span>() { System.out.<span class="fn">println</span>(<span class="str">"Child"</span>); }  <span class="cmt">// COMPILE ERROR!</span>
+}</pre>
+  <p>Parent has no no-arg constructor, but Child's constructor doesn't call <code>super(value)</code>. Java tries to insert <code>super()</code> automatically — but there's no no-arg constructor in Parent. <strong>Compilation error.</strong></p>
+</div>
+
+<!-- ─── EXCEPTION HANDLING ─── -->
+<h3 id="exception-handling">11. Exception Handling Patterns</h3>
+
+<h4>Basic try-catch</h4>
+<pre><span class="kw">try</span> {
+    <span class="kw">int</span> result = <span class="type">Integer</span>.<span class="fn">parseInt</span>(<span class="str">"abc"</span>);  <span class="cmt">// throws NumberFormatException</span>
+} <span class="kw">catch</span> (<span class="type">NumberFormatException</span> e) {
+    System.out.<span class="fn">println</span>(<span class="str">"Invalid number: "</span> + e.<span class="fn">getMessage</span>());
+}</pre>
+
+<h4>Multiple catch blocks (ORDER MATTERS)</h4>
+<pre><span class="kw">try</span> {
+    <span class="kw">int</span>[] arr = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>};
+    System.out.<span class="fn">println</span>(arr[<span class="num">5</span>]);
+} <span class="kw">catch</span> (<span class="type">ArrayIndexOutOfBoundsException</span> e) {
+    System.out.<span class="fn">println</span>(<span class="str">"Index out of range"</span>);
+} <span class="kw">catch</span> (<span class="type">Exception</span> e) {
+    System.out.<span class="fn">println</span>(<span class="str">"Some other error"</span>);
+}
+<span class="cmt">// Specific exceptions MUST come BEFORE general ones</span>
+<span class="cmt">// Putting Exception first = compile error (unreachable catch)</span></pre>
+
+<h4>finally block</h4>
+<pre><span class="kw">try</span> {
+    <span class="kw">int</span> x = <span class="num">10</span> / <span class="num">0</span>;
+} <span class="kw">catch</span> (<span class="type">ArithmeticException</span> e) {
+    System.out.<span class="fn">println</span>(<span class="str">"Cannot divide by zero"</span>);
+} <span class="kw">finally</span> {
+    System.out.<span class="fn">println</span>(<span class="str">"Always executes"</span>);  <span class="cmt">// ALWAYS runs</span>
+}</pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Favorite</div>
+  <p><code>finally</code> block executes <strong>even if</strong> there's a <code>return</code> statement in try or catch. The only exception: <code>System.exit(0)</code> — that kills the JVM before finally runs.</p>
+</div>
+
+<table>
+<tr><th>Exception</th><th>When It Happens</th></tr>
+<tr><td><code>NumberFormatException</code></td><td><code>Integer.parseInt("abc")</code></td></tr>
+<tr><td><code>ArrayIndexOutOfBoundsException</code></td><td>Accessing arr[10] when arr has 5 elements</td></tr>
+<tr><td><code>NullPointerException</code></td><td>Calling method on a null reference</td></tr>
+<tr><td><code>ArithmeticException</code></td><td>Division by zero (integer only — double gives Infinity)</td></tr>
+<tr><td><code>StringIndexOutOfBoundsException</code></td><td><code>str.charAt(100)</code> when str has 5 chars</td></tr>
+<tr><td><code>ClassCastException</code></td><td>Invalid type casting</td></tr>
+<tr><td><code>StackOverflowError</code></td><td>Infinite recursion</td></tr>
+</table>
+
+<!-- ─── COLLECTIONS ─── -->
+<h3 id="collections">12. Collections Shortcuts</h3>
+
+<h4>ArrayList</h4>
+<pre><span class="type">ArrayList</span>&lt;<span class="type">Integer</span>&gt; list = <span class="kw">new</span> <span class="type">ArrayList</span>&lt;&gt;();
+list.<span class="fn">add</span>(<span class="num">10</span>);          <span class="cmt">// add element</span>
+list.<span class="fn">add</span>(<span class="num">0</span>, <span class="num">5</span>);       <span class="cmt">// insert at index 0</span>
+list.<span class="fn">get</span>(<span class="num">0</span>);           <span class="cmt">// get element at index → 5</span>
+list.<span class="fn">set</span>(<span class="num">0</span>, <span class="num">99</span>);       <span class="cmt">// replace element at index</span>
+list.<span class="fn">remove</span>(<span class="num">0</span>);        <span class="cmt">// remove by index</span>
+list.<span class="fn">size</span>();            <span class="cmt">// number of elements</span>
+list.<span class="fn">contains</span>(<span class="num">10</span>);     <span class="cmt">// true/false</span>
+<span class="type">Collections</span>.<span class="fn">sort</span>(list);       <span class="cmt">// sort ascending</span>
+<span class="type">Collections</span>.<span class="fn">reverse</span>(list);    <span class="cmt">// reverse</span>
+<span class="type">Collections</span>.<span class="fn">max</span>(list);        <span class="cmt">// maximum</span>
+<span class="type">Collections</span>.<span class="fn">min</span>(list);        <span class="cmt">// minimum</span>
+<span class="type">Collections</span>.<span class="fn">frequency</span>(list, <span class="num">10</span>); <span class="cmt">// count of 10</span></pre>
+
+<h4>HashMap</h4>
+<pre><span class="type">HashMap</span>&lt;<span class="type">String</span>, <span class="type">Integer</span>&gt; map = <span class="kw">new</span> <span class="type">HashMap</span>&lt;&gt;();
+map.<span class="fn">put</span>(<span class="str">"Alice"</span>, <span class="num">90</span>);       <span class="cmt">// add key-value</span>
+map.<span class="fn">get</span>(<span class="str">"Alice"</span>);            <span class="cmt">// get value → 90</span>
+map.<span class="fn">getOrDefault</span>(<span class="str">"Bob"</span>, <span class="num">0</span>); <span class="cmt">// get or return default</span>
+map.<span class="fn">containsKey</span>(<span class="str">"Alice"</span>);   <span class="cmt">// true</span>
+map.<span class="fn">containsValue</span>(<span class="num">90</span>);      <span class="cmt">// true</span>
+map.<span class="fn">remove</span>(<span class="str">"Alice"</span>);         <span class="cmt">// remove entry</span>
+map.<span class="fn">size</span>();                  <span class="cmt">// number of entries</span>
+
+<span class="cmt">// Iterate over entries</span>
+<span class="kw">for</span> (<span class="type">Map</span>.<span class="type">Entry</span>&lt;<span class="type">String</span>, <span class="type">Integer</span>&gt; entry : map.<span class="fn">entrySet</span>()) {
+    System.out.<span class="fn">println</span>(entry.<span class="fn">getKey</span>() + <span class="str">": "</span> + entry.<span class="fn">getValue</span>());
+}
+
+<span class="cmt">// Character frequency — MOST COMMON USE CASE</span>
+<span class="type">HashMap</span>&lt;<span class="type">Character</span>, <span class="type">Integer</span>&gt; freq = <span class="kw">new</span> <span class="type">HashMap</span>&lt;&gt;();
+<span class="kw">for</span> (<span class="kw">char</span> c : str.<span class="fn">toCharArray</span>()) {
+    freq.<span class="fn">put</span>(c, freq.<span class="fn">getOrDefault</span>(c, <span class="num">0</span>) + <span class="num">1</span>);
+}</pre>
+
+<h4>HashSet</h4>
+<pre><span class="type">HashSet</span>&lt;<span class="type">Integer</span>&gt; set = <span class="kw">new</span> <span class="type">HashSet</span>&lt;&gt;();
+set.<span class="fn">add</span>(<span class="num">10</span>);         <span class="cmt">// add (ignores duplicates)</span>
+set.<span class="fn">contains</span>(<span class="num">10</span>);    <span class="cmt">// true</span>
+set.<span class="fn">remove</span>(<span class="num">10</span>);      <span class="cmt">// remove</span>
+set.<span class="fn">size</span>();           <span class="cmt">// count of unique elements</span></pre>
+
+<!-- ─── OUTPUT FORMATTING ─── -->
+<h3 id="output-formatting">13. Output Formatting</h3>
+
+<table>
+<tr><th>Method</th><th>Behavior</th><th>Use When</th></tr>
+<tr><td><code>System.out.println(x)</code></td><td>Prints x + newline</td><td>Most common — one result per line</td></tr>
+<tr><td><code>System.out.print(x)</code></td><td>Prints x, NO newline</td><td>Printing on the same line (space-separated output)</td></tr>
+<tr><td><code>System.out.printf()</code></td><td>Formatted print</td><td>Decimal precision, alignment, padding</td></tr>
+</table>
+
+<h4>printf Format Specifiers</h4>
+<pre>System.out.<span class="fn">printf</span>(<span class="str">"Name: %s, Age: %d, GPA: %.2f%n"</span>, name, age, gpa);
+
+<span class="cmt">// %s  → string</span>
+<span class="cmt">// %d  → integer (int, long)</span>
+<span class="cmt">// %f  → floating point (double, float)</span>
+<span class="cmt">// %.2f → float with 2 decimal places</span>
+<span class="cmt">// %n  → platform-independent newline</span>
+<span class="cmt">// %10d → right-align integer in 10-char width</span>
+<span class="cmt">// %-10s → left-align string in 10-char width</span></pre>
+
+<h4>Building Output with StringBuilder</h4>
+<pre><span class="cmt">// For multiple outputs, StringBuilder is faster than string concatenation</span>
+<span class="type">StringBuilder</span> sb = <span class="kw">new</span> <span class="type">StringBuilder</span>();
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+    sb.<span class="fn">append</span>(arr[i]);
+    <span class="kw">if</span> (i &lt; n - <span class="num">1</span>) sb.<span class="fn">append</span>(<span class="str">" "</span>);  <span class="cmt">// no trailing space</span>
+}
+System.out.<span class="fn">println</span>(sb.<span class="fn">toString</span>());</pre>
+
+<div class="box box-warn">
+  <div class="label">Trailing Space/Newline Trap</div>
+  <p>If the expected output is <code>1 2 3</code> and you print <code>1 2 3 </code> (with trailing space) — it FAILS. Always handle the last element separately or use the <code>if (i &lt; n-1)</code> check before adding separators.</p>
+</div>
+
+<!-- ─── TRAPS AND GOTCHAS ─── -->
+<h3 id="traps-gotchas">14. Common Traps and Gotchas</h3>
+
+<div class="box box-warn">
+  <div class="label">The 10 Traps That Fail Students</div>
+  <table>
+  <tr><th>#</th><th>Trap</th><th>Fix</th></tr>
+  <tr><td>1</td><td><code>== vs .equals()</code> for strings</td><td>ALWAYS use <code>.equals()</code> for string content comparison</td></tr>
+  <tr><td>2</td><td>Integer division: <code>7/2 = 3</code></td><td>Cast to double: <code>(double)7/2 = 3.5</code></td></tr>
+  <tr><td>3</td><td>Scanner <code>nextInt()</code> + <code>nextLine()</code></td><td>Add dummy <code>sc.nextLine()</code> after <code>nextInt()</code></td></tr>
+  <tr><td>4</td><td>Array index starts at 0</td><td><code>arr[0]</code> is first, <code>arr[n-1]</code> is last</td></tr>
+  <tr><td>5</td><td>String is immutable</td><td><code>str.toUpperCase()</code> returns NEW string — doesn't modify original</td></tr>
+  <tr><td>6</td><td>Off-by-one in loops</td><td><code>i &lt; n</code> runs n times (0 to n-1). <code>i &lt;= n</code> runs n+1 times.</td></tr>
+  <tr><td>7</td><td>NullPointerException</td><td>Always check <code>if (str != null)</code> before calling methods on it</td></tr>
+  <tr><td>8</td><td>Trailing space/newline in output</td><td>No extra separators after last element</td></tr>
+  <tr><td>9</td><td><code>(int) 3.9 = 3</code> (truncation)</td><td>Use <code>Math.round()</code> if you need rounding</td></tr>
+  <tr><td>10</td><td>Overflow with <code>int</code></td><td>Use <code>long</code> for factorial, large sums. <code>int</code> max is ~2.1 billion.</td></tr>
+  </table>
+</div>
+
+<!-- ─── PRACTICE PROBLEMS ─── -->
+<div class="box box-exam">
+  <div class="label">FA Subjective Practice</div>
+  Practice real FA Round 2 questions (Java + Unix) on HackerRank:<br>
+  <a href="https://www.hackerrank.com/contests/mock-pa-1/challenges" target="_blank" style="color:var(--info);font-weight:600">→ HackerRank FA Subjective Mock Practice</a>
+</div>
+
+<h3 id="practice-problems">15. 10 Practice Problems with Complete Solutions</h3>
+<p>These are the exact patterns that appear in TCS ILP exams. Type out each solution by hand at least once — don't just read them.</p>
+
+<!-- Problem 1 -->
+<h4>Problem 1: Average of N Numbers (2 Decimal Places)</h4>
+<div class="box box-example">
+  <div class="label">Problem</div>
+  <p>Read an integer N, then read N integers. Print their average rounded to 2 decimal places.</p>
+  <p><strong>Input:</strong></p>
+  <pre>5
+10 20 30 40 50</pre>
+  <p><strong>Output:</strong></p>
+  <pre>30.00</pre>
+</div>
+
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Solution</button>
+<div class="answer">
+<pre><span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="kw">int</span> n = sc.<span class="fn">nextInt</span>();
+        <span class="kw">int</span> sum = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+            sum += sc.<span class="fn">nextInt</span>();
+        }
+        <span class="kw">double</span> avg = (<span class="kw">double</span>) sum / n;
+        System.out.<span class="fn">printf</span>(<span class="str">"%.2f%n"</span>, avg);
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+<p><strong>Key patterns used:</strong> Reading N integers, integer-to-double cast for division, printf for 2 decimal places.</p>
+</div>
+
+<!-- Problem 2 -->
+<h4>Problem 2: Palindrome Check (Case Insensitive)</h4>
+<div class="box box-example">
+  <div class="label">Problem</div>
+  <p>Read a string and check if it's a palindrome (ignore case). Print "Yes" or "No".</p>
+  <p><strong>Input:</strong></p>
+  <pre>RaceCar</pre>
+  <p><strong>Output:</strong></p>
+  <pre>Yes</pre>
+</div>
+
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Solution</button>
+<div class="answer">
+<pre><span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="type">String</span> str = sc.<span class="fn">nextLine</span>().<span class="fn">toLowerCase</span>();
+        <span class="type">String</span> rev = <span class="kw">new</span> <span class="type">StringBuilder</span>(str).<span class="fn">reverse</span>().<span class="fn">toString</span>();
+        System.out.<span class="fn">println</span>(str.<span class="fn">equals</span>(rev) ? <span class="str">"Yes"</span> : <span class="str">"No"</span>);
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+<p><strong>Key patterns used:</strong> toLowerCase() for case insensitivity, StringBuilder.reverse(), .equals() for comparison, ternary operator.</p>
+</div>
+
+<!-- Problem 3 -->
+<h4>Problem 3: Character Frequency</h4>
+<div class="box box-example">
+  <div class="label">Problem</div>
+  <p>Read a string and print the frequency of each character in order of first appearance. Format: <code>char:count</code>, one per line. Ignore spaces.</p>
+  <p><strong>Input:</strong></p>
+  <pre>hello world</pre>
+  <p><strong>Output:</strong></p>
+  <pre>h:1
+e:1
+l:3
+o:2
+w:1
+r:1
+d:1</pre>
+</div>
+
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Solution</button>
+<div class="answer">
+<pre><span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="type">String</span> str = sc.<span class="fn">nextLine</span>().<span class="fn">replaceAll</span>(<span class="str">"\\s+"</span>, <span class="str">""</span>);
+
+        <span class="cmt">// LinkedHashMap preserves insertion order</span>
+        <span class="type">LinkedHashMap</span>&lt;<span class="type">Character</span>, <span class="type">Integer</span>&gt; freq = <span class="kw">new</span> <span class="type">LinkedHashMap</span>&lt;&gt;();
+        <span class="kw">for</span> (<span class="kw">char</span> c : str.<span class="fn">toCharArray</span>()) {
+            freq.<span class="fn">put</span>(c, freq.<span class="fn">getOrDefault</span>(c, <span class="num">0</span>) + <span class="num">1</span>);
+        }
+
+        <span class="kw">for</span> (<span class="type">Map</span>.<span class="type">Entry</span>&lt;<span class="type">Character</span>, <span class="type">Integer</span>&gt; entry : freq.<span class="fn">entrySet</span>()) {
+            System.out.<span class="fn">println</span>(entry.<span class="fn">getKey</span>() + <span class="str">":"</span> + entry.<span class="fn">getValue</span>());
+        }
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+<p><strong>Key patterns used:</strong> LinkedHashMap for ordered frequency counting, getOrDefault(), entrySet() iteration.</p>
+</div>
+
+<!-- Problem 4 -->
+<h4>Problem 4: Second Largest in Array</h4>
+<div class="box box-example">
+  <div class="label">Problem</div>
+  <p>Read N, then read N integers. Print the second largest number.</p>
+  <p><strong>Input:</strong></p>
+  <pre>5
+12 35 1 10 34</pre>
+  <p><strong>Output:</strong></p>
+  <pre>34</pre>
+</div>
+
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Solution</button>
+<div class="answer">
+<pre><span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="kw">int</span> n = sc.<span class="fn">nextInt</span>();
+        <span class="kw">int</span> first = <span class="type">Integer</span>.MIN_VALUE;
+        <span class="kw">int</span> second = <span class="type">Integer</span>.MIN_VALUE;
+
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+            <span class="kw">int</span> num = sc.<span class="fn">nextInt</span>();
+            <span class="kw">if</span> (num &gt; first) {
+                second = first;
+                first = num;
+            } <span class="kw">else if</span> (num &gt; second &amp;&amp; num != first) {
+                second = num;
+            }
+        }
+        System.out.<span class="fn">println</span>(second);
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+<p><strong>Key patterns used:</strong> Single-pass with two tracking variables, Integer.MIN_VALUE initialization, handling duplicates.</p>
+</div>
+
+<!-- Problem 5 -->
+<h4>Problem 5: Reverse Words in a Sentence</h4>
+<div class="box box-example">
+  <div class="label">Problem</div>
+  <p>Read a sentence and print it with words in reverse order.</p>
+  <p><strong>Input:</strong></p>
+  <pre>Hello World Java</pre>
+  <p><strong>Output:</strong></p>
+  <pre>Java World Hello</pre>
+</div>
+
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Solution</button>
+<div class="answer">
+<pre><span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="type">String</span>[] words = sc.<span class="fn">nextLine</span>().<span class="fn">split</span>(<span class="str">" "</span>);
+
+        <span class="type">StringBuilder</span> sb = <span class="kw">new</span> <span class="type">StringBuilder</span>();
+        <span class="kw">for</span> (<span class="kw">int</span> i = words.length - <span class="num">1</span>; i &gt;= <span class="num">0</span>; i--) {
+            sb.<span class="fn">append</span>(words[i]);
+            <span class="kw">if</span> (i &gt; <span class="num">0</span>) sb.<span class="fn">append</span>(<span class="str">" "</span>);
+        }
+        System.out.<span class="fn">println</span>(sb.<span class="fn">toString</span>());
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+<p><strong>Key patterns used:</strong> split() to tokenize, reverse iteration, StringBuilder for output, no trailing space.</p>
+</div>
+
+<!-- Problem 6 -->
+<h4>Problem 6: JSON/API Data Extraction (Template)</h4>
+<div class="box box-example">
+  <div class="label">Problem</div>
+  <p>Given a city name as input, fetch weather data from the API URL <code>https://jsonmock.hackerrank.com/api/weather?name=CITY</code>. Print the weather description from the response.</p>
+  <p>Response format: <code>{"data":[{"name":"Dallas","weather":"12 degree","status":["Wind: 2Kmph"]}]}</code></p>
+  <p><strong>Input:</strong></p>
+  <pre>Dallas</pre>
+  <p><strong>Output:</strong></p>
+  <pre>12 degree</pre>
+</div>
+
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Solution</button>
+<div class="answer">
+<pre><span class="kw">import</span> java.util.*;
+<span class="kw">import</span> java.io.*;
+<span class="kw">import</span> java.net.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) <span class="kw">throws</span> <span class="type">Exception</span> {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="type">String</span> city = sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>();
+
+        <span class="cmt">// Build URL</span>
+        <span class="type">String</span> urlStr = <span class="str">"https://jsonmock.hackerrank.com/api/weather?name="</span>
+            + <span class="type">URLEncoder</span>.<span class="fn">encode</span>(city, <span class="str">"UTF-8"</span>);
+
+        <span class="cmt">// Make HTTP request</span>
+        <span class="type">URL</span> url = <span class="kw">new</span> <span class="type">URL</span>(urlStr);
+        <span class="type">HttpURLConnection</span> conn = (<span class="type">HttpURLConnection</span>) url.<span class="fn">openConnection</span>();
+        conn.<span class="fn">setRequestMethod</span>(<span class="str">"GET"</span>);
+
+        <span class="type">BufferedReader</span> reader = <span class="kw">new</span> <span class="type">BufferedReader</span>(
+            <span class="kw">new</span> <span class="type">InputStreamReader</span>(conn.<span class="fn">getInputStream</span>())
+        );
+        <span class="type">StringBuilder</span> response = <span class="kw">new</span> <span class="type">StringBuilder</span>();
+        <span class="type">String</span> line;
+        <span class="kw">while</span> ((line = reader.<span class="fn">readLine</span>()) != <span class="kw">null</span>) {
+            response.<span class="fn">append</span>(line);
+        }
+        reader.<span class="fn">close</span>();
+
+        <span class="cmt">// Manual JSON parsing — extract "weather" value</span>
+        <span class="type">String</span> json = response.<span class="fn">toString</span>();
+        <span class="type">String</span> key = <span class="str">"\"weather\":\""</span>;
+        <span class="kw">int</span> start = json.<span class="fn">indexOf</span>(key) + key.<span class="fn">length</span>();
+        <span class="kw">int</span> end = json.<span class="fn">indexOf</span>(<span class="str">"\""</span>, start);
+        <span class="type">String</span> weather = json.<span class="fn">substring</span>(start, end);
+
+        System.out.<span class="fn">println</span>(weather);
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+<p><strong>Key patterns used:</strong> HTTP GET with HttpURLConnection, BufferedReader for response, manual JSON parsing with indexOf + substring. This template works without any external JSON library.</p>
+</div>
+
+<!-- Problem 7 -->
+<h4>Problem 7: Sum of Digits</h4>
+<div class="box box-example">
+  <div class="label">Problem</div>
+  <p>Read an integer and print the sum of its digits. Handle negative numbers.</p>
+  <p><strong>Input:</strong></p>
+  <pre>12345</pre>
+  <p><strong>Output:</strong></p>
+  <pre>15</pre>
+</div>
+
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Solution</button>
+<div class="answer">
+<pre><span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="kw">int</span> n = Math.<span class="fn">abs</span>(sc.<span class="fn">nextInt</span>());
+        <span class="kw">int</span> sum = <span class="num">0</span>;
+        <span class="kw">while</span> (n &gt; <span class="num">0</span>) {
+            sum += n % <span class="num">10</span>;  <span class="cmt">// get last digit</span>
+            n /= <span class="num">10</span>;       <span class="cmt">// remove last digit</span>
+        }
+        System.out.<span class="fn">println</span>(sum);
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+<p><strong>Key patterns used:</strong> <code>% 10</code> to extract last digit, <code>/ 10</code> to remove it, Math.abs() for negative handling.</p>
+</div>
+
+<!-- Problem 8 -->
+<h4>Problem 8: Anagram Check</h4>
+<div class="box box-example">
+  <div class="label">Problem</div>
+  <p>Read two strings and check if they are anagrams (same characters, different order, case insensitive). Print "Anagrams" or "Not Anagrams".</p>
+  <p><strong>Input:</strong></p>
+  <pre>Listen
+Silent</pre>
+  <p><strong>Output:</strong></p>
+  <pre>Anagrams</pre>
+</div>
+
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Solution</button>
+<div class="answer">
+<pre><span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="kw">char</span>[] a = sc.<span class="fn">nextLine</span>().<span class="fn">toLowerCase</span>().<span class="fn">toCharArray</span>();
+        <span class="kw">char</span>[] b = sc.<span class="fn">nextLine</span>().<span class="fn">toLowerCase</span>().<span class="fn">toCharArray</span>();
+
+        <span class="type">Arrays</span>.<span class="fn">sort</span>(a);
+        <span class="type">Arrays</span>.<span class="fn">sort</span>(b);
+
+        <span class="kw">if</span> (<span class="type">Arrays</span>.<span class="fn">equals</span>(a, b)) {
+            System.out.<span class="fn">println</span>(<span class="str">"Anagrams"</span>);
+        } <span class="kw">else</span> {
+            System.out.<span class="fn">println</span>(<span class="str">"Not Anagrams"</span>);
+        }
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+<p><strong>Key patterns used:</strong> Convert to char arrays, sort both, compare with Arrays.equals(). Sorting makes anagram check trivial.</p>
+</div>
+
+<!-- Problem 9 -->
+<h4>Problem 9: Find Duplicates in Array</h4>
+<div class="box box-example">
+  <div class="label">Problem</div>
+  <p>Read N integers and print the duplicate elements in the order they first repeat. If no duplicates, print "No duplicates".</p>
+  <p><strong>Input:</strong></p>
+  <pre>7
+4 2 7 2 4 9 7</pre>
+  <p><strong>Output:</strong></p>
+  <pre>2 4 7</pre>
+</div>
+
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Solution</button>
+<div class="answer">
+<pre><span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="kw">int</span> n = sc.<span class="fn">nextInt</span>();
+
+        <span class="type">Set</span>&lt;<span class="type">Integer</span>&gt; seen = <span class="kw">new</span> <span class="type">HashSet</span>&lt;&gt;();
+        <span class="type">Set</span>&lt;<span class="type">Integer</span>&gt; duplicates = <span class="kw">new</span> <span class="type">LinkedHashSet</span>&lt;&gt;();
+
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {
+            <span class="kw">int</span> num = sc.<span class="fn">nextInt</span>();
+            <span class="kw">if</span> (!seen.<span class="fn">add</span>(num)) {  <span class="cmt">// add returns false if already exists</span>
+                duplicates.<span class="fn">add</span>(num);
+            }
+        }
+
+        <span class="kw">if</span> (duplicates.<span class="fn">isEmpty</span>()) {
+            System.out.<span class="fn">println</span>(<span class="str">"No duplicates"</span>);
+        } <span class="kw">else</span> {
+            <span class="type">StringBuilder</span> sb = <span class="kw">new</span> <span class="type">StringBuilder</span>();
+            <span class="kw">for</span> (<span class="kw">int</span> d : duplicates) {
+                <span class="kw">if</span> (sb.<span class="fn">length</span>() &gt; <span class="num">0</span>) sb.<span class="fn">append</span>(<span class="str">" "</span>);
+                sb.<span class="fn">append</span>(d);
+            }
+            System.out.<span class="fn">println</span>(sb.<span class="fn">toString</span>());
+        }
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+<p><strong>Key patterns used:</strong> HashSet.add() returns false for duplicates, LinkedHashSet preserves insertion order, StringBuilder for clean output.</p>
+</div>
+
+<!-- Problem 10 -->
+<h4>Problem 10: Temperature Conversion</h4>
+<div class="box box-example">
+  <div class="label">Problem</div>
+  <p>Read a temperature in Celsius (double). Convert to Fahrenheit using <code>F = C * 9/5 + 32</code>. Print the result to 2 decimal places.</p>
+  <p><strong>Input:</strong></p>
+  <pre>36.5</pre>
+  <p><strong>Output:</strong></p>
+  <pre>97.70</pre>
+</div>
+
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Solution</button>
+<div class="answer">
+<pre><span class="kw">import</span> java.util.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="kw">double</span> celsius = sc.<span class="fn">nextDouble</span>();
+        <span class="kw">double</span> fahrenheit = celsius * <span class="num">9.0</span> / <span class="num">5.0</span> + <span class="num">32</span>;
+        System.out.<span class="fn">printf</span>(<span class="str">"%.2f%n"</span>, fahrenheit);
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+<p><strong>Key patterns used:</strong> <code>9.0/5.0</code> instead of <code>9/5</code> to avoid integer division, printf with <code>%.2f</code> for 2 decimal places.</p>
+</div>
+
+<!-- ─── QUICK REFERENCE ─── -->
+<h3>Quick Reference: Copy-Paste Starters</h3>
+
+<div class="box box-key">
+  <div class="label">Starter Template — Numbers</div>
+  <pre><span class="kw">import</span> java.util.*;
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="kw">int</span> n = sc.<span class="fn">nextInt</span>();
+        <span class="kw">int</span>[] arr = <span class="kw">new int</span>[n];
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) arr[i] = sc.<span class="fn">nextInt</span>();
+        <span class="cmt">// solve here</span>
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+</div>
+
+<div class="box box-key">
+  <div class="label">Starter Template — Strings</div>
+  <pre><span class="kw">import</span> java.util.*;
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="type">String</span> str = sc.<span class="fn">nextLine</span>();
+        <span class="cmt">// solve here</span>
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+</div>
+
+<div class="box box-key">
+  <div class="label">Starter Template — API/JSON</div>
+  <pre><span class="kw">import</span> java.util.*;
+<span class="kw">import</span> java.io.*;
+<span class="kw">import</span> java.net.*;
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) <span class="kw">throws</span> <span class="type">Exception</span> {
+        <span class="type">Scanner</span> sc = <span class="kw">new</span> <span class="type">Scanner</span>(System.in);
+        <span class="type">String</span> input = sc.<span class="fn">nextLine</span>().<span class="fn">trim</span>();
+        <span class="type">URL</span> url = <span class="kw">new</span> <span class="type">URL</span>(<span class="str">"https://api.example.com/data?q="</span> + input);
+        <span class="type">HttpURLConnection</span> conn = (<span class="type">HttpURLConnection</span>) url.<span class="fn">openConnection</span>();
+        conn.<span class="fn">setRequestMethod</span>(<span class="str">"GET"</span>);
+        <span class="type">BufferedReader</span> reader = <span class="kw">new</span> <span class="type">BufferedReader</span>(
+            <span class="kw">new</span> <span class="type">InputStreamReader</span>(conn.<span class="fn">getInputStream</span>()));
+        <span class="type">StringBuilder</span> resp = <span class="kw">new</span> <span class="type">StringBuilder</span>();
+        <span class="type">String</span> line;
+        <span class="kw">while</span> ((line = reader.<span class="fn">readLine</span>()) != <span class="kw">null</span>) resp.<span class="fn">append</span>(line);
+        reader.<span class="fn">close</span>();
+        <span class="type">String</span> json = resp.<span class="fn">toString</span>();
+        <span class="cmt">// parse json and print result</span>
+        sc.<span class="fn">close</span>();
+    }
+}</pre>
+</div>
+
+<div class="box box-exam">
+  <div class="label">Final Checklist Before Submitting</div>
+  <ol>
+    <li>Class name is <code>Solution</code> (capital S)?</li>
+    <li>No <code>package</code> declaration at the top?</li>
+    <li>No debug <code>System.out.println()</code> left in the code?</li>
+    <li>Output format matches exactly (spaces, newlines, decimal places)?</li>
+    <li>Did you handle the Scanner trap (<code>nextInt()</code> before <code>nextLine()</code>)?</li>
+    <li>Using <code>(double)</code> cast before division if you need decimal results?</li>
+    <li>No trailing space or extra newline in the output?</li>
+    <li>Tested with the sample input and output matches?</li>
+  </ol>
+</div>
+
+</section>
+
+  <div class="footer">
+    <a href="microservices.html">← Microservices</a> |
+    <a href="bizskills.html">BizSkills →</a>
+  </div>
+</div>
+
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

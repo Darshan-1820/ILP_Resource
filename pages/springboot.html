@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Boot — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#what-is-springboot">What is Spring Boot?</a>
+  <a href="#project-structure">Project Structure</a>
+  <a href="#annotations">Key Annotations</a>
+  <a href="#rest-controller">REST Controller</a>
+  <a href="#layered-architecture">Layered Architecture</a>
+  <a href="#jpa-hibernate">JPA & Hibernate</a>
+  <a href="#crud-app">Complete CRUD App</a>
+  <a href="#app-properties">application.properties</a>
+  <a href="#dependency-injection">Dependency Injection</a>
+  <a href="#exception-handling">Exception Handling</a>
+  <a href="#springboot-vs-servlet">Spring Boot vs Servlet</a>
+  <a href="#practice">Practice Questions</a>
+</nav>
+
+<div class="main">
+<section class="sec-springboot">
+
+<h2 id="what-is-springboot">1. What is Spring Boot?</h2>
+
+<p>Spring Boot is a framework built <strong>on top of the Spring Framework</strong> that makes it extremely easy to build Java web applications and REST APIs. It follows the principle of <strong>"Convention over Configuration"</strong> — it auto-configures almost everything so you can focus on writing business logic instead of XML configuration files.</p>
+
+<h3>Spring Framework vs Spring Boot</h3>
+<table>
+<tr><th>Feature</th><th>Spring Framework</th><th>Spring Boot</th></tr>
+<tr><td>Configuration</td><td>Manual XML + Java config</td><td>Auto-configured</td></tr>
+<tr><td>Server</td><td>Need external Tomcat</td><td>Embedded Tomcat (built-in)</td></tr>
+<tr><td>Setup time</td><td>Hours of config</td><td>Minutes with Spring Initializr</td></tr>
+<tr><td>Dependencies</td><td>Manually add each JAR</td><td>Starter packs (one dependency = everything)</td></tr>
+<tr><td>XML files</td><td>Required (web.xml, beans.xml)</td><td>No XML needed</td></tr>
+<tr><td>Learning curve</td><td>Steep</td><td>Beginner-friendly</td></tr>
+</table>
+
+<div class="box box-key">
+  <div class="label">Convention over Configuration</div>
+  Spring Boot makes smart default choices for you. You don't configure a database connection pool, a web server, or component scanning — Spring Boot does it automatically. You only override when you need something different.
+</div>
+
+<h3>Spring Initializr</h3>
+<p>Go to <strong>start.spring.io</strong> to generate a Spring Boot project. Select your dependencies (Spring Web, Spring Data JPA, MySQL Driver, etc.), click Generate, and you get a ready-to-run project ZIP.</p>
+
+<h3>Key Features of Spring Boot</h3>
+<ul>
+  <li><strong>Embedded Server</strong> — Tomcat runs inside your JAR. No external server deployment needed.</li>
+  <li><strong>Auto-Configuration</strong> — Detects dependencies and configures beans automatically.</li>
+  <li><strong>Starter Dependencies</strong> — <code>spring-boot-starter-web</code> pulls in everything for web apps.</li>
+  <li><strong>No XML</strong> — Everything done via annotations and properties files.</li>
+  <li><strong>Production-ready</strong> — Health checks, metrics, externalized config built in.</li>
+</ul>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  If the question asks "What makes Spring Boot different from Spring?" — the answer is <strong>auto-configuration, embedded server, and starter dependencies</strong>. These three are the most tested points.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="project-structure">2. Project Structure</h2>
+
+<p>A standard Spring Boot project looks like this:</p>
+
+<pre>
+my-project/
+├── src/
+│   ├── main/
+│   │   ├── java/                    <span class="cmt">// All your Java code goes here</span>
+│   │   │   └── com/example/demo/
+│   │   │       ├── DemoApplication.java      <span class="cmt">// Main class (entry point)</span>
+│   │   │       ├── controller/               <span class="cmt">// REST controllers</span>
+│   │   │       ├── service/                  <span class="cmt">// Business logic</span>
+│   │   │       ├── repository/               <span class="cmt">// Database access</span>
+│   │   │       └── model/                    <span class="cmt">// Entity classes</span>
+│   │   └── resources/
+│   │       ├── application.properties        <span class="cmt">// Configuration file</span>
+│   │       ├── static/                       <span class="cmt">// CSS, JS, images</span>
+│   │       └── templates/                    <span class="cmt">// HTML templates (Thymeleaf)</span>
+│   └── test/                                 <span class="cmt">// Test files</span>
+└── pom.xml                                   <span class="cmt">// Maven dependencies</span>
+</pre>
+
+<h3>pom.xml — Maven Dependencies</h3>
+<p>The <code>pom.xml</code> file lists all libraries your project needs. Spring Boot uses "starter" dependencies — one starter pulls in multiple related JARs.</p>
+
+<pre>
+<span class="cmt">&lt;!-- Key dependencies in pom.xml --&gt;</span>
+<span class="kw">&lt;dependencies&gt;</span>
+
+    <span class="cmt">&lt;!-- Spring Web — for building REST APIs --&gt;</span>
+    <span class="kw">&lt;dependency&gt;</span>
+        <span class="kw">&lt;groupId&gt;</span>org.springframework.boot<span class="kw">&lt;/groupId&gt;</span>
+        <span class="kw">&lt;artifactId&gt;</span><span class="str">spring-boot-starter-web</span><span class="kw">&lt;/artifactId&gt;</span>
+    <span class="kw">&lt;/dependency&gt;</span>
+
+    <span class="cmt">&lt;!-- Spring Data JPA — for database operations --&gt;</span>
+    <span class="kw">&lt;dependency&gt;</span>
+        <span class="kw">&lt;groupId&gt;</span>org.springframework.boot<span class="kw">&lt;/groupId&gt;</span>
+        <span class="kw">&lt;artifactId&gt;</span><span class="str">spring-boot-starter-data-jpa</span><span class="kw">&lt;/artifactId&gt;</span>
+    <span class="kw">&lt;/dependency&gt;</span>
+
+    <span class="cmt">&lt;!-- MySQL Driver — connects Java to MySQL --&gt;</span>
+    <span class="kw">&lt;dependency&gt;</span>
+        <span class="kw">&lt;groupId&gt;</span>com.mysql<span class="kw">&lt;/groupId&gt;</span>
+        <span class="kw">&lt;artifactId&gt;</span><span class="str">mysql-connector-j</span><span class="kw">&lt;/artifactId&gt;</span>
+    <span class="kw">&lt;/dependency&gt;</span>
+
+<span class="kw">&lt;/dependencies&gt;</span>
+</pre>
+
+<div class="box box-tip">
+  <div class="label">Key starter dependencies to remember</div>
+  <ul>
+    <li><code>spring-boot-starter-web</code> — REST APIs, embedded Tomcat</li>
+    <li><code>spring-boot-starter-data-jpa</code> — JPA + Hibernate for database</li>
+    <li><code>spring-boot-starter-test</code> — testing support</li>
+  </ul>
+</div>
+
+<h3>The Main Class — Entry Point</h3>
+<pre>
+<span class="kw">package</span> com.example.demo;
+
+<span class="kw">import</span> org.springframework.boot.SpringApplication;
+<span class="kw">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;
+
+<span class="type">@SpringBootApplication</span>   <span class="cmt">// This ONE annotation does 3 things (see below)</span>
+<span class="kw">public class</span> <span class="type">DemoApplication</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        SpringApplication.<span class="fn">run</span>(DemoApplication.<span class="kw">class</span>, args);  <span class="cmt">// Starts the app</span>
+    }
+}
+</pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  <code>@SpringBootApplication</code> = <code>@Configuration</code> + <code>@EnableAutoConfiguration</code> + <code>@ComponentScan</code>. This is asked very frequently. Know what each sub-annotation does.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="annotations">3. Key Annotations</h2>
+
+<p>Annotations are the backbone of Spring Boot. Instead of XML config, you put <code>@</code> annotations on classes and methods to tell Spring what to do. <strong>This is the most important section for exams.</strong></p>
+
+<h3>Complete Annotation Reference Table</h3>
+<table>
+<tr><th>Annotation</th><th>Where Used</th><th>What It Does</th></tr>
+<tr><td><code>@SpringBootApplication</code></td><td>Main class</td><td>Combines @Configuration + @EnableAutoConfiguration + @ComponentScan. Entry point.</td></tr>
+<tr><td><code>@RestController</code></td><td>Class</td><td>Makes the class a REST API controller. Every method returns data (JSON), not a view.</td></tr>
+<tr><td><code>@Controller</code></td><td>Class</td><td>Makes the class a web controller. Methods return view names (HTML pages).</td></tr>
+<tr><td><code>@RequestMapping("/path")</code></td><td>Class or Method</td><td>Maps a URL path to a class or method. Base path for all endpoints in the class.</td></tr>
+<tr><td><code>@GetMapping("/path")</code></td><td>Method</td><td>Handles HTTP GET requests (read/fetch data).</td></tr>
+<tr><td><code>@PostMapping("/path")</code></td><td>Method</td><td>Handles HTTP POST requests (create new data).</td></tr>
+<tr><td><code>@PutMapping("/path")</code></td><td>Method</td><td>Handles HTTP PUT requests (update existing data).</td></tr>
+<tr><td><code>@DeleteMapping("/path")</code></td><td>Method</td><td>Handles HTTP DELETE requests (remove data).</td></tr>
+<tr><td><code>@PathVariable</code></td><td>Method param</td><td>Extracts value from URL path. <code>/emp/{id}</code> → id = 5</td></tr>
+<tr><td><code>@RequestParam</code></td><td>Method param</td><td>Extracts query parameter. <code>/emp?name=John</code> → name = "John"</td></tr>
+<tr><td><code>@RequestBody</code></td><td>Method param</td><td>Converts incoming JSON body to a Java object automatically.</td></tr>
+<tr><td><code>@Autowired</code></td><td>Field or Constructor</td><td>Injects a dependency automatically (Dependency Injection).</td></tr>
+<tr><td><code>@Service</code></td><td>Class</td><td>Marks class as a service layer component (business logic).</td></tr>
+<tr><td><code>@Repository</code></td><td>Class</td><td>Marks class as a data access layer component (database operations).</td></tr>
+<tr><td><code>@Component</code></td><td>Class</td><td>Generic Spring-managed bean. @Service and @Repository are specialized versions.</td></tr>
+<tr><td><code>@Entity</code></td><td>Class</td><td>Maps this Java class to a database table (JPA).</td></tr>
+<tr><td><code>@Table(name="tbl")</code></td><td>Class</td><td>Specifies the exact database table name for the entity.</td></tr>
+<tr><td><code>@Id</code></td><td>Field</td><td>Marks a field as the primary key of the table.</td></tr>
+<tr><td><code>@GeneratedValue</code></td><td>Field</td><td>Auto-generates the primary key value (auto-increment).</td></tr>
+<tr><td><code>@Column(name="col")</code></td><td>Field</td><td>Maps a field to a specific column name in the table.</td></tr>
+</table>
+
+<h3>@RestController vs @Controller</h3>
+<pre>
+<span class="type">@RestController</span>    <span class="cmt">// Returns DATA (JSON) — used for REST APIs</span>
+<span class="kw">public class</span> <span class="type">ApiController</span> {
+    <span class="type">@GetMapping</span>(<span class="str">"/hello"</span>)
+    <span class="kw">public</span> String <span class="fn">hello</span>() {
+        <span class="kw">return</span> <span class="str">"Hello World"</span>;   <span class="cmt">// Returns this string as response body</span>
+    }
+}
+
+<span class="type">@Controller</span>        <span class="cmt">// Returns VIEW NAME (HTML page) — used for web pages</span>
+<span class="kw">public class</span> <span class="type">WebController</span> {
+    <span class="type">@GetMapping</span>(<span class="str">"/home"</span>)
+    <span class="kw">public</span> String <span class="fn">home</span>() {
+        <span class="kw">return</span> <span class="str">"index"</span>;         <span class="cmt">// Looks for index.html template</span>
+    }
+}
+</pre>
+
+<div class="box box-key">
+  <div class="label">Key Difference</div>
+  <code>@RestController</code> = <code>@Controller</code> + <code>@ResponseBody</code>. The <code>@ResponseBody</code> part tells Spring to write the return value directly into the HTTP response body (as JSON or text) instead of looking for an HTML template.
+</div>
+
+<h3>@PathVariable vs @RequestParam vs @RequestBody</h3>
+<pre>
+<span class="cmt">// @PathVariable — value is PART of the URL path</span>
+<span class="cmt">// URL: GET /employees/5</span>
+<span class="type">@GetMapping</span>(<span class="str">"/employees/{id}"</span>)
+<span class="kw">public</span> Employee <span class="fn">getById</span>(<span class="type">@PathVariable</span> Long id) {  <span class="cmt">// id = 5</span>
+    <span class="kw">return</span> service.<span class="fn">findById</span>(id);
+}
+
+<span class="cmt">// @RequestParam — value comes AFTER ? in URL</span>
+<span class="cmt">// URL: GET /employees?department=IT</span>
+<span class="type">@GetMapping</span>(<span class="str">"/employees"</span>)
+<span class="kw">public</span> List&lt;Employee&gt; <span class="fn">getByDept</span>(<span class="type">@RequestParam</span> String department) {  <span class="cmt">// department = "IT"</span>
+    <span class="kw">return</span> service.<span class="fn">findByDept</span>(department);
+}
+
+<span class="cmt">// @RequestBody — value comes from JSON body of the request</span>
+<span class="cmt">// POST /employees with body: {"name":"John","department":"IT"}</span>
+<span class="type">@PostMapping</span>(<span class="str">"/employees"</span>)
+<span class="kw">public</span> Employee <span class="fn">create</span>(<span class="type">@RequestBody</span> Employee emp) {  <span class="cmt">// JSON → Java object</span>
+    <span class="kw">return</span> service.<span class="fn">save</span>(emp);
+}
+</pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  <strong>@PathVariable</strong> = value in URL path (<code>/emp/5</code>). <strong>@RequestParam</strong> = value after <code>?</code> (<code>/emp?id=5</code>). <strong>@RequestBody</strong> = JSON data in request body. They ask "which annotation to use when..." — know the difference.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="rest-controller">4. REST Controller — Building APIs</h2>
+
+<p>A REST controller handles HTTP requests and returns data (usually JSON). Each method maps to an HTTP method (GET, POST, PUT, DELETE).</p>
+
+<h3>Simple GET Endpoint</h3>
+<pre>
+<span class="type">@RestController</span>                           <span class="cmt">// This class handles REST API requests</span>
+<span class="type">@RequestMapping</span>(<span class="str">"/api"</span>)                   <span class="cmt">// Base URL: all endpoints start with /api</span>
+<span class="kw">public class</span> <span class="type">HelloController</span> {
+
+    <span class="type">@GetMapping</span>(<span class="str">"/hello"</span>)                  <span class="cmt">// Handles GET /api/hello</span>
+    <span class="kw">public</span> String <span class="fn">sayHello</span>() {
+        <span class="kw">return</span> <span class="str">"Hello from Spring Boot!"</span>;  <span class="cmt">// Response sent as plain text</span>
+    }
+}
+</pre>
+
+<h3>GET with Path Variable</h3>
+<pre>
+<span class="type">@GetMapping</span>(<span class="str">"/employees/{id}"</span>)              <span class="cmt">// {id} is a placeholder in URL</span>
+<span class="kw">public</span> Employee <span class="fn">getEmployee</span>(<span class="type">@PathVariable</span> Long id) {
+    <span class="kw">return</span> service.<span class="fn">getEmployeeById</span>(id);    <span class="cmt">// Fetch employee by ID</span>
+}
+<span class="cmt">// URL: GET /api/employees/5 → id = 5</span>
+</pre>
+
+<h3>POST — Create New Resource</h3>
+<pre>
+<span class="type">@PostMapping</span>(<span class="str">"/employees"</span>)                 <span class="cmt">// Handles POST /api/employees</span>
+<span class="kw">public</span> Employee <span class="fn">createEmployee</span>(<span class="type">@RequestBody</span> Employee emp) {
+    <span class="cmt">// @RequestBody converts JSON from request body → Employee object</span>
+    <span class="kw">return</span> service.<span class="fn">saveEmployee</span>(emp);      <span class="cmt">// Save and return the new employee</span>
+}
+<span class="cmt">// Send JSON: {"name": "John", "department": "IT", "salary": 50000}</span>
+</pre>
+
+<h3>PUT — Update Existing Resource</h3>
+<pre>
+<span class="type">@PutMapping</span>(<span class="str">"/employees/{id}"</span>)              <span class="cmt">// Handles PUT /api/employees/5</span>
+<span class="kw">public</span> Employee <span class="fn">updateEmployee</span>(<span class="type">@PathVariable</span> Long id,
+                               <span class="type">@RequestBody</span> Employee emp) {
+    emp.<span class="fn">setId</span>(id);                         <span class="cmt">// Set the ID from URL path</span>
+    <span class="kw">return</span> service.<span class="fn">saveEmployee</span>(emp);      <span class="cmt">// save() updates if ID exists</span>
+}
+</pre>
+
+<h3>DELETE — Remove Resource</h3>
+<pre>
+<span class="type">@DeleteMapping</span>(<span class="str">"/employees/{id}"</span>)           <span class="cmt">// Handles DELETE /api/employees/5</span>
+<span class="kw">public</span> String <span class="fn">deleteEmployee</span>(<span class="type">@PathVariable</span> Long id) {
+    service.<span class="fn">deleteEmployee</span>(id);              <span class="cmt">// Delete employee with this ID</span>
+    <span class="kw">return</span> <span class="str">"Employee deleted successfully"</span>;
+}
+</pre>
+
+<div class="box box-key">
+  <div class="label">HTTP Method → Annotation Mapping</div>
+  <table>
+  <tr><th>HTTP Method</th><th>Annotation</th><th>Purpose</th><th>Example URL</th></tr>
+  <tr><td>GET</td><td><code>@GetMapping</code></td><td>Read / Fetch</td><td>GET /api/employees</td></tr>
+  <tr><td>POST</td><td><code>@PostMapping</code></td><td>Create</td><td>POST /api/employees</td></tr>
+  <tr><td>PUT</td><td><code>@PutMapping</code></td><td>Update</td><td>PUT /api/employees/5</td></tr>
+  <tr><td>DELETE</td><td><code>@DeleteMapping</code></td><td>Delete</td><td>DELETE /api/employees/5</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="layered-architecture">5. Layered Architecture</h2>
+
+<p>Spring Boot follows a <strong>layered architecture</strong> pattern. Each layer has a specific responsibility and talks only to the layer directly below it.</p>
+
+<pre>
+  Client (Browser / Postman)
+        ↓ HTTP Request
+  ┌─────────────────────┐
+  │    <span class="type">Controller</span>        │  ← Handles HTTP requests, calls Service
+  │   (@RestController)  │
+  └─────────┬───────────┘
+            ↓
+  ┌─────────────────────┐
+  │     <span class="type">Service</span>          │  ← Business logic, validation, rules
+  │    (@Service)        │
+  └─────────┬───────────┘
+            ↓
+  ┌─────────────────────┐
+  │    <span class="type">Repository</span>       │  ← Database queries (CRUD operations)
+  │   (@Repository)      │
+  └─────────┬───────────┘
+            ↓
+  ┌─────────────────────┐
+  │    <span class="type">Database</span>         │  ← MySQL, PostgreSQL, H2, etc.
+  └─────────────────────┘
+</pre>
+
+<h3>Why Layers?</h3>
+<ul>
+  <li><strong>Separation of Concerns</strong> — Each layer does ONE thing. Controller handles requests, Service handles logic, Repository handles database.</li>
+  <li><strong>Maintainability</strong> — Change database? Only Repository changes. Change business rules? Only Service changes.</li>
+  <li><strong>Testability</strong> — Each layer can be tested independently.</li>
+  <li><strong>Reusability</strong> — Multiple controllers can use the same service.</li>
+</ul>
+
+<h3>Each Layer's Responsibility</h3>
+<table>
+<tr><th>Layer</th><th>Annotation</th><th>Responsibility</th></tr>
+<tr><td><strong>Controller</strong></td><td><code>@RestController</code></td><td>Receive HTTP requests, validate input, call service, return response</td></tr>
+<tr><td><strong>Service</strong></td><td><code>@Service</code></td><td>Business logic, calculations, validation rules, orchestration</td></tr>
+<tr><td><strong>Repository</strong></td><td><code>@Repository</code></td><td>Database operations — save, find, update, delete</td></tr>
+<tr><td><strong>Model/Entity</strong></td><td><code>@Entity</code></td><td>Represents a database table as a Java class</td></tr>
+</table>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  If they ask "Which layer contains business logic?" — answer is <strong>Service layer</strong>. Controller NEVER contains business logic. Repository NEVER contains business logic. They each have one job.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="jpa-hibernate">6. JPA and Hibernate (ORM)</h2>
+
+<h3>What is ORM?</h3>
+<p><strong>ORM = Object-Relational Mapping</strong>. It maps Java objects to database tables automatically. Instead of writing SQL queries, you work with Java objects and JPA/Hibernate translates them to SQL behind the scenes.</p>
+
+<table>
+<tr><th>Java Concept</th><th>Database Concept</th></tr>
+<tr><td>Class</td><td>Table</td></tr>
+<tr><td>Object</td><td>Row</td></tr>
+<tr><td>Field/Variable</td><td>Column</td></tr>
+</table>
+
+<h3>Entity Class Example</h3>
+<p>An entity class is a regular Java class with JPA annotations that maps to a database table.</p>
+
+<pre>
+<span class="kw">import</span> jakarta.persistence.*;  <span class="cmt">// JPA annotations</span>
+
+<span class="type">@Entity</span>                        <span class="cmt">// Tells JPA: this class = a database table</span>
+<span class="type">@Table</span>(name = <span class="str">"employees"</span>)     <span class="cmt">// Table name in database (optional if class name = table name)</span>
+<span class="kw">public class</span> <span class="type">Employee</span> {
+
+    <span class="type">@Id</span>                        <span class="cmt">// This field is the PRIMARY KEY</span>
+    <span class="type">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)  <span class="cmt">// Auto-increment</span>
+    <span class="kw">private</span> Long id;
+
+    <span class="type">@Column</span>(name = <span class="str">"emp_name"</span>)  <span class="cmt">// Maps to column "emp_name" in table</span>
+    <span class="kw">private</span> String name;
+
+    <span class="kw">private</span> String department;   <span class="cmt">// No @Column? Column name = field name "department"</span>
+
+    <span class="kw">private</span> <span class="kw">double</span> salary;
+
+    <span class="cmt">// Default constructor (REQUIRED by JPA)</span>
+    <span class="kw">public</span> <span class="fn">Employee</span>() {}
+
+    <span class="cmt">// Parameterized constructor</span>
+    <span class="kw">public</span> <span class="fn">Employee</span>(String name, String department, <span class="kw">double</span> salary) {
+        <span class="kw">this</span>.name = name;
+        <span class="kw">this</span>.department = department;
+        <span class="kw">this</span>.salary = salary;
+    }
+
+    <span class="cmt">// Getters and Setters (required for JPA and JSON conversion)</span>
+    <span class="kw">public</span> Long <span class="fn">getId</span>() { <span class="kw">return</span> id; }
+    <span class="kw">public void</span> <span class="fn">setId</span>(Long id) { <span class="kw">this</span>.id = id; }
+    <span class="kw">public</span> String <span class="fn">getName</span>() { <span class="kw">return</span> name; }
+    <span class="kw">public void</span> <span class="fn">setName</span>(String name) { <span class="kw">this</span>.name = name; }
+    <span class="kw">public</span> String <span class="fn">getDepartment</span>() { <span class="kw">return</span> department; }
+    <span class="kw">public void</span> <span class="fn">setDepartment</span>(String dept) { <span class="kw">this</span>.department = dept; }
+    <span class="kw">public double</span> <span class="fn">getSalary</span>() { <span class="kw">return</span> salary; }
+    <span class="kw">public void</span> <span class="fn">setSalary</span>(<span class="kw">double</span> salary) { <span class="kw">this</span>.salary = salary; }
+}
+</pre>
+
+<div class="box box-warn">
+  <div class="label">Common Mistake</div>
+  JPA entities MUST have a <strong>default (no-arg) constructor</strong>. If you only define a parameterized constructor, JPA will throw an error. Always include <code>public Employee() {}</code>.
+</div>
+
+<h3>JpaRepository — Built-in Database Methods</h3>
+<p>By extending <code>JpaRepository</code>, you get a full set of database operations for FREE. No SQL needed.</p>
+
+<pre>
+<span class="kw">import</span> org.springframework.data.jpa.repository.JpaRepository;
+
+<span class="cmt">// JpaRepository&lt;EntityClass, PrimaryKeyType&gt;</span>
+<span class="kw">public interface</span> <span class="type">EmployeeRepository</span> <span class="kw">extends</span> <span class="type">JpaRepository</span>&lt;Employee, Long&gt; {
+    <span class="cmt">// That's it! You get all CRUD methods automatically:</span>
+    <span class="cmt">// findAll()       → SELECT * FROM employees</span>
+    <span class="cmt">// findById(id)    → SELECT * FROM employees WHERE id = ?</span>
+    <span class="cmt">// save(entity)    → INSERT or UPDATE</span>
+    <span class="cmt">// deleteById(id)  → DELETE FROM employees WHERE id = ?</span>
+    <span class="cmt">// count()         → SELECT COUNT(*) FROM employees</span>
+    <span class="cmt">// existsById(id)  → checks if row exists</span>
+}
+</pre>
+
+<h3>Built-in JpaRepository Methods</h3>
+<table>
+<tr><th>Method</th><th>SQL Equivalent</th><th>Returns</th></tr>
+<tr><td><code>findAll()</code></td><td>SELECT * FROM table</td><td>List&lt;Entity&gt;</td></tr>
+<tr><td><code>findById(id)</code></td><td>SELECT * WHERE id = ?</td><td>Optional&lt;Entity&gt;</td></tr>
+<tr><td><code>save(entity)</code></td><td>INSERT or UPDATE</td><td>Saved Entity</td></tr>
+<tr><td><code>deleteById(id)</code></td><td>DELETE WHERE id = ?</td><td>void</td></tr>
+<tr><td><code>count()</code></td><td>SELECT COUNT(*)</td><td>long</td></tr>
+<tr><td><code>existsById(id)</code></td><td>SELECT EXISTS(...)</td><td>boolean</td></tr>
+</table>
+
+<h3>Custom Queries with @Query</h3>
+<pre>
+<span class="kw">public interface</span> <span class="type">EmployeeRepository</span> <span class="kw">extends</span> <span class="type">JpaRepository</span>&lt;Employee, Long&gt; {
+
+    <span class="cmt">// Custom query method — Spring generates SQL from method name!</span>
+    List&lt;Employee&gt; <span class="fn">findByDepartment</span>(String department);
+    <span class="cmt">// → SELECT * FROM employees WHERE department = ?</span>
+
+    List&lt;Employee&gt; <span class="fn">findByNameContaining</span>(String keyword);
+    <span class="cmt">// → SELECT * FROM employees WHERE name LIKE '%keyword%'</span>
+
+    <span class="cmt">// Custom JPQL query (Java Persistence Query Language)</span>
+    <span class="type">@Query</span>(<span class="str">"SELECT e FROM Employee e WHERE e.salary > :minSalary"</span>)
+    List&lt;Employee&gt; <span class="fn">findHighEarners</span>(<span class="type">@Param</span>(<span class="str">"minSalary"</span>) <span class="kw">double</span> minSalary);
+}
+</pre>
+
+<div class="box box-key">
+  <div class="label">Query Method Naming Convention</div>
+  Spring Data JPA generates queries from method names automatically:
+  <ul>
+    <li><code>findBy<strong>Name</strong></code> → WHERE name = ?</li>
+    <li><code>findBy<strong>Department</strong>And<strong>Salary</strong>GreaterThan</code> → WHERE department = ? AND salary > ?</li>
+    <li><code>findBy<strong>Name</strong>Containing</code> → WHERE name LIKE '%?%'</li>
+    <li><code>findBy<strong>Salary</strong>Between</code> → WHERE salary BETWEEN ? AND ?</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="crud-app">7. Complete CRUD Application</h2>
+
+<p>Here's a complete working CRUD app with all 4 layers. This is what you need to know for PRA and Sprint 3.</p>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  PRA and Sprint 3 often ask you to build or trace through a complete CRUD application. Understand how each layer connects. Data flows: <strong>Controller → Service → Repository → Database</strong>.
+</div>
+
+<h3>Layer 1: Entity — Employee.java</h3>
+<pre>
+<span class="kw">package</span> com.example.demo.model;
+
+<span class="kw">import</span> jakarta.persistence.*;
+
+<span class="type">@Entity</span>                                     <span class="cmt">// This class maps to a database table</span>
+<span class="type">@Table</span>(name = <span class="str">"employees"</span>)                  <span class="cmt">// Table name: "employees"</span>
+<span class="kw">public class</span> <span class="type">Employee</span> {
+
+    <span class="type">@Id</span>                                     <span class="cmt">// Primary key</span>
+    <span class="type">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)  <span class="cmt">// Auto-increment</span>
+    <span class="kw">private</span> Long id;
+
+    <span class="type">@Column</span>(nullable = <span class="kw">false</span>)               <span class="cmt">// Cannot be null in database</span>
+    <span class="kw">private</span> String name;
+
+    <span class="kw">private</span> String department;
+
+    <span class="kw">private</span> <span class="kw">double</span> salary;
+
+    <span class="cmt">// Default constructor — REQUIRED by JPA</span>
+    <span class="kw">public</span> <span class="fn">Employee</span>() {}
+
+    <span class="cmt">// Constructor with fields (no id — database generates it)</span>
+    <span class="kw">public</span> <span class="fn">Employee</span>(String name, String department, <span class="kw">double</span> salary) {
+        <span class="kw">this</span>.name = name;
+        <span class="kw">this</span>.department = department;
+        <span class="kw">this</span>.salary = salary;
+    }
+
+    <span class="cmt">// --- Getters and Setters ---</span>
+    <span class="kw">public</span> Long <span class="fn">getId</span>() { <span class="kw">return</span> id; }
+    <span class="kw">public void</span> <span class="fn">setId</span>(Long id) { <span class="kw">this</span>.id = id; }
+
+    <span class="kw">public</span> String <span class="fn">getName</span>() { <span class="kw">return</span> name; }
+    <span class="kw">public void</span> <span class="fn">setName</span>(String name) { <span class="kw">this</span>.name = name; }
+
+    <span class="kw">public</span> String <span class="fn">getDepartment</span>() { <span class="kw">return</span> department; }
+    <span class="kw">public void</span> <span class="fn">setDepartment</span>(String department) { <span class="kw">this</span>.department = department; }
+
+    <span class="kw">public double</span> <span class="fn">getSalary</span>() { <span class="kw">return</span> salary; }
+    <span class="kw">public void</span> <span class="fn">setSalary</span>(<span class="kw">double</span> salary) { <span class="kw">this</span>.salary = salary; }
+}
+</pre>
+
+<h3>Layer 2: Repository — EmployeeRepository.java</h3>
+<pre>
+<span class="kw">package</span> com.example.demo.repository;
+
+<span class="kw">import</span> com.example.demo.model.Employee;
+<span class="kw">import</span> org.springframework.data.jpa.repository.JpaRepository;
+<span class="kw">import</span> org.springframework.stereotype.Repository;
+
+<span class="type">@Repository</span>                                        <span class="cmt">// Marks as data access layer</span>
+<span class="kw">public interface</span> <span class="type">EmployeeRepository</span>
+        <span class="kw">extends</span> <span class="type">JpaRepository</span>&lt;Employee, Long&gt; {
+    <span class="cmt">// Employee = Entity class</span>
+    <span class="cmt">// Long = type of the primary key (id)</span>
+
+    <span class="cmt">// All CRUD methods are inherited automatically!</span>
+    <span class="cmt">// findAll(), findById(), save(), deleteById(), etc.</span>
+}
+</pre>
+
+<h3>Layer 3: Service — EmployeeService.java</h3>
+<pre>
+<span class="kw">package</span> com.example.demo.service;
+
+<span class="kw">import</span> com.example.demo.model.Employee;
+<span class="kw">import</span> com.example.demo.repository.EmployeeRepository;
+<span class="kw">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span class="kw">import</span> org.springframework.stereotype.Service;
+<span class="kw">import</span> java.util.List;
+<span class="kw">import</span> java.util.Optional;
+
+<span class="type">@Service</span>                                            <span class="cmt">// Marks as service layer (business logic)</span>
+<span class="kw">public class</span> <span class="type">EmployeeService</span> {
+
+    <span class="type">@Autowired</span>                                      <span class="cmt">// Inject repository automatically</span>
+    <span class="kw">private</span> EmployeeRepository repository;
+
+    <span class="cmt">// GET ALL employees</span>
+    <span class="kw">public</span> List&lt;Employee&gt; <span class="fn">getAllEmployees</span>() {
+        <span class="kw">return</span> repository.<span class="fn">findAll</span>();                  <span class="cmt">// Returns all rows from table</span>
+    }
+
+    <span class="cmt">// GET ONE employee by ID</span>
+    <span class="kw">public</span> Employee <span class="fn">getEmployeeById</span>(Long id) {
+        Optional&lt;Employee&gt; emp = repository.<span class="fn">findById</span>(id);  <span class="cmt">// May or may not exist</span>
+        <span class="kw">if</span> (emp.<span class="fn">isPresent</span>()) {
+            <span class="kw">return</span> emp.<span class="fn">get</span>();                        <span class="cmt">// Found — return employee</span>
+        } <span class="kw">else</span> {
+            <span class="kw">throw new</span> RuntimeException(<span class="str">"Employee not found with id: "</span> + id);
+        }
+    }
+
+    <span class="cmt">// CREATE a new employee (or UPDATE if id exists)</span>
+    <span class="kw">public</span> Employee <span class="fn">saveEmployee</span>(Employee emp) {
+        <span class="kw">return</span> repository.<span class="fn">save</span>(emp);                  <span class="cmt">// save() handles both INSERT and UPDATE</span>
+    }
+
+    <span class="cmt">// UPDATE an existing employee</span>
+    <span class="kw">public</span> Employee <span class="fn">updateEmployee</span>(Long id, Employee updatedEmp) {
+        Employee existing = <span class="fn">getEmployeeById</span>(id);     <span class="cmt">// Find existing record</span>
+        existing.<span class="fn">setName</span>(updatedEmp.<span class="fn">getName</span>());       <span class="cmt">// Update name</span>
+        existing.<span class="fn">setDepartment</span>(updatedEmp.<span class="fn">getDepartment</span>()); <span class="cmt">// Update department</span>
+        existing.<span class="fn">setSalary</span>(updatedEmp.<span class="fn">getSalary</span>());   <span class="cmt">// Update salary</span>
+        <span class="kw">return</span> repository.<span class="fn">save</span>(existing);             <span class="cmt">// Save updated record</span>
+    }
+
+    <span class="cmt">// DELETE an employee</span>
+    <span class="kw">public void</span> <span class="fn">deleteEmployee</span>(Long id) {
+        repository.<span class="fn">deleteById</span>(id);                   <span class="cmt">// Delete row with this ID</span>
+    }
+}
+</pre>
+
+<h3>Layer 4: Controller — EmployeeController.java</h3>
+<pre>
+<span class="kw">package</span> com.example.demo.controller;
+
+<span class="kw">import</span> com.example.demo.model.Employee;
+<span class="kw">import</span> com.example.demo.service.EmployeeService;
+<span class="kw">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span class="kw">import</span> org.springframework.web.bind.annotation.*;
+<span class="kw">import</span> java.util.List;
+
+<span class="type">@RestController</span>                                     <span class="cmt">// This handles REST API requests</span>
+<span class="type">@RequestMapping</span>(<span class="str">"/api/employees"</span>)                   <span class="cmt">// Base URL for all endpoints</span>
+<span class="kw">public class</span> <span class="type">EmployeeController</span> {
+
+    <span class="type">@Autowired</span>                                      <span class="cmt">// Inject service automatically</span>
+    <span class="kw">private</span> EmployeeService service;
+
+    <span class="cmt">// GET /api/employees — Get all employees</span>
+    <span class="type">@GetMapping</span>
+    <span class="kw">public</span> List&lt;Employee&gt; <span class="fn">getAll</span>() {
+        <span class="kw">return</span> service.<span class="fn">getAllEmployees</span>();              <span class="cmt">// Returns JSON array</span>
+    }
+
+    <span class="cmt">// GET /api/employees/5 — Get one employee by ID</span>
+    <span class="type">@GetMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> Employee <span class="fn">getById</span>(<span class="type">@PathVariable</span> Long id) {
+        <span class="kw">return</span> service.<span class="fn">getEmployeeById</span>(id);           <span class="cmt">// Returns JSON object</span>
+    }
+
+    <span class="cmt">// POST /api/employees — Create new employee</span>
+    <span class="type">@PostMapping</span>
+    <span class="kw">public</span> Employee <span class="fn">create</span>(<span class="type">@RequestBody</span> Employee emp) {
+        <span class="kw">return</span> service.<span class="fn">saveEmployee</span>(emp);              <span class="cmt">// JSON body → Employee object</span>
+    }
+
+    <span class="cmt">// PUT /api/employees/5 — Update employee</span>
+    <span class="type">@PutMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> Employee <span class="fn">update</span>(<span class="type">@PathVariable</span> Long id,
+                           <span class="type">@RequestBody</span> Employee emp) {
+        <span class="kw">return</span> service.<span class="fn">updateEmployee</span>(id, emp);       <span class="cmt">// Update and return</span>
+    }
+
+    <span class="cmt">// DELETE /api/employees/5 — Delete employee</span>
+    <span class="type">@DeleteMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> String <span class="fn">delete</span>(<span class="type">@PathVariable</span> Long id) {
+        service.<span class="fn">deleteEmployee</span>(id);
+        <span class="kw">return</span> <span class="str">"Employee with id "</span> + id + <span class="str">" deleted"</span>;
+    }
+}
+</pre>
+
+<div class="box box-example">
+  <div class="label">How It All Connects — Request Flow</div>
+  <ol>
+    <li>Client sends <code>GET /api/employees/5</code></li>
+    <li><strong>Controller</strong> receives request → calls <code>service.getEmployeeById(5)</code></li>
+    <li><strong>Service</strong> runs business logic → calls <code>repository.findById(5)</code></li>
+    <li><strong>Repository</strong> runs SQL → <code>SELECT * FROM employees WHERE id = 5</code></li>
+    <li><strong>Database</strong> returns row → Repository converts to Employee object</li>
+    <li>Response travels back up: Repository → Service → Controller → Client (as JSON)</li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="app-properties">8. application.properties</h2>
+
+<p>The <code>application.properties</code> file (in <code>src/main/resources/</code>) configures your Spring Boot app — database connection, server settings, JPA behavior, etc.</p>
+
+<h3>Complete Configuration Example</h3>
+<pre>
+<span class="cmt"># ─── Server Configuration ───</span>
+server.port=<span class="num">8080</span>                              <span class="cmt"># Port the app runs on (default: 8080)</span>
+
+<span class="cmt"># ─── Database Connection ───</span>
+spring.datasource.url=<span class="str">jdbc:mysql://localhost:3306/employeedb</span>
+spring.datasource.username=<span class="str">root</span>               <span class="cmt"># Database username</span>
+spring.datasource.password=<span class="str">password</span>           <span class="cmt"># Database password</span>
+spring.datasource.driver-class-name=<span class="str">com.mysql.cj.jdbc.Driver</span>
+
+<span class="cmt"># ─── JPA / Hibernate Settings ───</span>
+spring.jpa.hibernate.ddl-auto=<span class="str">update</span>          <span class="cmt"># Auto-create/update tables</span>
+spring.jpa.show-sql=<span class="kw">true</span>                      <span class="cmt"># Print SQL queries in console</span>
+spring.jpa.properties.hibernate.dialect=<span class="str">org.hibernate.dialect.MySQLDialect</span>
+</pre>
+
+<h3>ddl-auto Values — Important for Exams</h3>
+<table>
+<tr><th>Value</th><th>What It Does</th><th>When to Use</th></tr>
+<tr><td><code>create</code></td><td>Drops all tables, creates fresh every time app starts</td><td>Testing only (DESTROYS data)</td></tr>
+<tr><td><code>update</code></td><td>Updates tables if entity changes, keeps existing data</td><td>Development (most common)</td></tr>
+<tr><td><code>validate</code></td><td>Only validates schema — doesn't change anything</td><td>Production</td></tr>
+<tr><td><code>none</code></td><td>Does nothing — you manage schema manually</td><td>Production</td></tr>
+<tr><td><code>create-drop</code></td><td>Creates on startup, drops on shutdown</td><td>Unit testing only</td></tr>
+</table>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  Most exam questions about <code>ddl-auto</code> ask: "Which value preserves existing data while updating schema?" — Answer: <strong>update</strong>. "Which drops and recreates tables?" — Answer: <strong>create</strong>.
+</div>
+
+<div class="box box-warn">
+  <div class="label">Never use create or create-drop in production</div>
+  <code>create</code> deletes ALL your data every time the application restarts. Use <code>update</code> during development and <code>validate</code> or <code>none</code> in production.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="dependency-injection">9. Dependency Injection (DI)</h2>
+
+<h3>What is Dependency Injection?</h3>
+<p><strong>Dependency Injection</strong> means objects receive their dependencies from the outside instead of creating them internally. Spring creates and manages all objects (called "beans") and injects them where needed.</p>
+
+<h3>Without DI (Bad — Tight Coupling)</h3>
+<pre>
+<span class="kw">public class</span> <span class="type">EmployeeService</span> {
+    <span class="cmt">// Creating dependency manually — TIGHT COUPLING</span>
+    <span class="kw">private</span> EmployeeRepository repo = <span class="kw">new</span> EmployeeRepository();  <span class="cmt">// BAD!</span>
+}
+</pre>
+
+<h3>With DI (Good — Loose Coupling)</h3>
+<pre>
+<span class="type">@Service</span>
+<span class="kw">public class</span> <span class="type">EmployeeService</span> {
+    <span class="cmt">// Spring injects the dependency — LOOSE COUPLING</span>
+    <span class="type">@Autowired</span>                                       <span class="cmt">// Spring creates and injects this</span>
+    <span class="kw">private</span> EmployeeRepository repo;                  <span class="cmt">// GOOD!</span>
+}
+</pre>
+
+<h3>Constructor Injection (Preferred)</h3>
+<pre>
+<span class="type">@Service</span>
+<span class="kw">public class</span> <span class="type">EmployeeService</span> {
+
+    <span class="kw">private final</span> EmployeeRepository repo;           <span class="cmt">// Declared as final</span>
+
+    <span class="cmt">// Constructor injection — BEST PRACTICE</span>
+    <span class="kw">public</span> <span class="fn">EmployeeService</span>(EmployeeRepository repo) {
+        <span class="kw">this</span>.repo = repo;                             <span class="cmt">// Spring passes repo here</span>
+    }
+    <span class="cmt">// When there's only ONE constructor, @Autowired is optional</span>
+}
+</pre>
+
+<h3>Field Injection vs Constructor Injection</h3>
+<table>
+<tr><th>Aspect</th><th>Field Injection (@Autowired on field)</th><th>Constructor Injection (Preferred)</th></tr>
+<tr><td>Syntax</td><td><code>@Autowired private Repo repo;</code></td><td><code>public Service(Repo repo) { this.repo = repo; }</code></td></tr>
+<tr><td>Testability</td><td>Hard to test (need reflection)</td><td>Easy to test (pass mock in constructor)</td></tr>
+<tr><td>Immutability</td><td>Field can change</td><td>Field is <code>final</code> — cannot change</td></tr>
+<tr><td>Best practice?</td><td>No (but commonly used in tutorials)</td><td>Yes — recommended by Spring team</td></tr>
+</table>
+
+<div class="box box-key">
+  <div class="label">Why DI Matters</div>
+  <ul>
+    <li><strong>Loose coupling</strong> — classes don't depend on specific implementations</li>
+    <li><strong>Testability</strong> — you can inject mock objects during testing</li>
+    <li><strong>Flexibility</strong> — swap implementations without changing code</li>
+    <li><strong>Spring manages lifecycle</strong> — you don't worry about creating/destroying objects</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="exception-handling">10. Exception Handling</h2>
+
+<p>When something goes wrong (e.g., employee not found), you want to return a clean error response instead of a stack trace. Spring Boot provides annotations for this.</p>
+
+<h3>Custom Exception Class</h3>
+<pre>
+<span class="kw">public class</span> <span class="type">ResourceNotFoundException</span> <span class="kw">extends</span> RuntimeException {
+    <span class="kw">public</span> <span class="fn">ResourceNotFoundException</span>(String message) {
+        <span class="kw">super</span>(message);   <span class="cmt">// Pass message to parent RuntimeException</span>
+    }
+}
+</pre>
+
+<h3>Using @ExceptionHandler (Local — Single Controller)</h3>
+<pre>
+<span class="type">@RestController</span>
+<span class="type">@RequestMapping</span>(<span class="str">"/api/employees"</span>)
+<span class="kw">public class</span> <span class="type">EmployeeController</span> {
+
+    <span class="type">@GetMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> Employee <span class="fn">getById</span>(<span class="type">@PathVariable</span> Long id) {
+        <span class="kw">return</span> service.<span class="fn">getEmployeeById</span>(id);  <span class="cmt">// Throws exception if not found</span>
+    }
+
+    <span class="cmt">// Handles ResourceNotFoundException in THIS controller only</span>
+    <span class="type">@ExceptionHandler</span>(ResourceNotFoundException.<span class="kw">class</span>)
+    <span class="kw">public</span> String <span class="fn">handleNotFound</span>(ResourceNotFoundException ex) {
+        <span class="kw">return</span> ex.<span class="fn">getMessage</span>();               <span class="cmt">// Return error message as response</span>
+    }
+}
+</pre>
+
+<h3>Using @RestControllerAdvice (Global — All Controllers)</h3>
+<pre>
+<span class="type">@RestControllerAdvice</span>          <span class="cmt">// Applies to ALL controllers in the application</span>
+<span class="kw">public class</span> <span class="type">GlobalExceptionHandler</span> {
+
+    <span class="cmt">// Handle specific exception</span>
+    <span class="type">@ExceptionHandler</span>(ResourceNotFoundException.<span class="kw">class</span>)
+    <span class="kw">public</span> Map&lt;String, String&gt; <span class="fn">handleNotFound</span>(ResourceNotFoundException ex) {
+        Map&lt;String, String&gt; error = <span class="kw">new</span> HashMap&lt;&gt;();
+        error.<span class="fn">put</span>(<span class="str">"error"</span>, ex.<span class="fn">getMessage</span>());
+        error.<span class="fn">put</span>(<span class="str">"status"</span>, <span class="str">"404"</span>);
+        <span class="kw">return</span> error;  <span class="cmt">// Returns JSON: {"error": "...", "status": "404"}</span>
+    }
+
+    <span class="cmt">// Handle all other exceptions</span>
+    <span class="type">@ExceptionHandler</span>(Exception.<span class="kw">class</span>)
+    <span class="kw">public</span> Map&lt;String, String&gt; <span class="fn">handleGeneral</span>(Exception ex) {
+        Map&lt;String, String&gt; error = <span class="kw">new</span> HashMap&lt;&gt;();
+        error.<span class="fn">put</span>(<span class="str">"error"</span>, <span class="str">"Something went wrong"</span>);
+        error.<span class="fn">put</span>(<span class="str">"status"</span>, <span class="str">"500"</span>);
+        <span class="kw">return</span> error;
+    }
+}
+</pre>
+
+<div class="box box-key">
+  <div class="label">@ExceptionHandler vs @RestControllerAdvice</div>
+  <ul>
+    <li><code>@ExceptionHandler</code> inside a controller — handles exceptions for <strong>that controller only</strong></li>
+    <li><code>@RestControllerAdvice</code> on a separate class — handles exceptions for <strong>all controllers</strong> (global)</li>
+    <li><code>@ControllerAdvice</code> = same but returns views. <code>@RestControllerAdvice</code> = returns JSON/data.</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="springboot-vs-servlet">11. Spring Boot vs Servlet Comparison</h2>
+
+<table>
+<tr><th>Feature</th><th>Servlets</th><th>Spring Boot</th></tr>
+<tr><td>Configuration</td><td>web.xml (XML-based)</td><td>Annotations + application.properties</td></tr>
+<tr><td>Server</td><td>External Tomcat required</td><td>Embedded Tomcat (built-in)</td></tr>
+<tr><td>HTTP handling</td><td><code>doGet()</code>, <code>doPost()</code> methods</td><td><code>@GetMapping</code>, <code>@PostMapping</code> annotations</td></tr>
+<tr><td>Request data</td><td><code>request.getParameter()</code></td><td><code>@PathVariable</code>, <code>@RequestBody</code></td></tr>
+<tr><td>Response format</td><td>Manual <code>response.getWriter().write()</code></td><td>Automatic JSON conversion</td></tr>
+<tr><td>Database</td><td>Manual JDBC code</td><td>JPA Repository (automatic)</td></tr>
+<tr><td>Code needed</td><td>~100 lines for basic CRUD</td><td>~30 lines for same CRUD</td></tr>
+<tr><td>Dependency management</td><td>Manually add each JAR</td><td>Starter dependencies in pom.xml</td></tr>
+<tr><td>Boilerplate</td><td>Lots of repetitive code</td><td>Minimal — convention over config</td></tr>
+<tr><td>Modern projects?</td><td>Rarely used directly</td><td>Industry standard</td></tr>
+</table>
+
+<div class="box box-example">
+  <div class="label">Same endpoint — Servlet vs Spring Boot</div>
+  <strong>Servlet (verbose):</strong>
+  <pre>
+<span class="kw">protected void</span> <span class="fn">doGet</span>(HttpServletRequest request,
+                     HttpServletResponse response) {
+    String id = request.<span class="fn">getParameter</span>(<span class="str">"id"</span>);
+    <span class="cmt">// Manual JDBC connection, query, result parsing...</span>
+    response.<span class="fn">setContentType</span>(<span class="str">"application/json"</span>);
+    response.<span class="fn">getWriter</span>().<span class="fn">write</span>(jsonString);
+}
+  </pre>
+  <strong>Spring Boot (clean):</strong>
+  <pre>
+<span class="type">@GetMapping</span>(<span class="str">"/{id}"</span>)
+<span class="kw">public</span> Employee <span class="fn">getById</span>(<span class="type">@PathVariable</span> Long id) {
+    <span class="kw">return</span> service.<span class="fn">findById</span>(id);  <span class="cmt">// Auto-converts to JSON</span>
+}
+  </pre>
+</div>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  Spring Boot uses Servlets internally — it runs on an embedded Tomcat servlet container. Spring Boot is NOT a replacement for servlets; it's built ON TOP of servlets. It just removes the boilerplate.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="practice">12. Practice Questions</h2>
+
+<!-- Q1 -->
+<div class="practice">
+  <div class="q-label">Question 1</div>
+  <div class="question">What does @SpringBootApplication combine?</div>
+  <ol class="options">
+    <li>@Component + @Service + @Repository</li>
+    <li>@Configuration + @EnableAutoConfiguration + @ComponentScan</li>
+    <li>@RestController + @RequestMapping + @Autowired</li>
+    <li>@Entity + @Table + @Id</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) @Configuration + @EnableAutoConfiguration + @ComponentScan. This is the most frequently asked Spring Boot annotation question.</div>
+</div>
+
+<!-- Q2 -->
+<div class="practice">
+  <div class="q-label">Question 2</div>
+  <div class="question">Which annotation is used to handle HTTP GET requests?</div>
+  <ol class="options">
+    <li>@PostMapping</li>
+    <li>@RequestMapping</li>
+    <li>@GetMapping</li>
+    <li>@ResponseBody</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) @GetMapping. It specifically handles GET requests. @RequestMapping can handle any method but needs the method attribute specified.</div>
+</div>
+
+<!-- Q3 -->
+<div class="practice">
+  <div class="q-label">Question 3</div>
+  <div class="question">What is the difference between @RestController and @Controller?</div>
+  <ol class="options">
+    <li>@RestController is for REST APIs, @Controller is for Servlets</li>
+    <li>@RestController = @Controller + @ResponseBody (returns data, not views)</li>
+    <li>@RestController handles only GET, @Controller handles all methods</li>
+    <li>There is no difference</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) @RestController = @Controller + @ResponseBody. @RestController returns data (JSON/text) directly. @Controller returns view names (HTML templates).</div>
+</div>
+
+<!-- Q4 -->
+<div class="practice">
+  <div class="q-label">Question 4</div>
+  <div class="question">Which annotation extracts a value from the URL path <code>/employees/5</code>?</div>
+  <ol class="options">
+    <li>@RequestParam</li>
+    <li>@RequestBody</li>
+    <li>@PathVariable</li>
+    <li>@RequestMapping</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) @PathVariable. It extracts values from the URL path. @RequestParam extracts from query parameters (?key=value). @RequestBody extracts from the request body (JSON).</div>
+</div>
+
+<!-- Q5 -->
+<div class="practice">
+  <div class="q-label">Question 5</div>
+  <div class="question">Which layer in Spring Boot architecture contains business logic?</div>
+  <ol class="options">
+    <li>Controller layer</li>
+    <li>Repository layer</li>
+    <li>Service layer</li>
+    <li>Entity layer</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) Service layer (@Service). Controller handles HTTP requests/responses. Repository handles database operations. Service contains all business logic and rules.</div>
+</div>
+
+<!-- Q6 -->
+<div class="practice">
+  <div class="q-label">Question 6</div>
+  <div class="question">What does <code>spring.jpa.hibernate.ddl-auto=update</code> do?</div>
+  <ol class="options">
+    <li>Drops all tables and recreates them</li>
+    <li>Only validates the schema without changes</li>
+    <li>Updates tables when entity changes, preserves existing data</li>
+    <li>Does nothing — schema is managed manually</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) <code>update</code> modifies the table structure when entity classes change but keeps existing data. <code>create</code> drops and recreates (data lost). <code>validate</code> only checks. <code>none</code> does nothing.</div>
+</div>
+
+<!-- Q7 -->
+<div class="practice">
+  <div class="q-label">Question 7</div>
+  <div class="question">Which JpaRepository method is used to insert OR update a record?</div>
+  <ol class="options">
+    <li>insert()</li>
+    <li>save()</li>
+    <li>update()</li>
+    <li>persist()</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) save(). If the entity has no ID (or ID doesn't exist in DB), it inserts. If the ID already exists, it updates. One method handles both operations.</div>
+</div>
+
+<!-- Q8 -->
+<div class="practice">
+  <div class="q-label">Question 8</div>
+  <div class="question">What does @Autowired do?</div>
+  <ol class="options">
+    <li>Creates a new instance of a class</li>
+    <li>Automatically injects a dependency managed by Spring</li>
+    <li>Maps a URL to a method</li>
+    <li>Makes a field the primary key</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) @Autowired tells Spring to automatically inject (provide) the required dependency. Spring creates the object and passes it to your class — you don't use <code>new</code>.</div>
+</div>
+
+<!-- Q9 -->
+<div class="practice">
+  <div class="q-label">Question 9</div>
+  <div class="question">Which annotation marks a Java class as a database table?</div>
+  <ol class="options">
+    <li>@Table</li>
+    <li>@Entity</li>
+    <li>@Repository</li>
+    <li>@Column</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) @Entity. It tells JPA that this Java class maps to a database table. @Table is optional — it specifies the exact table name. @Entity is mandatory for JPA to recognize the class.</div>
+</div>
+
+<!-- Q10 -->
+<div class="practice">
+  <div class="q-label">Question 10</div>
+  <div class="question">What HTTP method does @DeleteMapping handle?</div>
+  <ol class="options">
+    <li>GET</li>
+    <li>POST</li>
+    <li>PUT</li>
+    <li>DELETE</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="3">D) DELETE. Each annotation maps to its HTTP method: @GetMapping → GET, @PostMapping → POST, @PutMapping → PUT, @DeleteMapping → DELETE.</div>
+</div>
+
+<!-- Q11 -->
+<div class="practice">
+  <div class="q-label">Question 11</div>
+  <div class="question">Which is the correct order of layers when a request comes in?</div>
+  <ol class="options">
+    <li>Service → Controller → Repository → Database</li>
+    <li>Controller → Repository → Service → Database</li>
+    <li>Controller → Service → Repository → Database</li>
+    <li>Repository → Service → Controller → Database</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) Controller → Service → Repository → Database. The controller receives the HTTP request, passes to service for business logic, service calls repository for database operations.</div>
+</div>
+
+<!-- Q12 -->
+<div class="practice">
+  <div class="q-label">Question 12</div>
+  <div class="question">What does @GeneratedValue(strategy = GenerationType.IDENTITY) do?</div>
+  <ol class="options">
+    <li>Generates a random UUID</li>
+    <li>Uses auto-increment in the database for the primary key</li>
+    <li>Creates a composite key</li>
+    <li>Validates the primary key value</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) It tells JPA to let the database auto-increment the primary key value. The database assigns the next available number (1, 2, 3...) automatically when inserting a new row.</div>
+</div>
+
+<!-- Q13 -->
+<div class="practice">
+  <div class="q-label">Question 13</div>
+  <div class="question">What is the default port for a Spring Boot application?</div>
+  <ol class="options">
+    <li>3000</li>
+    <li>8080</li>
+    <li>80</li>
+    <li>443</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) 8080. You can change it in application.properties with <code>server.port=9090</code>. Port 80 is HTTP default, 443 is HTTPS default, 3000 is commonly used by Node.js.</div>
+</div>
+
+<!-- Q14 -->
+<div class="practice">
+  <div class="q-label">Question 14</div>
+  <div class="question">What does @RestControllerAdvice do?</div>
+  <ol class="options">
+    <li>Creates a REST controller</li>
+    <li>Handles exceptions globally across all controllers</li>
+    <li>Adds authentication to controllers</li>
+    <li>Logs all API requests</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) @RestControllerAdvice creates a global exception handler that catches exceptions from ANY controller in the application and returns a clean error response (JSON).</div>
+</div>
+
+<!-- Q15 -->
+<div class="practice">
+  <div class="q-label">Question 15</div>
+  <div class="question">Why is constructor injection preferred over field injection (@Autowired on field)?</div>
+  <ol class="options">
+    <li>Constructor injection is faster</li>
+    <li>Field injection doesn't work with Spring</li>
+    <li>Constructor injection allows final fields and is easier to test</li>
+    <li>Field injection requires XML configuration</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) Constructor injection allows fields to be <code>final</code> (immutable) and makes testing easier because you can pass mock objects directly through the constructor. Field injection requires reflection for testing.</div>
+</div>
+
+<!-- Q16 -->
+<div class="practice">
+  <div class="q-label">Question 16</div>
+  <div class="question">Which file lists all Maven dependencies in a Spring Boot project?</div>
+  <ol class="options">
+    <li>application.properties</li>
+    <li>web.xml</li>
+    <li>pom.xml</li>
+    <li>build.gradle</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) pom.xml (for Maven projects). It lists all dependencies like spring-boot-starter-web, spring-boot-starter-data-jpa, mysql-connector-j, etc. build.gradle is used for Gradle projects (alternative to Maven).</div>
+</div>
+
+<!-- Q17 -->
+<div class="practice">
+  <div class="q-label">Question 17</div>
+  <div class="question">What does <code>findById()</code> return in JpaRepository?</div>
+  <ol class="options">
+    <li>The entity object directly</li>
+    <li>A List of entities</li>
+    <li>An Optional&lt;Entity&gt;</li>
+    <li>null if not found</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) Optional&lt;Entity&gt;. It wraps the result — you use <code>.isPresent()</code> to check if found and <code>.get()</code> to retrieve the value. This avoids NullPointerException.</div>
+</div>
+
+<!-- Q18 -->
+<div class="practice">
+  <div class="q-label">Question 18</div>
+  <div class="question">What does @RequestBody do?</div>
+  <ol class="options">
+    <li>Extracts query parameters from the URL</li>
+    <li>Converts JSON in the request body to a Java object</li>
+    <li>Returns the response body as HTML</li>
+    <li>Extracts path variables from the URL</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) @RequestBody automatically converts (deserializes) JSON data from the HTTP request body into a Java object. Used with POST and PUT requests where the client sends data in the body.</div>
+</div>
+
+</section>
+
+  <div class="footer">
+    <a href="servlets.html">← Servlets</a> |
+    <a href="rest-json-xml.html">REST / JSON / XML →</a>
+  </div>
+</div>
+
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

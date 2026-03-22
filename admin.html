@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  .admin-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent-glow); display: flex; align-items: center;
+    justify-content: center; font-size: 14px; font-weight: 700;
+    color: var(--accent); flex-shrink: 0; border: 1px solid rgba(233,69,96,.25);
+  }
+  .user-row .user-info { flex: 1; min-width: 0; }
+  .user-row .user-info .name { font-weight: 600; color: #fff; font-size: 13px; }
+  .user-row .user-info .email { font-size: 11px; color: var(--text-dim); }
+  .user-row .user-meta { text-align: right; flex-shrink: 0; }
+  .user-row .user-meta .time { font-size: 11px; color: var(--text-dim); }
+  .stat-card .stat-icon {
+    font-size: 24px; margin-bottom: 8px; display: block;
+  }
+  .stat-card.accent { border-bottom: 2px solid var(--accent); }
+  .stat-card.info { border-bottom: 2px solid var(--info); }
+  .stat-card.success { border-bottom: 2px solid var(--success); }
+  .stat-card.purple { border-bottom: 2px solid var(--purple); }
+  .admin-date { font-size: 13px; color: var(--text-dim); font-weight: 400; }
+  .admin-header-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .engagement-bar {
+    display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+    border-radius: var(--radius-sm); background: var(--bg-surface); font-size: 13px;
+  }
+  .engagement-bar .topic-name { flex: 1; color: var(--text); font-weight: 500; }
+  .engagement-bar .bar-track {
+    width: 100px; height: 6px; background: var(--border);
+    border-radius: 3px; overflow: hidden; flex-shrink: 0;
+  }
+  .engagement-bar .bar-fill {
+    height: 100%; border-radius: 3px; background: var(--accent);
+    transition: width .6s cubic-bezier(.4,0,.2,1);
+  }
+  .engagement-bar .bar-count { font-size: 11px; color: var(--text-dim); width: 36px; text-align: right; }
+  .quick-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .quick-actions .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 20px; border-radius: var(--radius-sm); font-size: 13px;
+    font-weight: 600; border: none; cursor: pointer; transition: var(--transition);
+    text-decoration: none;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-outline {
+    background: transparent; color: var(--text); border: 1px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .loading-spinner {
+    display: flex; align-items: center; justify-content: center;
+    padding: 32px; color: var(--text-dim); font-size: 13px;
+  }
+  .admin-card h4 .card-icon { margin-right: 8px; }
+  .sidebar a.admin-link { color: var(--accent); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<button class="menu-toggle">☰</button>
+
+<nav class="sidebar">
+  <h2>Admin Panel</h2>
+
+  <div class="section-label">Admin</div>
+  <a href="#" class="admin-link active">📊 Dashboard</a>
+  <a href="#users-section">👥 Users</a>
+  <a href="#engagement-section">📈 Engagement</a>
+  <div class="divider"></div>
+
+  <div class="section-label">Study Guide</div>
+  <a href="index.html">← Back to Guide</a>
+  <div class="divider"></div>
+
+  <div class="section-label">FA — Phase 1</div>
+  <a href="pages/html.html" class="sub">HTML</a>
+  <a href="pages/css.html" class="sub">CSS</a>
+  <a href="pages/javascript.html" class="sub">JavaScript</a>
+  <a href="pages/unix.html" class="sub">Unix / Linux</a>
+  <a href="pages/sql.html" class="sub">SQL</a>
+  <a href="pages/plsql.html" class="sub">PL/SQL</a>
+  <div class="divider"></div>
+
+  <div class="section-label">FA/PRA — Phase 2</div>
+  <a href="pages/java.html" class="sub">Java</a>
+  <a href="pages/unix.html" class="sub">Unix (Subjective)</a>
+  <div class="divider"></div>
+
+  <div class="section-label">PRA — Phase 3</div>
+  <a href="pages/jdbc.html" class="sub">JDBC</a>
+  <a href="pages/servlets.html" class="sub">Servlets</a>
+  <a href="pages/springboot.html" class="sub">Spring Boot (CRUD)</a>
+  <div class="divider"></div>
+
+  <div class="section-label">PRA — Phase 4</div>
+  <a href="pages/rest-json-xml.html" class="sub">REST / JSON / XML</a>
+  <a href="pages/typescript.html" class="sub">TypeScript</a>
+  <a href="pages/angular.html" class="sub">Angular</a>
+  <a href="pages/microservices.html" class="sub">Microservices</a>
+  <div class="divider"></div>
+
+  <a href="pages/hse-coding.html">HSE Coding Patterns</a>
+  <a href="pages/bizskills.html">BizSkills &amp; Versant</a>
+
+  <div class="sidebar-user" id="sidebar-user">
+    <div style="flex:1">
+      <div class="user-name" id="admin-name">Admin</div>
+      <div class="user-email" id="admin-email">—</div>
+    </div>
+    <button class="logout-btn" id="sign-out-btn" title="Sign Out">⏻</button>
+  </div>
+</nav>
+
+<div class="main">
+
+  <!-- Admin Header -->
+  <div class="admin-header">
+    <div class="admin-header-left">
+      <h2>System Admin</h2>
+      <span class="admin-badge">ADMIN</span>
+      <span class="admin-date" id="current-date"></span>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stat-row" id="stat-row">
+    <div class="stat-card accent">
+      <span class="stat-icon">👥</span>
+      <div class="stat-num" id="stat-total-users">—</div>
+      <div class="stat-label">Total Users</div>
+    </div>
+    <div class="stat-card info">
+      <span class="stat-icon">⚡</span>
+      <div class="stat-num" id="stat-active-today">—</div>
+      <div class="stat-label">Active Today</div>
+    </div>
+    <div class="stat-card success">
+      <span class="stat-icon">📚</span>
+      <div class="stat-num">16</div>
+      <div class="stat-label">Total Topics</div>
+    </div>
+    <div class="stat-card purple">
+      <span class="stat-icon">❓</span>
+      <div class="stat-num">254</div>
+      <div class="stat-label">Total Questions</div>
+    </div>
+  </div>
+
+  <!-- Grid: Recent Users + Topic Engagement -->
+  <div class="admin-grid">
+
+    <!-- Recent Users -->
+    <div class="admin-card" id="users-section">
+      <h4><span class="card-icon">👥</span>Recent Users</h4>
+      <div class="user-list" id="user-list">
+        <div class="loading-spinner">Loading users...</div>
+      </div>
+    </div>
+
+    <!-- Topic Engagement -->
+    <div class="admin-card" id="engagement-section">
+      <h4><span class="card-icon">📈</span>Topic Engagement</h4>
+      <div class="user-list" id="engagement-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="admin-card" style="margin-top: 4px;">
+    <h4><span class="card-icon">⚡</span>Quick Actions</h4>
+    <div class="quick-actions">
+      <button class="btn btn-primary" id="btn-view-all">👥 View All Users</button>
+      <button class="btn btn-outline" id="btn-export">📥 Export Data</button>
+      <a href="index.html" class="btn btn-outline">← Back to Study Guide</a>
+    </div>
+  </div>
+
+  <!-- All Users Table (hidden by default) -->
+  <div class="admin-card" id="all-users-panel" style="margin-top: 20px; display: none;">
+    <h4><span class="card-icon">📋</span>All Registered Users</h4>
+    <div class="user-list" id="all-users-list">
+      <div class="loading-spinner">Loading...</div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, collection, getDocs, query, orderBy, limit, where, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { firebaseConfig } from "./js/firebase-config.js";
+
+  // --- Init ---
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // --- Admin whitelist ---
+  const ADMINS = ["darshan@example.com"];
+
+  // --- Date display ---
+  const now = new Date();
+  document.getElementById("current-date").textContent =
+    now.toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+
+  // --- Auth gate ---
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "index.html";
+      return;
+    }
+    if (!ADMINS.includes(user.email)) {
+      window.location.href = "index.html";
+      return;
+    }
+    document.getElementById("admin-name").textContent = user.displayName || "Admin";
+    document.getElementById("admin-email").textContent = user.email;
+    loadDashboard();
+  });
+
+  // --- Sign out ---
+  document.getElementById("sign-out-btn").addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "index.html";
+  });
+
+  // --- Mobile menu toggle ---
+  document.querySelector(".menu-toggle").addEventListener("click", () => {
+    document.querySelector(".sidebar").classList.toggle("open");
+  });
+
+  // --- Helpers ---
+  function timeAgo(date) {
+    if (!date) return "—";
+    const seconds = Math.floor((now - date) / 1000);
+    if (seconds < 60) return "just now";
+    if (seconds < 3600) return Math.floor(seconds / 60) + "m ago";
+    if (seconds < 86400) return Math.floor(seconds / 3600) + "h ago";
+    return Math.floor(seconds / 86400) + "d ago";
+  }
+
+  function getInitial(name, email) {
+    if (name && name.trim()) return name.trim()[0].toUpperCase();
+    if (email) return email[0].toUpperCase();
+    return "?";
+  }
+
+  function renderUserRow(user) {
+    const name = user.displayName || user.name || "Anonymous";
+    const email = user.email || "—";
+    const lastLogin = user.lastLogin?.toDate ? user.lastLogin.toDate() : (user.lastLogin ? new Date(user.lastLogin) : null);
+    const isOnline = lastLogin && (now - lastLogin) < 5 * 60 * 1000; // 5 min threshold
+
+    return `
+      <div class="user-row">
+        <div class="admin-avatar">${getInitial(name, email)}</div>
+        <div class="user-info">
+          <div class="name">${escapeHtml(name)}</div>
+          <div class="email">${escapeHtml(email)}</div>
+        </div>
+        <div class="user-meta">
+          <div class="time">${lastLogin ? timeAgo(lastLogin) : "Never"}</div>
+        </div>
+        <div class="user-dot ${isOnline ? '' : 'offline'}" title="${isOnline ? 'Online' : 'Offline'}"></div>
+      </div>`;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // --- Load Dashboard Data ---
+  async function loadDashboard() {
+    try {
+      // Fetch all users
+      const usersRef = collection(db, "users");
+      const allSnap = await getDocs(usersRef);
+      const allUsers = [];
+      allSnap.forEach(doc => allUsers.push({ id: doc.id, ...doc.data() }));
+
+      // Total users
+      document.getElementById("stat-total-users").textContent = allUsers.length;
+
+      // Active today
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const activeToday = allUsers.filter(u => {
+        const ll = u.lastLogin?.toDate ? u.lastLogin.toDate() : (u.lastLogin ? new Date(u.lastLogin) : null);
+        return ll && ll >= todayStart;
+      });
+      document.getElementById("stat-active-today").textContent = activeToday.length;
+
+      // Recent 10 users (sort by lastLogin desc)
+      const sorted = [...allUsers].sort((a, b) => {
+        const aTime = a.lastLogin?.toDate ? a.lastLogin.toDate() : (a.lastLogin ? new Date(a.lastLogin) : new Date(0));
+        const bTime = b.lastLogin?.toDate ? b.lastLogin.toDate() : (b.lastLogin ? new Date(b.lastLogin) : new Date(0));
+        return bTime - aTime;
+      });
+
+      const recentUsers = sorted.slice(0, 10);
+      const userListEl = document.getElementById("user-list");
+
+      if (recentUsers.length === 0) {
+        userListEl.innerHTML = '<div class="loading-spinner">No users found</div>';
+      } else {
+        userListEl.innerHTML = recentUsers.map(renderUserRow).join("");
+      }
+
+      // Store for "view all" and "export"
+      window.__allUsers = sorted;
+
+    } catch (err) {
+      console.error("Dashboard load error:", err);
+      document.getElementById("user-list").innerHTML =
+        '<div class="loading-spinner">Error loading data. Check console.</div>';
+      document.getElementById("stat-total-users").textContent = "!";
+      document.getElementById("stat-active-today").textContent = "!";
+    }
+
+    // Render engagement (placeholder data)
+    renderEngagement();
+  }
+
+  // --- Topic Engagement (placeholder) ---
+  function renderEngagement() {
+    const topics = [
+      { name: "Java", visits: 184 },
+      { name: "JavaScript", visits: 156 },
+      { name: "SQL", visits: 142 },
+      { name: "HTML", visits: 130 },
+      { name: "Spring Boot", visits: 118 },
+      { name: "Angular", visits: 97 },
+      { name: "CSS", visits: 89 },
+      { name: "Unix / Linux", visits: 78 },
+      { name: "Servlets", visits: 65 },
+      { name: "PL/SQL", visits: 54 },
+      { name: "JDBC", visits: 48 },
+      { name: "TypeScript", visits: 42 },
+      { name: "REST / JSON / XML", visits: 38 },
+      { name: "Microservices", visits: 31 },
+      { name: "HSE Coding", visits: 27 },
+      { name: "BizSkills", visits: 19 },
+    ];
+
+    const max = topics[0].visits;
+    const el = document.getElementById("engagement-list");
+    el.innerHTML = topics.map(t => `
+      <div class="engagement-bar">
+        <span class="topic-name">${t.name}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${(t.visits / max * 100).toFixed(0)}%"></div></div>
+        <span class="bar-count">${t.visits}</span>
+      </div>
+    `).join("");
+  }
+
+  // --- View All Users ---
+  document.getElementById("btn-view-all").addEventListener("click", () => {
+    const panel = document.getElementById("all-users-panel");
+    const listEl = document.getElementById("all-users-list");
+
+    if (panel.style.display === "none") {
+      panel.style.display = "block";
+      document.getElementById("btn-view-all").textContent = "✕ Hide All Users";
+
+      const users = window.__allUsers || [];
+      if (users.length === 0) {
+        listEl.innerHTML = '<div class="loading-spinner">No users found</div>';
+      } else {
+        listEl.innerHTML = users.map(renderUserRow).join("");
+      }
+      panel.scrollIntoView({ behavior: "smooth" });
+    } else {
+      panel.style.display = "none";
+      document.getElementById("btn-view-all").textContent = "👥 View All Users";
+    }
+  });
+
+  // --- Export Data (CSV) ---
+  document.getElementById("btn-export").addEventListener("click", () => {
+    const users = window.__allUsers || [];
+    if (users.length === 0) { alert("No data to export."); return; }
+
+    const header = "Name,Email,Last Login\n";
+    const rows = users.map(u => {
+      const name = (u.displayName || u.name || "Anonymous").replace(/,/g, " ");
+      const email = (u.email || "—").replace(/,/g, " ");
+      const ll = u.lastLogin?.toDate ? u.lastLogin.toDate().toISOString() : (u.lastLogin || "Never");
+      return `"${name}","${email}","${ll}"`;
+    }).join("\n");
+
+    const blob = new Blob([header + rows], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `ilp-users-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+</script>
+
+</body>
+</html>

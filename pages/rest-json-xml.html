@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REST APIs / JSON / XML — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#rest-api">What is an API?</a>
+  <a href="#rest" class="sub">What is REST?</a>
+  <a href="#rest-principles" class="sub">REST Principles</a>
+  <a href="#http-methods" class="sub">HTTP Methods</a>
+  <a href="#status-codes" class="sub">HTTP Status Codes</a>
+  <a href="#url-structure" class="sub">URL Structure</a>
+  <a href="#headers" class="sub">Headers</a>
+  <a href="#request-response" class="sub">Request &amp; Response</a>
+  <a href="#rest-vs-soap" class="sub">REST vs SOAP</a>
+  <a href="#idempotent" class="sub">Idempotent Methods</a>
+  <div class="divider"></div>
+  <a href="#json">JSON</a>
+  <a href="#json-syntax" class="sub">JSON Syntax</a>
+  <a href="#json-types" class="sub">JSON Data Types</a>
+  <a href="#json-valid-invalid" class="sub">Valid vs Invalid</a>
+  <a href="#json-nested" class="sub">Nested JSON</a>
+  <a href="#json-java" class="sub">JSON in Java</a>
+  <a href="#json-hackerrank" class="sub">HackerRank Pattern</a>
+  <div class="divider"></div>
+  <a href="#xml">XML</a>
+  <a href="#xml-syntax" class="sub">XML Syntax</a>
+  <a href="#xml-parsing" class="sub">XML Parsing in Java</a>
+  <a href="#json-vs-xml" class="sub">JSON vs XML</a>
+  <div class="divider"></div>
+  <a href="#api-java">API Consumption in Java</a>
+  <a href="#practice">Practice Questions</a>
+</nav>
+
+<div class="main">
+<section class="sec-rest">
+
+<!-- ========== REST APIs ========== -->
+<h2 id="rest-api">What is an API?</h2>
+
+<p><strong>API</strong> stands for <strong>Application Programming Interface</strong>. Think of it like a <strong>waiter in a restaurant</strong>:</p>
+
+<div class="box box-tip">
+<div class="label">Waiter Analogy</div>
+<strong>You</strong> (client) sit at a table and look at the menu.<br>
+<strong>The waiter</strong> (API) takes your order to the kitchen.<br>
+<strong>The kitchen</strong> (server) prepares the food.<br>
+<strong>The waiter</strong> (API) brings the food back to you.<br><br>
+You never go into the kitchen yourself. The API is the middleman that lets two systems talk to each other.
+</div>
+
+<p>In programming terms: an API defines <strong>rules for how one piece of software can request data or services from another</strong>. When you open a weather app, it uses an API to fetch weather data from a remote server.</p>
+
+<!-- ========== What is REST? ========== -->
+<h2 id="rest">What is REST?</h2>
+
+<p><strong>REST</strong> = <strong>RE</strong>presentational <strong>S</strong>tate <strong>T</strong>ransfer. It is an <strong>architectural style</strong> (not a protocol, not a library) for designing networked applications. Most modern web APIs follow REST.</p>
+
+<div class="box box-key">
+<div class="label">Key Point</div>
+REST is <strong>not</strong> a protocol like HTTP. It is a set of <strong>guidelines/constraints</strong> that use HTTP as the transport. An API that follows REST rules is called a <strong>RESTful API</strong>.
+</div>
+
+<!-- ========== REST Principles ========== -->
+<h3 id="rest-principles">REST Principles (6 Constraints)</h3>
+
+<table>
+<tr><th>#</th><th>Principle</th><th>What It Means</th></tr>
+<tr><td>1</td><td><strong>Client-Server</strong></td><td>Client (frontend) and Server (backend) are separate. They communicate over HTTP.</td></tr>
+<tr><td>2</td><td><strong>Stateless</strong></td><td>Each request is independent. Server does NOT remember previous requests. All info must be in the request itself.</td></tr>
+<tr><td>3</td><td><strong>Cacheable</strong></td><td>Responses can be cached by the client to improve performance.</td></tr>
+<tr><td>4</td><td><strong>Uniform Interface</strong></td><td>A consistent way to interact: use standard HTTP methods, URIs, and status codes.</td></tr>
+<tr><td>5</td><td><strong>Layered System</strong></td><td>Client doesn't know if it's talking directly to the server or through a load balancer/proxy.</td></tr>
+<tr><td>6</td><td><strong>Code on Demand</strong> (optional)</td><td>Server can send executable code to the client (e.g., JavaScript). Rarely used.</td></tr>
+</table>
+
+<div class="box box-exam">
+<div class="label">Exam Favorite</div>
+<strong>"Stateless"</strong> is the most asked principle. It means: every request must contain ALL the information the server needs. The server does not store session info between requests.
+</div>
+
+<!-- ========== HTTP Methods ========== -->
+<h2 id="http-methods">HTTP Methods</h2>
+
+<p>HTTP methods tell the server <strong>what action</strong> you want to perform. These are also called <strong>HTTP verbs</strong>.</p>
+
+<table>
+<tr><th>Method</th><th>Purpose</th><th>Example</th><th>Has Body?</th></tr>
+<tr><td><strong>GET</strong></td><td>Retrieve/Read data</td><td>Get list of users</td><td>No</td></tr>
+<tr><td><strong>POST</strong></td><td>Create new resource</td><td>Create a new user</td><td>Yes</td></tr>
+<tr><td><strong>PUT</strong></td><td>Update entire resource (replace)</td><td>Update all user fields</td><td>Yes</td></tr>
+<tr><td><strong>PATCH</strong></td><td>Update part of resource</td><td>Update only email</td><td>Yes</td></tr>
+<tr><td><strong>DELETE</strong></td><td>Delete a resource</td><td>Delete a user</td><td>No (usually)</td></tr>
+</table>
+
+<div class="box box-example">
+<div class="label">Example — CRUD Operations</div>
+<code>GET    /api/employees</code> → Get all employees<br>
+<code>GET    /api/employees/5</code> → Get employee with id 5<br>
+<code>POST   /api/employees</code> → Create a new employee (data in body)<br>
+<code>PUT    /api/employees/5</code> → Replace employee 5 completely<br>
+<code>PATCH  /api/employees/5</code> → Update some fields of employee 5<br>
+<code>DELETE /api/employees/5</code> → Delete employee 5
+</div>
+
+<div class="box box-warn">
+<div class="label">Common Confusion</div>
+<strong>PUT vs PATCH:</strong><br>
+<strong>PUT</strong> replaces the ENTIRE resource. If you send a PUT with only the name, other fields become null.<br>
+<strong>PATCH</strong> updates ONLY the fields you send. Other fields stay unchanged.
+</div>
+
+<!-- ========== HTTP Status Codes ========== -->
+<h2 id="status-codes">HTTP Status Codes</h2>
+
+<div class="box box-exam">
+<div class="label">Heavily Tested</div>
+Status codes appear in almost every REST-related question. Memorize these.
+</div>
+
+<table>
+<tr><th>Code</th><th>Name</th><th>Meaning</th><th>When Used</th></tr>
+<tr><td><strong>200</strong></td><td>OK</td><td>Request succeeded</td><td>GET, PUT, PATCH success</td></tr>
+<tr><td><strong>201</strong></td><td>Created</td><td>Resource created successfully</td><td>POST success</td></tr>
+<tr><td><strong>204</strong></td><td>No Content</td><td>Success but no response body</td><td>DELETE success</td></tr>
+<tr><td><strong>400</strong></td><td>Bad Request</td><td>Invalid request data</td><td>Validation errors, malformed JSON</td></tr>
+<tr><td><strong>401</strong></td><td>Unauthorized</td><td>Not authenticated</td><td>Missing or invalid credentials</td></tr>
+<tr><td><strong>403</strong></td><td>Forbidden</td><td>Authenticated but no permission</td><td>User lacks access rights</td></tr>
+<tr><td><strong>404</strong></td><td>Not Found</td><td>Resource doesn't exist</td><td>Wrong URL or deleted resource</td></tr>
+<tr><td><strong>500</strong></td><td>Internal Server Error</td><td>Server crashed</td><td>Bug in server code</td></tr>
+</table>
+
+<div class="box box-tip">
+<div class="label">Quick Memory Trick</div>
+<strong>2xx</strong> = Success (all good)<br>
+<strong>4xx</strong> = Client's fault (you sent something wrong)<br>
+<strong>5xx</strong> = Server's fault (server broke)<br><br>
+<strong>401 vs 403:</strong> 401 = "Who are you?" (not logged in). 403 = "I know who you are, but you can't do this" (logged in, but no permission).
+</div>
+
+<!-- ========== URL Structure ========== -->
+<h3 id="url-structure">URL Structure</h3>
+
+<pre>https://api.example.com/v1/employees/42?sort=name&amp;order=asc
+|_____|  |_____________| |_| |________| |_| |_______________|
+scheme      host        ver  endpoint   id    query params</pre>
+
+<table>
+<tr><th>Part</th><th>Example</th><th>Purpose</th></tr>
+<tr><td><strong>Base URL</strong></td><td><code>https://api.example.com</code></td><td>Server address</td></tr>
+<tr><td><strong>Version</strong></td><td><code>/v1</code></td><td>API version</td></tr>
+<tr><td><strong>Endpoint</strong></td><td><code>/employees</code></td><td>The resource you want</td></tr>
+<tr><td><strong>Path Parameter</strong></td><td><code>/employees/42</code></td><td>Identifies specific resource (42 is the path param)</td></tr>
+<tr><td><strong>Query Parameters</strong></td><td><code>?sort=name&amp;order=asc</code></td><td>Filter, sort, paginate (after the ? mark)</td></tr>
+</table>
+
+<div class="box box-key">
+<div class="label">Path Param vs Query Param</div>
+<strong>Path param</strong> → identifies a SPECIFIC resource: <code>/users/5</code> (get user 5)<br>
+<strong>Query param</strong> → filters/modifies the result: <code>/users?age=25</code> (get users where age is 25)
+</div>
+
+<!-- ========== Headers ========== -->
+<h3 id="headers">HTTP Headers</h3>
+
+<p>Headers are <strong>metadata</strong> sent with every HTTP request and response. They carry information about the request format, authentication, and more.</p>
+
+<table>
+<tr><th>Header</th><th>Purpose</th><th>Example Value</th></tr>
+<tr><td><strong>Content-Type</strong></td><td>Format of data in request body</td><td><code>application/json</code></td></tr>
+<tr><td><strong>Accept</strong></td><td>Format client wants in response</td><td><code>application/json</code></td></tr>
+<tr><td><strong>Authorization</strong></td><td>Authentication credentials</td><td><code>Bearer eyJhbGci...</code></td></tr>
+<tr><td><strong>Cache-Control</strong></td><td>Caching instructions</td><td><code>no-cache</code></td></tr>
+</table>
+
+<div class="box box-tip">
+<div class="label">Remember</div>
+<strong>Content-Type</strong> = "I'm SENDING you this format"<br>
+<strong>Accept</strong> = "I WANT you to REPLY in this format"
+</div>
+
+<!-- ========== Request & Response ========== -->
+<h3 id="request-response">Request and Response Anatomy</h3>
+
+<h4>HTTP Request</h4>
+<pre><span class="kw">POST</span> /api/employees <span class="cmt">HTTP/1.1</span>
+<span class="type">Host:</span> <span class="str">api.example.com</span>
+<span class="type">Content-Type:</span> <span class="str">application/json</span>
+<span class="type">Authorization:</span> <span class="str">Bearer abc123token</span>
+
+{
+  <span class="str">"name"</span>: <span class="str">"Darshan"</span>,
+  <span class="str">"department"</span>: <span class="str">"Engineering"</span>,
+  <span class="str">"salary"</span>: <span class="num">50000</span>
+}</pre>
+
+<h4>HTTP Response</h4>
+<pre><span class="cmt">HTTP/1.1</span> <span class="num">201</span> <span class="kw">Created</span>
+<span class="type">Content-Type:</span> <span class="str">application/json</span>
+
+{
+  <span class="str">"id"</span>: <span class="num">101</span>,
+  <span class="str">"name"</span>: <span class="str">"Darshan"</span>,
+  <span class="str">"department"</span>: <span class="str">"Engineering"</span>,
+  <span class="str">"salary"</span>: <span class="num">50000</span>,
+  <span class="str">"message"</span>: <span class="str">"Employee created successfully"</span>
+}</pre>
+
+<!-- ========== REST vs SOAP ========== -->
+<h3 id="rest-vs-soap">REST vs SOAP</h3>
+
+<table>
+<tr><th>Feature</th><th>REST</th><th>SOAP</th></tr>
+<tr><td><strong>Full Form</strong></td><td>REpresentational State Transfer</td><td>Simple Object Access Protocol</td></tr>
+<tr><td><strong>Type</strong></td><td>Architectural style</td><td>Protocol</td></tr>
+<tr><td><strong>Data Format</strong></td><td>JSON, XML, HTML, plain text</td><td>XML only</td></tr>
+<tr><td><strong>Transport</strong></td><td>HTTP</td><td>HTTP, SMTP, TCP, etc.</td></tr>
+<tr><td><strong>Speed</strong></td><td>Faster (lightweight)</td><td>Slower (heavy XML)</td></tr>
+<tr><td><strong>Caching</strong></td><td>Supports caching</td><td>No caching</td></tr>
+<tr><td><strong>Standards</strong></td><td>Flexible, no strict rules</td><td>Strict WS-* standards</td></tr>
+<tr><td><strong>Error Handling</strong></td><td>HTTP status codes</td><td>SOAP fault elements</td></tr>
+<tr><td><strong>Use Case</strong></td><td>Web apps, mobile, microservices</td><td>Banking, enterprise (high security)</td></tr>
+<tr><td><strong>Learning Curve</strong></td><td>Easy</td><td>Complex</td></tr>
+</table>
+
+<div class="box box-exam">
+<div class="label">Exam Tip</div>
+If the question asks "which is faster?" → REST. If it asks "which uses only XML?" → SOAP. If it asks "which is a protocol?" → SOAP (REST is an architectural <strong>style</strong>).
+</div>
+
+<!-- ========== Idempotent Methods ========== -->
+<h3 id="idempotent">Idempotent Methods</h3>
+
+<p><strong>Idempotent</strong> means: calling the same request <strong>multiple times produces the same result</strong> as calling it once.</p>
+
+<table>
+<tr><th>Method</th><th>Idempotent?</th><th>Why?</th></tr>
+<tr><td><strong>GET</strong></td><td>Yes</td><td>Reading data 10 times gives same result</td></tr>
+<tr><td><strong>PUT</strong></td><td>Yes</td><td>Replacing a resource 10 times gives same final state</td></tr>
+<tr><td><strong>DELETE</strong></td><td>Yes</td><td>Deleting same resource 10 times — it's still deleted</td></tr>
+<tr><td><strong>PATCH</strong></td><td>Not guaranteed</td><td>Can depend on current state</td></tr>
+<tr><td><strong>POST</strong></td><td>No</td><td>Calling POST 10 times creates 10 resources!</td></tr>
+</table>
+
+<div class="box box-warn">
+<div class="label">Common Trap</div>
+POST is <strong>NOT</strong> idempotent. Sending the same POST request twice creates TWO resources. This is why you sometimes see duplicate orders when you click "Buy" twice.
+</div>
+
+<!-- ========== JSON ========== -->
+<h2 id="json">JSON (JavaScript Object Notation)</h2>
+
+<p><strong>JSON</strong> is a lightweight <strong>data format</strong> used to exchange data between client and server. Almost all modern APIs use JSON. It is human-readable and easy for machines to parse.</p>
+
+<div class="box box-key">
+<div class="label">Key Fact</div>
+JSON was derived from JavaScript, but it is <strong>language-independent</strong>. Java, Python, C#, every language can read and write JSON.
+</div>
+
+<!-- ========== JSON Syntax ========== -->
+<h3 id="json-syntax">JSON Syntax Rules</h3>
+
+<ul>
+<li>Data is in <strong>key-value pairs</strong>: <code>"key": value</code></li>
+<li>Keys MUST be in <strong>double quotes</strong> (single quotes are INVALID)</li>
+<li>Values can be: string, number, boolean, null, object, array</li>
+<li>Objects use <strong>curly braces</strong> <code>{ }</code></li>
+<li>Arrays use <strong>square brackets</strong> <code>[ ]</code></li>
+<li><strong>No trailing commas</strong> allowed</li>
+<li><strong>No comments</strong> allowed in JSON</li>
+</ul>
+
+<div class="box box-example">
+<div class="label">Basic JSON Object</div>
+<pre>{
+  <span class="str">"name"</span>: <span class="str">"Darshan"</span>,
+  <span class="str">"age"</span>: <span class="num">22</span>,
+  <span class="str">"isEmployee"</span>: <span class="kw">true</span>,
+  <span class="str">"address"</span>: <span class="kw">null</span>
+}</pre>
+</div>
+
+<div class="box box-example">
+<div class="label">JSON Array</div>
+<pre>[
+  <span class="str">"Java"</span>,
+  <span class="str">"Python"</span>,
+  <span class="str">"JavaScript"</span>
+]</pre>
+</div>
+
+<!-- ========== JSON Data Types ========== -->
+<h3 id="json-types">JSON Data Types</h3>
+
+<table>
+<tr><th>Type</th><th>Example</th><th>Notes</th></tr>
+<tr><td><strong>String</strong></td><td><code>"hello"</code></td><td>Must use double quotes</td></tr>
+<tr><td><strong>Number</strong></td><td><code>42</code>, <code>3.14</code>, <code>-10</code></td><td>No quotes. Integer or decimal.</td></tr>
+<tr><td><strong>Boolean</strong></td><td><code>true</code>, <code>false</code></td><td>Lowercase only. NOT "true" in quotes.</td></tr>
+<tr><td><strong>Null</strong></td><td><code>null</code></td><td>Lowercase only. Means "empty/no value".</td></tr>
+<tr><td><strong>Object</strong></td><td><code>{"key": "value"}</code></td><td>Nested object inside another object</td></tr>
+<tr><td><strong>Array</strong></td><td><code>[1, 2, 3]</code></td><td>Ordered list of values</td></tr>
+</table>
+
+<!-- ========== Valid vs Invalid JSON ========== -->
+<h3 id="json-valid-invalid">Valid vs Invalid JSON</h3>
+
+<div class="box box-exam">
+<div class="label">Exam Favorite — Spot the Error</div>
+These questions appear frequently. You'll be shown JSON and asked if it's valid.
+</div>
+
+<h4>VALID JSON</h4>
+<pre><span class="cmt">// All keys in double quotes, proper syntax</span>
+{
+  <span class="str">"name"</span>: <span class="str">"Darshan"</span>,
+  <span class="str">"age"</span>: <span class="num">22</span>,
+  <span class="str">"skills"</span>: [<span class="str">"Java"</span>, <span class="str">"SQL"</span>],
+  <span class="str">"active"</span>: <span class="kw">true</span>
+}</pre>
+
+<h4>INVALID JSON (with reasons)</h4>
+<pre><span class="cmt">// ERROR 1: Single quotes (MUST be double quotes)</span>
+{ <span class="str">'name'</span>: <span class="str">'Darshan'</span> }
+
+<span class="cmt">// ERROR 2: Key without quotes</span>
+{ name: <span class="str">"Darshan"</span> }
+
+<span class="cmt">// ERROR 3: Trailing comma after last item</span>
+{ <span class="str">"name"</span>: <span class="str">"Darshan"</span>, }
+
+<span class="cmt">// ERROR 4: Using undefined (not a JSON value)</span>
+{ <span class="str">"name"</span>: undefined }
+
+<span class="cmt">// ERROR 5: Single value without object/array wrapper</span>
+<span class="str">"just a string"</span>
+<span class="cmt">// Actually this IS valid JSON! A single value is valid.</span></pre>
+
+<div class="box box-warn">
+<div class="label">The #1 Rule</div>
+Keys in JSON MUST be in <strong>double quotes</strong>. Not single quotes. Not no quotes. <strong>Double quotes only.</strong> This is the most common trick question in exams.
+</div>
+
+<!-- ========== Nested JSON ========== -->
+<h3 id="json-nested">Nested JSON Objects and Arrays</h3>
+
+<pre>{
+  <span class="str">"employee"</span>: {
+    <span class="str">"id"</span>: <span class="num">101</span>,
+    <span class="str">"name"</span>: <span class="str">"Darshan"</span>,
+    <span class="str">"department"</span>: {
+      <span class="str">"name"</span>: <span class="str">"Engineering"</span>,
+      <span class="str">"floor"</span>: <span class="num">3</span>
+    },
+    <span class="str">"skills"</span>: [
+      { <span class="str">"name"</span>: <span class="str">"Java"</span>, <span class="str">"level"</span>: <span class="str">"intermediate"</span> },
+      { <span class="str">"name"</span>: <span class="str">"SQL"</span>, <span class="str">"level"</span>: <span class="str">"beginner"</span> }
+    ],
+    <span class="str">"projects"</span>: [<span class="str">"ILP Guide"</span>, <span class="str">"Chat App"</span>]
+  }
+}</pre>
+
+<div class="box box-tip">
+<div class="label">How to Access Nested Values</div>
+To get "Engineering": <code>obj.employee.department.name</code><br>
+To get "SQL": <code>obj.employee.skills[1].name</code><br>
+To get "Chat App": <code>obj.employee.projects[1]</code><br><br>
+Arrays are <strong>zero-indexed</strong>: first item is [0], second is [1].
+</div>
+
+<!-- ========== JSON in Java ========== -->
+<h2 id="json-java">JSON in Java</h2>
+
+<h3>Using org.json Library (JSONObject, JSONArray)</h3>
+
+<h4>Creating JSON from scratch</h4>
+<pre><span class="kw">import</span> org.json.JSONObject;
+<span class="kw">import</span> org.json.JSONArray;
+
+<span class="type">JSONObject</span> emp = <span class="kw">new</span> <span class="type">JSONObject</span>();
+emp.<span class="fn">put</span>(<span class="str">"name"</span>, <span class="str">"Darshan"</span>);
+emp.<span class="fn">put</span>(<span class="str">"age"</span>, <span class="num">22</span>);
+emp.<span class="fn">put</span>(<span class="str">"active"</span>, <span class="kw">true</span>);
+
+<span class="type">JSONArray</span> skills = <span class="kw">new</span> <span class="type">JSONArray</span>();
+skills.<span class="fn">put</span>(<span class="str">"Java"</span>);
+skills.<span class="fn">put</span>(<span class="str">"SQL"</span>);
+emp.<span class="fn">put</span>(<span class="str">"skills"</span>, skills);
+
+System.out.<span class="fn">println</span>(emp.<span class="fn">toString</span>(<span class="num">2</span>)); <span class="cmt">// pretty print with indent 2</span></pre>
+
+<h4>Parsing a JSON string</h4>
+<pre><span class="type">String</span> jsonStr = <span class="str">"{\"name\":\"Darshan\",\"age\":22,\"skills\":[\"Java\",\"SQL\"]}"</span>;
+
+<span class="type">JSONObject</span> obj = <span class="kw">new</span> <span class="type">JSONObject</span>(jsonStr);
+
+<span class="cmt">// Get values</span>
+<span class="type">String</span> name = obj.<span class="fn">getString</span>(<span class="str">"name"</span>);      <span class="cmt">// "Darshan"</span>
+<span class="kw">int</span> age = obj.<span class="fn">getInt</span>(<span class="str">"age"</span>);              <span class="cmt">// 22</span>
+
+<span class="cmt">// Get array</span>
+<span class="type">JSONArray</span> skills = obj.<span class="fn">getJSONArray</span>(<span class="str">"skills"</span>);
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; skills.<span class="fn">length</span>(); i++) {
+    System.out.<span class="fn">println</span>(skills.<span class="fn">getString</span>(i));
+}
+<span class="cmt">// Output: Java</span>
+<span class="cmt">//         SQL</span></pre>
+
+<h4>Accessing nested values</h4>
+<pre><span class="type">String</span> json = <span class="str">"{\"employee\":{\"name\":\"Darshan\",\"dept\":{\"name\":\"Engg\"}}}"</span>;
+
+<span class="type">JSONObject</span> root = <span class="kw">new</span> <span class="type">JSONObject</span>(json);
+<span class="type">JSONObject</span> employee = root.<span class="fn">getJSONObject</span>(<span class="str">"employee"</span>);
+<span class="type">JSONObject</span> dept = employee.<span class="fn">getJSONObject</span>(<span class="str">"dept"</span>);
+<span class="type">String</span> deptName = dept.<span class="fn">getString</span>(<span class="str">"name"</span>);  <span class="cmt">// "Engg"</span></pre>
+
+<h3>Using Jackson Library (ObjectMapper)</h3>
+
+<pre><span class="kw">import</span> com.fasterxml.jackson.databind.ObjectMapper;
+<span class="kw">import</span> com.fasterxml.jackson.databind.JsonNode;
+
+<span class="type">ObjectMapper</span> mapper = <span class="kw">new</span> <span class="type">ObjectMapper</span>();
+
+<span class="cmt">// JSON String → Java Object</span>
+<span class="type">String</span> json = <span class="str">"{\"name\":\"Darshan\",\"age\":22}"</span>;
+<span class="type">Employee</span> emp = mapper.<span class="fn">readValue</span>(json, <span class="type">Employee</span>.<span class="kw">class</span>);
+
+<span class="cmt">// Java Object → JSON String</span>
+<span class="type">String</span> jsonOut = mapper.<span class="fn">writeValueAsString</span>(emp);
+
+<span class="cmt">// Parse to tree (when you don't have a class)</span>
+<span class="type">JsonNode</span> node = mapper.<span class="fn">readTree</span>(json);
+<span class="type">String</span> name = node.<span class="fn">get</span>(<span class="str">"name"</span>).<span class="fn">asText</span>();  <span class="cmt">// "Darshan"</span></pre>
+
+<div class="box box-tip">
+<div class="label">Jackson vs org.json</div>
+<strong>org.json</strong> — simpler, good for quick parsing. Used in HackerRank.<br>
+<strong>Jackson</strong> — industry standard. Can map JSON directly to Java classes. Used in Spring Boot.<br>
+<strong>Gson</strong> (by Google) — similar to Jackson but simpler API. <code>new Gson().fromJson(json, MyClass.class)</code>
+</div>
+
+<!-- ========== HackerRank JSON Pattern ========== -->
+<h2 id="json-hackerrank">JSON Parsing — HackerRank Pattern</h2>
+
+<div class="box box-exam">
+<div class="label">HSE Critical — Memorize This Template</div>
+In HackerRank, you'll be asked to fetch data from an API, parse the JSON response, and extract specific values. This is the exact pattern you need.
+</div>
+
+<h4>Complete HackerRank Template: Fetch API + Parse JSON</h4>
+<pre><span class="kw">import</span> java.io.*;
+<span class="kw">import</span> java.net.*;
+<span class="kw">import</span> org.json.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) <span class="kw">throws</span> <span class="type">Exception</span> {
+
+        <span class="cmt">// Step 1: Build the URL</span>
+        <span class="type">String</span> urlStr = <span class="str">"https://jsonmock.hackerrank.com/api/articles?page=1"</span>;
+        <span class="type">URL</span> url = <span class="kw">new</span> <span class="type">URL</span>(urlStr);
+
+        <span class="cmt">// Step 2: Open connection</span>
+        <span class="type">HttpURLConnection</span> conn = (<span class="type">HttpURLConnection</span>) url.<span class="fn">openConnection</span>();
+        conn.<span class="fn">setRequestMethod</span>(<span class="str">"GET"</span>);
+
+        <span class="cmt">// Step 3: Read the response</span>
+        <span class="type">BufferedReader</span> br = <span class="kw">new</span> <span class="type">BufferedReader</span>(
+            <span class="kw">new</span> <span class="type">InputStreamReader</span>(conn.<span class="fn">getInputStream</span>())
+        );
+        <span class="type">StringBuilder</span> sb = <span class="kw">new</span> <span class="type">StringBuilder</span>();
+        <span class="type">String</span> line;
+        <span class="kw">while</span> ((line = br.<span class="fn">readLine</span>()) != <span class="kw">null</span>) {
+            sb.<span class="fn">append</span>(line);
+        }
+        br.<span class="fn">close</span>();
+
+        <span class="cmt">// Step 4: Parse JSON</span>
+        <span class="type">JSONObject</span> response = <span class="kw">new</span> <span class="type">JSONObject</span>(sb.<span class="fn">toString</span>());
+
+        <span class="cmt">// Step 5: Get the data array</span>
+        <span class="type">JSONArray</span> data = response.<span class="fn">getJSONArray</span>(<span class="str">"data"</span>);
+
+        <span class="cmt">// Step 6: Loop through and extract fields</span>
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; data.<span class="fn">length</span>(); i++) {
+            <span class="type">JSONObject</span> item = data.<span class="fn">getJSONObject</span>(i);
+
+            <span class="cmt">// Use optString to avoid errors on null values</span>
+            <span class="type">String</span> title = item.<span class="fn">optString</span>(<span class="str">"title"</span>, <span class="str">""</span>);
+
+            <span class="kw">if</span> (!title.<span class="fn">isEmpty</span>()) {
+                System.out.<span class="fn">println</span>(title);
+            }
+        }
+    }
+}</pre>
+
+<div class="box box-key">
+<div class="label">Key Methods to Remember</div>
+<code>getString("key")</code> → throws error if key is missing<br>
+<code>optString("key", "default")</code> → returns default if key is missing (SAFER)<br>
+<code>getInt("key")</code> / <code>optInt("key", 0)</code> → same for integers<br>
+<code>getJSONObject("key")</code> → get nested object<br>
+<code>getJSONArray("key")</code> → get array<br>
+<code>isNull("key")</code> → check if value is null<br>
+<code>has("key")</code> → check if key exists
+</div>
+
+<h4>Pagination Pattern (Multiple Pages)</h4>
+<pre><span class="kw">int</span> page = <span class="num">1</span>;
+<span class="kw">int</span> totalPages = <span class="num">1</span>;
+
+<span class="kw">while</span> (page &lt;= totalPages) {
+    <span class="type">String</span> urlStr = <span class="str">"https://api.example.com/data?page="</span> + page;
+    <span class="cmt">// ... fetch and parse (same as above) ...</span>
+
+    <span class="type">JSONObject</span> response = <span class="kw">new</span> <span class="type">JSONObject</span>(sb.<span class="fn">toString</span>());
+    totalPages = response.<span class="fn">getInt</span>(<span class="str">"total_pages"</span>);
+
+    <span class="type">JSONArray</span> data = response.<span class="fn">getJSONArray</span>(<span class="str">"data"</span>);
+    <span class="cmt">// process data...</span>
+
+    page++;
+}</pre>
+
+<!-- ========== XML ========== -->
+<h2 id="xml">XML (eXtensible Markup Language)</h2>
+
+<p><strong>XML</strong> is a markup language designed to store and transport data. Unlike HTML (which displays data), XML <strong>carries data</strong>. It was widely used before JSON took over, but is still used in SOAP APIs, configuration files (like pom.xml, web.xml), and enterprise systems.</p>
+
+<!-- ========== XML vs HTML ========== -->
+<h3>XML vs HTML</h3>
+
+<table>
+<tr><th>Feature</th><th>XML</th><th>HTML</th></tr>
+<tr><td><strong>Purpose</strong></td><td>Carry/store data</td><td>Display data</td></tr>
+<tr><td><strong>Tags</strong></td><td>You define your own tags</td><td>Predefined tags (h1, p, div)</td></tr>
+<tr><td><strong>Case Sensitive</strong></td><td>Yes</td><td>No</td></tr>
+<tr><td><strong>Closing Tags</strong></td><td>Mandatory</td><td>Optional for some tags</td></tr>
+<tr><td><strong>Strictness</strong></td><td>Very strict (well-formed rules)</td><td>Forgiving (browsers fix errors)</td></tr>
+</table>
+
+<!-- ========== XML Syntax ========== -->
+<h3 id="xml-syntax">XML Syntax</h3>
+
+<pre><span class="cmt">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>      <span class="cmt">&lt;!-- Prolog/Declaration --&gt;</span>
+<span class="kw">&lt;employees&gt;</span>                                    <span class="cmt">&lt;!-- Root element (only ONE allowed) --&gt;</span>
+    <span class="kw">&lt;employee</span> <span class="type">id</span>=<span class="str">"101"</span><span class="kw">&gt;</span>                        <span class="cmt">&lt;!-- Element with attribute --&gt;</span>
+        <span class="kw">&lt;name&gt;</span><span class="str">Darshan</span><span class="kw">&lt;/name&gt;</span>                     <span class="cmt">&lt;!-- Child element --&gt;</span>
+        <span class="kw">&lt;department&gt;</span><span class="str">Engineering</span><span class="kw">&lt;/department&gt;</span>
+        <span class="kw">&lt;salary&gt;</span><span class="num">50000</span><span class="kw">&lt;/salary&gt;</span>
+    <span class="kw">&lt;/employee&gt;</span>
+    <span class="kw">&lt;employee</span> <span class="type">id</span>=<span class="str">"102"</span><span class="kw">&gt;</span>
+        <span class="kw">&lt;name&gt;</span><span class="str">Priya</span><span class="kw">&lt;/name&gt;</span>
+        <span class="kw">&lt;department&gt;</span><span class="str">HR</span><span class="kw">&lt;/department&gt;</span>
+        <span class="kw">&lt;salary&gt;</span><span class="num">45000</span><span class="kw">&lt;/salary&gt;</span>
+    <span class="kw">&lt;/employee&gt;</span>
+<span class="kw">&lt;/employees&gt;</span></pre>
+
+<h4>Well-Formed XML Rules</h4>
+<ul>
+<li>Must have exactly <strong>one root element</strong></li>
+<li>Every opening tag MUST have a <strong>closing tag</strong>: <code>&lt;name&gt;...&lt;/name&gt;</code></li>
+<li>Tags are <strong>case-sensitive</strong>: <code>&lt;Name&gt;</code> and <code>&lt;name&gt;</code> are different</li>
+<li>Elements must be <strong>properly nested</strong>: <code>&lt;a&gt;&lt;b&gt;&lt;/b&gt;&lt;/a&gt;</code> (not <code>&lt;a&gt;&lt;b&gt;&lt;/a&gt;&lt;/b&gt;</code>)</li>
+<li>Attribute values must be in <strong>quotes</strong>: <code>id="101"</code></li>
+<li>Prolog (declaration) is optional but recommended</li>
+</ul>
+
+<div class="box box-warn">
+<div class="label">Common Exam Trick</div>
+This XML is NOT well-formed:<br>
+<code>&lt;Name&gt;Darshan&lt;/name&gt;</code> — case mismatch (N vs n)<br>
+<code>&lt;br&gt;</code> without closing → invalid (use <code>&lt;br/&gt;</code> for self-closing)
+</div>
+
+<!-- ========== XML Parsing in Java ========== -->
+<h2 id="xml-parsing">XML Parsing in Java</h2>
+
+<h3>DOM Parser (Document Object Model)</h3>
+<p>Loads the <strong>entire XML into memory</strong> as a tree. Good for small files. Easy to navigate.</p>
+
+<pre><span class="kw">import</span> javax.xml.parsers.*;
+<span class="kw">import</span> org.w3c.dom.*;
+<span class="kw">import</span> java.io.*;
+
+<span class="kw">public class</span> <span class="type">XMLParser</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) <span class="kw">throws</span> <span class="type">Exception</span> {
+
+        <span class="cmt">// Step 1: Create DocumentBuilder</span>
+        <span class="type">DocumentBuilderFactory</span> factory = <span class="type">DocumentBuilderFactory</span>.<span class="fn">newInstance</span>();
+        <span class="type">DocumentBuilder</span> builder = factory.<span class="fn">newDocumentBuilder</span>();
+
+        <span class="cmt">// Step 2: Parse XML file into Document</span>
+        <span class="type">Document</span> doc = builder.<span class="fn">parse</span>(<span class="kw">new</span> <span class="type">File</span>(<span class="str">"employees.xml"</span>));
+        doc.<span class="fn">getDocumentElement</span>().<span class="fn">normalize</span>();
+
+        <span class="cmt">// Step 3: Get all "employee" elements</span>
+        <span class="type">NodeList</span> empList = doc.<span class="fn">getElementsByTagName</span>(<span class="str">"employee"</span>);
+
+        <span class="cmt">// Step 4: Loop through each employee</span>
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; empList.<span class="fn">getLength</span>(); i++) {
+            <span class="type">Node</span> node = empList.<span class="fn">item</span>(i);
+
+            <span class="kw">if</span> (node.<span class="fn">getNodeType</span>() == <span class="type">Node</span>.ELEMENT_NODE) {
+                <span class="type">Element</span> elem = (<span class="type">Element</span>) node;
+
+                <span class="cmt">// Get attribute</span>
+                <span class="type">String</span> id = elem.<span class="fn">getAttribute</span>(<span class="str">"id"</span>);
+
+                <span class="cmt">// Get child element text</span>
+                <span class="type">String</span> name = elem.<span class="fn">getElementsByTagName</span>(<span class="str">"name"</span>)
+                                  .<span class="fn">item</span>(<span class="num">0</span>)
+                                  .<span class="fn">getTextContent</span>();
+
+                <span class="type">String</span> dept = elem.<span class="fn">getElementsByTagName</span>(<span class="str">"department"</span>)
+                                  .<span class="fn">item</span>(<span class="num">0</span>)
+                                  .<span class="fn">getTextContent</span>();
+
+                System.out.<span class="fn">println</span>(id + <span class="str">" - "</span> + name + <span class="str">" - "</span> + dept);
+            }
+        }
+    }
+}
+<span class="cmt">// Output:</span>
+<span class="cmt">// 101 - Darshan - Engineering</span>
+<span class="cmt">// 102 - Priya - HR</span></pre>
+
+<h3>SAX Parser (Simple API for XML)</h3>
+<p><strong>Event-based</strong>. Reads XML sequentially, fires events (start element, end element, characters). Good for <strong>large files</strong> because it doesn't load everything into memory.</p>
+
+<div class="box box-tip">
+<div class="label">DOM vs SAX</div>
+<strong>DOM</strong>: Loads entire tree → Easy to navigate → Uses more memory → Good for small files<br>
+<strong>SAX</strong>: Reads sequentially → Event-based → Uses less memory → Good for large files<br><br>
+For exams and HackerRank, DOM is used more often. SAX is asked as theory.
+</div>
+
+<!-- ========== JSON vs XML ========== -->
+<h3 id="json-vs-xml">JSON vs XML Comparison</h3>
+
+<table>
+<tr><th>Feature</th><th>JSON</th><th>XML</th></tr>
+<tr><td><strong>Full Form</strong></td><td>JavaScript Object Notation</td><td>eXtensible Markup Language</td></tr>
+<tr><td><strong>Syntax</strong></td><td>Key-value pairs: <code>{"k":"v"}</code></td><td>Tags: <code>&lt;k&gt;v&lt;/k&gt;</code></td></tr>
+<tr><td><strong>Readability</strong></td><td>More readable, less verbose</td><td>More verbose (lots of tags)</td></tr>
+<tr><td><strong>Data Types</strong></td><td>String, Number, Boolean, Null, Object, Array</td><td>Everything is text (no native types)</td></tr>
+<tr><td><strong>Arrays</strong></td><td>Native support: <code>[1,2,3]</code></td><td>No direct array — use repeated elements</td></tr>
+<tr><td><strong>Comments</strong></td><td>Not allowed</td><td>Allowed: <code>&lt;!-- comment --&gt;</code></td></tr>
+<tr><td><strong>Parsing Speed</strong></td><td>Faster</td><td>Slower</td></tr>
+<tr><td><strong>File Size</strong></td><td>Smaller</td><td>Larger (because of closing tags)</td></tr>
+<tr><td><strong>Used In</strong></td><td>REST APIs, web apps, mobile</td><td>SOAP, config files, enterprise</td></tr>
+<tr><td><strong>Namespace</strong></td><td>Not supported</td><td>Supported</td></tr>
+</table>
+
+<div class="box box-exam">
+<div class="label">Exam Tip</div>
+"When to use JSON?" → Web APIs, lightweight, mobile apps<br>
+"When to use XML?" → Configuration files (pom.xml, web.xml), SOAP APIs, when you need namespaces or comments
+</div>
+
+<!-- ========== API Consumption in Java ========== -->
+<h2 id="api-java">API Consumption in Java (HttpURLConnection)</h2>
+
+<h3>Making a GET Request</h3>
+<pre><span class="kw">import</span> java.io.*;
+<span class="kw">import</span> java.net.*;
+
+<span class="type">URL</span> url = <span class="kw">new</span> <span class="type">URL</span>(<span class="str">"https://api.example.com/users"</span>);
+<span class="type">HttpURLConnection</span> conn = (<span class="type">HttpURLConnection</span>) url.<span class="fn">openConnection</span>();
+conn.<span class="fn">setRequestMethod</span>(<span class="str">"GET"</span>);
+conn.<span class="fn">setRequestProperty</span>(<span class="str">"Accept"</span>, <span class="str">"application/json"</span>);
+
+<span class="kw">int</span> statusCode = conn.<span class="fn">getResponseCode</span>();  <span class="cmt">// 200, 404, etc.</span>
+
+<span class="kw">if</span> (statusCode == <span class="num">200</span>) {
+    <span class="type">BufferedReader</span> br = <span class="kw">new</span> <span class="type">BufferedReader</span>(
+        <span class="kw">new</span> <span class="type">InputStreamReader</span>(conn.<span class="fn">getInputStream</span>())
+    );
+    <span class="type">StringBuilder</span> sb = <span class="kw">new</span> <span class="type">StringBuilder</span>();
+    <span class="type">String</span> line;
+    <span class="kw">while</span> ((line = br.<span class="fn">readLine</span>()) != <span class="kw">null</span>) {
+        sb.<span class="fn">append</span>(line);
+    }
+    br.<span class="fn">close</span>();
+
+    System.out.<span class="fn">println</span>(sb.<span class="fn">toString</span>());
+} <span class="kw">else</span> {
+    System.out.<span class="fn">println</span>(<span class="str">"Error: "</span> + statusCode);
+}
+conn.<span class="fn">disconnect</span>();</pre>
+
+<h3>Making a POST Request</h3>
+<pre><span class="type">URL</span> url = <span class="kw">new</span> <span class="type">URL</span>(<span class="str">"https://api.example.com/users"</span>);
+<span class="type">HttpURLConnection</span> conn = (<span class="type">HttpURLConnection</span>) url.<span class="fn">openConnection</span>();
+conn.<span class="fn">setRequestMethod</span>(<span class="str">"POST"</span>);
+conn.<span class="fn">setRequestProperty</span>(<span class="str">"Content-Type"</span>, <span class="str">"application/json"</span>);
+conn.<span class="fn">setDoOutput</span>(<span class="kw">true</span>);  <span class="cmt">// Enable sending body</span>
+
+<span class="cmt">// Write JSON body</span>
+<span class="type">String</span> jsonBody = <span class="str">"{\"name\":\"Darshan\",\"age\":22}"</span>;
+<span class="type">OutputStream</span> os = conn.<span class="fn">getOutputStream</span>();
+os.<span class="fn">write</span>(jsonBody.<span class="fn">getBytes</span>());
+os.<span class="fn">flush</span>();
+os.<span class="fn">close</span>();
+
+<span class="kw">int</span> code = conn.<span class="fn">getResponseCode</span>();  <span class="cmt">// Expect 201</span>
+System.out.<span class="fn">println</span>(<span class="str">"Response Code: "</span> + code);</pre>
+
+<h3>Complete Template: Fetch + Parse + Extract</h3>
+
+<div class="box box-exam">
+<div class="label">The Template That Solves 80% of HSE API Questions</div>
+Memorize this flow: URL → Connection → Read → Parse → Extract → Print
+</div>
+
+<pre><span class="kw">import</span> java.io.*;
+<span class="kw">import</span> java.net.*;
+<span class="kw">import</span> org.json.*;
+
+<span class="kw">public class</span> <span class="type">Solution</span> {
+
+    <span class="cmt">// Reusable method: fetch JSON from any URL</span>
+    <span class="kw">static</span> <span class="type">String</span> <span class="fn">fetchJSON</span>(<span class="type">String</span> urlStr) <span class="kw">throws</span> <span class="type">Exception</span> {
+        <span class="type">URL</span> url = <span class="kw">new</span> <span class="type">URL</span>(urlStr);
+        <span class="type">HttpURLConnection</span> conn = (<span class="type">HttpURLConnection</span>) url.<span class="fn">openConnection</span>();
+        conn.<span class="fn">setRequestMethod</span>(<span class="str">"GET"</span>);
+
+        <span class="type">BufferedReader</span> br = <span class="kw">new</span> <span class="type">BufferedReader</span>(
+            <span class="kw">new</span> <span class="type">InputStreamReader</span>(conn.<span class="fn">getInputStream</span>())
+        );
+        <span class="type">StringBuilder</span> sb = <span class="kw">new</span> <span class="type">StringBuilder</span>();
+        <span class="type">String</span> line;
+        <span class="kw">while</span> ((line = br.<span class="fn">readLine</span>()) != <span class="kw">null</span>) {
+            sb.<span class="fn">append</span>(line);
+        }
+        br.<span class="fn">close</span>();
+        <span class="kw">return</span> sb.<span class="fn">toString</span>();
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) <span class="kw">throws</span> <span class="type">Exception</span> {
+
+        <span class="cmt">// Example: Get total goals by a football team in a year</span>
+        <span class="type">String</span> team = <span class="str">"Barcelona"</span>;
+        <span class="kw">int</span> year = <span class="num">2011</span>;
+        <span class="kw">int</span> totalGoals = <span class="num">0</span>;
+
+        <span class="kw">int</span> page = <span class="num">1</span>;
+        <span class="kw">int</span> totalPages = <span class="num">1</span>;
+
+        <span class="kw">while</span> (page &lt;= totalPages) {
+            <span class="type">String</span> url = <span class="str">"https://jsonmock.hackerrank.com/api/football_matches"</span>
+                + <span class="str">"?year="</span> + year
+                + <span class="str">"&amp;team1="</span> + <span class="type">URLEncoder</span>.<span class="fn">encode</span>(team, <span class="str">"UTF-8"</span>)
+                + <span class="str">"&amp;page="</span> + page;
+
+            <span class="type">JSONObject</span> resp = <span class="kw">new</span> <span class="type">JSONObject</span>(<span class="fn">fetchJSON</span>(url));
+            totalPages = resp.<span class="fn">getInt</span>(<span class="str">"total_pages"</span>);
+
+            <span class="type">JSONArray</span> data = resp.<span class="fn">getJSONArray</span>(<span class="str">"data"</span>);
+            <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; data.<span class="fn">length</span>(); i++) {
+                <span class="type">JSONObject</span> match = data.<span class="fn">getJSONObject</span>(i);
+                totalGoals += match.<span class="fn">getInt</span>(<span class="str">"team1goals"</span>);
+            }
+            page++;
+        }
+
+        System.out.<span class="fn">println</span>(<span class="str">"Total Goals: "</span> + totalGoals);
+    }
+}</pre>
+
+<h3>Error Handling for API Calls</h3>
+<pre><span class="kw">try</span> {
+    <span class="type">HttpURLConnection</span> conn = (<span class="type">HttpURLConnection</span>) url.<span class="fn">openConnection</span>();
+    conn.<span class="fn">setRequestMethod</span>(<span class="str">"GET"</span>);
+    conn.<span class="fn">setConnectTimeout</span>(<span class="num">5000</span>);  <span class="cmt">// 5 second timeout</span>
+    conn.<span class="fn">setReadTimeout</span>(<span class="num">5000</span>);
+
+    <span class="kw">int</span> code = conn.<span class="fn">getResponseCode</span>();
+
+    <span class="kw">if</span> (code == <span class="num">200</span>) {
+        <span class="cmt">// Read from getInputStream()</span>
+    } <span class="kw">else</span> {
+        <span class="cmt">// Read error from getErrorStream()</span>
+        <span class="type">BufferedReader</span> err = <span class="kw">new</span> <span class="type">BufferedReader</span>(
+            <span class="kw">new</span> <span class="type">InputStreamReader</span>(conn.<span class="fn">getErrorStream</span>())
+        );
+        <span class="cmt">// handle error...</span>
+    }
+} <span class="kw">catch</span> (<span class="type">SocketTimeoutException</span> e) {
+    System.out.<span class="fn">println</span>(<span class="str">"Connection timed out"</span>);
+} <span class="kw">catch</span> (<span class="type">IOException</span> e) {
+    System.out.<span class="fn">println</span>(<span class="str">"Network error: "</span> + e.<span class="fn">getMessage</span>());
+}</pre>
+
+<!-- ========== Practice Questions ========== -->
+<h2 id="practice">Practice Questions</h2>
+
+<!-- Q1 -->
+<div class="practice">
+<div class="q-label">Question 1</div>
+<p class="question">Which HTTP method is used to CREATE a new resource?</p>
+<ol class="options">
+<li>GET</li>
+<li>POST</li>
+<li>PUT</li>
+<li>PATCH</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) POST — POST creates a new resource. PUT replaces an existing one.</div>
+</div>
+
+<!-- Q2 -->
+<div class="practice">
+<div class="q-label">Question 2</div>
+<p class="question">What does HTTP status code 404 mean?</p>
+<ol class="options">
+<li>Unauthorized</li>
+<li>Bad Request</li>
+<li>Not Found</li>
+<li>Internal Server Error</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) Not Found — The requested resource does not exist at the given URL.</div>
+</div>
+
+<!-- Q3 -->
+<div class="practice">
+<div class="q-label">Question 3</div>
+<p class="question">Which of the following is VALID JSON?</p>
+<ol class="options">
+<li><code>{'name': 'Darshan'}</code></li>
+<li><code>{name: "Darshan"}</code></li>
+<li><code>{"name": "Darshan"}</code></li>
+<li><code>{"name": "Darshan",}</code></li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) {"name": "Darshan"} — JSON keys MUST be in double quotes. A has single quotes, B has no quotes, D has a trailing comma.</div>
+</div>
+
+<!-- Q4 -->
+<div class="practice">
+<div class="q-label">Question 4</div>
+<p class="question">Which REST principle states that each request must contain all information needed to process it?</p>
+<ol class="options">
+<li>Client-Server</li>
+<li>Stateless</li>
+<li>Cacheable</li>
+<li>Layered System</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) Stateless — The server does not store session state. Every request must be self-contained.</div>
+</div>
+
+<!-- Q5 -->
+<div class="practice">
+<div class="q-label">Question 5</div>
+<p class="question">Which HTTP method is NOT idempotent?</p>
+<ol class="options">
+<li>GET</li>
+<li>PUT</li>
+<li>DELETE</li>
+<li>POST</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="3">D) POST — Calling POST multiple times creates multiple resources. GET, PUT, and DELETE are idempotent.</div>
+</div>
+
+<!-- Q6 -->
+<div class="practice">
+<div class="q-label">Question 6</div>
+<p class="question">What is the difference between status codes 401 and 403?</p>
+<ol class="options">
+<li>401 = Server error, 403 = Client error</li>
+<li>401 = Not authenticated, 403 = Authenticated but no permission</li>
+<li>401 = Not found, 403 = Bad request</li>
+<li>They mean the same thing</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) 401 = Not authenticated (who are you?). 403 = Authenticated but forbidden (I know you, but you can't do this).</div>
+</div>
+
+<!-- Q7 -->
+<div class="practice">
+<div class="q-label">Question 7</div>
+<p class="question">What data format does SOAP exclusively use?</p>
+<ol class="options">
+<li>JSON</li>
+<li>XML</li>
+<li>HTML</li>
+<li>Plain text</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) XML — SOAP uses XML exclusively. REST can use JSON, XML, HTML, or plain text.</div>
+</div>
+
+<!-- Q8 -->
+<div class="practice">
+<div class="q-label">Question 8</div>
+<p class="question">Which of the following is NOT a valid JSON data type?</p>
+<ol class="options">
+<li>string</li>
+<li>number</li>
+<li>undefined</li>
+<li>null</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) undefined — JSON supports: string, number, boolean, null, object, array. "undefined" is a JavaScript concept, NOT valid in JSON.</div>
+</div>
+
+<!-- Q9 -->
+<div class="practice">
+<div class="q-label">Question 9</div>
+<p class="question">What is the correct way to access the value "SQL" from this JSON?<br><code>{"employee": {"skills": ["Java", "SQL", "Python"]}}</code></p>
+<ol class="options">
+<li><code>employee.skills[1]</code></li>
+<li><code>employee.skills[2]</code></li>
+<li><code>employee.skills.1</code></li>
+<li><code>employee[skills][1]</code></li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="0">A) employee.skills[1] — Arrays are zero-indexed. "Java" is [0], "SQL" is [1], "Python" is [2].</div>
+</div>
+
+<!-- Q10 -->
+<div class="practice">
+<div class="q-label">Question 10</div>
+<p class="question">Which status code should a REST API return after successfully CREATING a resource?</p>
+<ol class="options">
+<li>200 OK</li>
+<li>201 Created</li>
+<li>204 No Content</li>
+<li>202 Accepted</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) 201 Created — Used specifically when a new resource has been successfully created (typically in response to POST).</div>
+</div>
+
+<!-- Q11 -->
+<div class="practice">
+<div class="q-label">Question 11</div>
+<p class="question">Which XML rule makes this invalid? <code>&lt;Name&gt;Darshan&lt;/name&gt;</code></p>
+<ol class="options">
+<li>Missing root element</li>
+<li>Tags are case-sensitive — Name != name</li>
+<li>Missing XML declaration</li>
+<li>Missing attribute</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) XML is case-sensitive. The opening tag &lt;Name&gt; does not match the closing tag &lt;/name&gt;. They must have identical casing.</div>
+</div>
+
+<!-- Q12 -->
+<div class="practice">
+<div class="q-label">Question 12</div>
+<p class="question">In the URL <code>https://api.com/users/5?sort=name</code>, what is <code>5</code>?</p>
+<ol class="options">
+<li>Query parameter</li>
+<li>Path parameter</li>
+<li>Header</li>
+<li>Request body</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) Path parameter — It identifies a specific resource (user with id 5). Query parameters come after the ? mark (like sort=name).</div>
+</div>
+
+<!-- Q13 -->
+<div class="practice">
+<div class="q-label">Question 13</div>
+<p class="question">Which Java class is used to parse XML using the DOM approach?</p>
+<ol class="options">
+<li>SAXParser</li>
+<li>JSONObject</li>
+<li>DocumentBuilder</li>
+<li>ObjectMapper</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) DocumentBuilder — Created from DocumentBuilderFactory.newInstance().newDocumentBuilder(). SAXParser is for SAX parsing. JSONObject is for JSON. ObjectMapper is Jackson (JSON).</div>
+</div>
+
+<!-- Q14 -->
+<div class="practice">
+<div class="q-label">Question 14</div>
+<p class="question">What does the Content-Type header specify?</p>
+<ol class="options">
+<li>The format the client wants in response</li>
+<li>The format of data being sent in the request body</li>
+<li>The authentication token</li>
+<li>The API version</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) Content-Type tells the server the format of data in the request body (e.g., application/json). The Accept header tells the server what format the client wants in the response.</div>
+</div>
+
+<!-- Q15 -->
+<div class="practice">
+<div class="q-label">Question 15</div>
+<p class="question">Which is true about REST?</p>
+<ol class="options">
+<li>REST is a protocol like HTTP</li>
+<li>REST requires XML format</li>
+<li>REST is an architectural style that uses HTTP</li>
+<li>REST maintains session state on the server</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) REST is an architectural style (not a protocol) that uses HTTP. It is stateless (no server-side session) and supports multiple formats (JSON, XML, etc.).</div>
+</div>
+
+<!-- Q16 -->
+<div class="practice">
+<div class="q-label">Question 16</div>
+<p class="question">What is the output of this Java code?<br>
+<code>JSONObject obj = new JSONObject("{\"a\":10,\"b\":20}");<br>
+System.out.println(obj.getInt("a") + obj.getInt("b"));</code></p>
+<ol class="options">
+<li>"1020"</li>
+<li>30</li>
+<li>Compile error</li>
+<li>"a10b20"</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) 30 — getInt() returns integer values. 10 + 20 = 30. If it were getString(), it would concatenate strings.</div>
+</div>
+
+<!-- Q17 -->
+<div class="practice">
+<div class="q-label">Question 17</div>
+<p class="question">How many root elements can an XML document have?</p>
+<ol class="options">
+<li>Unlimited</li>
+<li>Two</li>
+<li>Exactly one</li>
+<li>Zero or more</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) Exactly one — Every well-formed XML document must have exactly one root element that contains all other elements.</div>
+</div>
+
+<!-- Q18 -->
+<div class="practice">
+<div class="q-label">Question 18</div>
+<p class="question">Which of the following is an advantage of JSON over XML?</p>
+<ol class="options">
+<li>JSON supports comments</li>
+<li>JSON supports namespaces</li>
+<li>JSON is less verbose and faster to parse</li>
+<li>JSON is a protocol</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) JSON is less verbose (no closing tags) and faster to parse. XML supports comments and namespaces, not JSON. Neither is a protocol.</div>
+</div>
+
+<!-- Q19 -->
+<div class="practice">
+<div class="q-label">Question 19</div>
+<p class="question">What does <code>conn.setDoOutput(true)</code> do in HttpURLConnection?</p>
+<ol class="options">
+<li>Enables reading the response</li>
+<li>Sets the request timeout</li>
+<li>Enables sending a request body (for POST/PUT)</li>
+<li>Sets the response format to JSON</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) setDoOutput(true) enables writing data to the connection's output stream — required for sending request bodies in POST and PUT requests.</div>
+</div>
+
+<!-- Q20 -->
+<div class="practice">
+<div class="q-label">Question 20</div>
+<p class="question">Which method safely returns a default value if a JSON key doesn't exist?</p>
+<ol class="options">
+<li><code>getString("key")</code></li>
+<li><code>optString("key", "default")</code></li>
+<li><code>getOrDefault("key")</code></li>
+<li><code>findString("key")</code></li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) optString("key", "default") — The opt* methods return a default value instead of throwing an exception. getString() throws JSONException if the key is missing.</div>
+</div>
+
+<!-- Q21 -->
+<div class="practice">
+<div class="q-label">Question 21</div>
+<p class="question">What is the difference between PUT and PATCH?</p>
+<ol class="options">
+<li>PUT creates, PATCH deletes</li>
+<li>PUT updates entire resource, PATCH updates partial resource</li>
+<li>PUT is idempotent, PATCH is not — but both update</li>
+<li>Both B and C are correct</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="3">D) Both B and C. PUT replaces the entire resource (send all fields). PATCH updates only specified fields. PUT is idempotent; PATCH is not guaranteed to be.</div>
+</div>
+
+<!-- Q22 -->
+<div class="practice">
+<div class="q-label">Question 22</div>
+<p class="question">Which HTTP status code means "Success, but no response body"?</p>
+<ol class="options">
+<li>200</li>
+<li>201</li>
+<li>204</li>
+<li>202</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) 204 No Content — The request was successful, but there is no content to return. Commonly used after DELETE operations.</div>
+</div>
+
+<!-- Q23 -->
+<div class="practice">
+<div class="q-label">Question 23</div>
+<p class="question">In XML, which of these is well-formed?</p>
+<ol class="options">
+<li><code>&lt;book&gt;&lt;title&gt;Java&lt;/book&gt;&lt;/title&gt;</code></li>
+<li><code>&lt;book&gt;&lt;title&gt;Java&lt;/title&gt;&lt;/book&gt;</code></li>
+<li><code>&lt;book&gt;&lt;title&gt;Java&lt;/book&gt;</code></li>
+<li><code>&lt;book title=Java&gt;&lt;/book&gt;</code></li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) Elements must be properly nested. A has wrong nesting order. C is missing closing tag for title. D has unquoted attribute value.</div>
+</div>
+
+<!-- Q24 -->
+<div class="practice">
+<div class="q-label">Question 24</div>
+<p class="question">What does <code>getElementsByTagName("employee")</code> return in DOM parsing?</p>
+<ol class="options">
+<li>A single Element</li>
+<li>A NodeList of all matching elements</li>
+<li>A String</li>
+<li>A JSONArray</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) NodeList — It returns a NodeList containing all elements with the specified tag name. You iterate it with .item(i) and .getLength().</div>
+</div>
+
+<!-- Q25 -->
+<div class="practice">
+<div class="q-label">Question 25</div>
+<p class="question">Which of the following JSON values is valid?</p>
+<ol class="options">
+<li><code>{"age": 25}</code></li>
+<li><code>{"age": 25,}</code></li>
+<li><code>{age: 25}</code></li>
+<li><code>{"age": NaN}</code></li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="0">A) {"age": 25} — B has trailing comma (invalid). C has unquoted key (invalid). D has NaN which is not a valid JSON value (JSON numbers cannot be NaN or Infinity).</div>
+</div>
+
+</section>
+
+  <div class="footer">
+    <a href="springboot.html">← Spring Boot</a> |
+    <a href="typescript.html">TypeScript →</a>
+  </div>
+</div>
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

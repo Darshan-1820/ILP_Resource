@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JDBC — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#what-is-jdbc">What is JDBC?</a>
+  <a href="#jdbc-architecture">JDBC Architecture</a>
+  <a href="#driver-types">Driver Types</a>
+  <a href="#jdbc-setup">JDBC Setup</a>
+  <a href="#seven-steps">The 7 Steps of JDBC</a>
+  <a href="#connection">Connection</a>
+  <a href="#statement-types">Statement Types</a>
+  <a href="#preparedstatement">PreparedStatement</a>
+  <a href="#execute-methods">execute Methods</a>
+  <a href="#resultset">ResultSet</a>
+  <a href="#crud-operations">CRUD Operations</a>
+  <a href="#transactions">Transaction Management</a>
+  <a href="#batch-processing">Batch Processing</a>
+  <a href="#connection-pooling">Connection Pooling</a>
+  <a href="#common-exceptions">Common Exceptions</a>
+  <a href="#practice">Practice Questions</a>
+</nav>
+
+<div class="main">
+<section class="sec-jdbc">
+
+<!-- ============================================ -->
+<!--  HEADER                                      -->
+<!-- ============================================ -->
+<h2 id="what-is-jdbc">1. What is JDBC?</h2>
+
+<p><strong>JDBC</strong> stands for <strong>Java Database Connectivity</strong>. It is a Java API that lets your Java program talk to a database (MySQL, Oracle, PostgreSQL, etc.) — send SQL queries, get results back, and manipulate data.</p>
+
+<div class="box box-tip">
+  <div class="label">Analogy — JDBC is a Phone Call</div>
+  Think of JDBC like making a phone call:<br>
+  <strong>1.</strong> You pick up the phone (load the driver)<br>
+  <strong>2.</strong> You dial the number (create a connection)<br>
+  <strong>3.</strong> You talk (send SQL queries)<br>
+  <strong>4.</strong> You listen (read results from ResultSet)<br>
+  <strong>5.</strong> You hang up (close the connection)<br>
+  The phone system itself is JDBC — it connects you (Java) to the other person (database).
+</div>
+
+<h3>Why Do We Need JDBC?</h3>
+<p>Your Java application stores data in variables and objects — but when the app closes, all that data is <strong>lost</strong>. Databases store data permanently. JDBC is the bridge that lets Java save and retrieve data from a database.</p>
+
+<ul>
+  <li>Java app needs to store user registrations → needs a database</li>
+  <li>Java app needs to show a list of products → reads from a database</li>
+  <li>Without JDBC, Java has no way to talk to MySQL, Oracle, etc.</li>
+</ul>
+
+<!-- ============================================ -->
+<!--  ARCHITECTURE                                -->
+<!-- ============================================ -->
+<h2 id="jdbc-architecture">2. JDBC Architecture</h2>
+
+<p>JDBC sits between your Java code and the database. Here's the flow:</p>
+
+<pre>
+<span class="cmt">┌─────────────────┐</span>
+<span class="cmt">│  Java Application │</span>
+<span class="cmt">└────────┬────────┘</span>
+         <span class="cmt">│ calls methods like executeQuery()</span>
+<span class="cmt">┌────────▼────────┐</span>
+<span class="cmt">│    JDBC API       │  ← java.sql package (Connection, Statement, ResultSet)</span>
+<span class="cmt">└────────┬────────┘</span>
+         <span class="cmt">│ translates to database-specific protocol</span>
+<span class="cmt">┌────────▼────────┐</span>
+<span class="cmt">│   JDBC Driver     │  ← e.g., MySQL Connector/J, Oracle JDBC driver</span>
+<span class="cmt">└────────┬────────┘</span>
+         <span class="cmt">│ sends actual SQL over the network</span>
+<span class="cmt">┌────────▼────────┐</span>
+<span class="cmt">│    Database       │  ← MySQL, Oracle, PostgreSQL</span>
+<span class="cmt">└─────────────────┘</span>
+</pre>
+
+<div class="box box-key">
+  <div class="label">Key Idea</div>
+  You write the same Java code no matter which database you use. Only the <strong>driver JAR file</strong> and the <strong>connection URL</strong> change. That's the power of JDBC — it is database-independent.
+</div>
+
+<!-- ============================================ -->
+<!--  DRIVER TYPES                                -->
+<!-- ============================================ -->
+<h2 id="driver-types">3. Types of JDBC Drivers</h2>
+
+<table>
+  <tr><th>Type</th><th>Name</th><th>How It Works</th><th>Used?</th></tr>
+  <tr>
+    <td><strong>Type 1</strong></td>
+    <td>JDBC-ODBC Bridge</td>
+    <td>Uses ODBC driver as middleman. Very slow.</td>
+    <td>Removed in Java 8. Never use.</td>
+  </tr>
+  <tr>
+    <td><strong>Type 2</strong></td>
+    <td>Native-API</td>
+    <td>Uses database-specific native libraries (C/C++).</td>
+    <td>Platform-dependent. Rarely used.</td>
+  </tr>
+  <tr>
+    <td><strong>Type 3</strong></td>
+    <td>Network Protocol</td>
+    <td>Talks to a middleware server that then talks to DB.</td>
+    <td>Complex setup. Rare.</td>
+  </tr>
+  <tr>
+    <td><strong>Type 4</strong></td>
+    <td>Thin / Pure Java</td>
+    <td>Directly talks to database using Java sockets. No middleman.</td>
+    <td><strong>Most used. This is what you use.</strong></td>
+  </tr>
+</table>
+
+<div class="box box-exam">
+  <div class="label">Exam Alert</div>
+  <strong>Type 4 (Thin / Pure Java)</strong> is the most commonly asked. Remember: it is written entirely in Java, needs no native libraries, and communicates directly with the database. MySQL Connector/J is a Type 4 driver.
+</div>
+
+<!-- ============================================ -->
+<!--  SETUP                                       -->
+<!-- ============================================ -->
+<h2 id="jdbc-setup">4. JDBC Setup</h2>
+
+<h3>Step 1: Get the MySQL Connector/J JAR</h3>
+<p>Download <code>mysql-connector-j-8.x.x.jar</code> from the MySQL website and add it to your project's classpath (or lib folder).</p>
+
+<h3>Step 2: Load the Driver</h3>
+<pre>
+<span class="type">Class</span>.<span class="fn">forName</span>(<span class="str">"com.mysql.cj.jdbc.Driver"</span>);
+</pre>
+
+<div class="box box-tip">
+  <div class="label">Why Class.forName()?</div>
+  <code>Class.forName()</code> loads the driver class into JVM memory. When the driver class loads, its static block automatically registers itself with <code>DriverManager</code>. Without this, Java doesn't know which driver to use.<br><br>
+  <strong>Note:</strong> In JDBC 4.0+ (Java 6+), the driver auto-loads if the JAR is on classpath. But TCS exams still ask about <code>Class.forName()</code>, so always know it.
+</div>
+
+<h3>Step 3: Connection URL Format</h3>
+<pre>
+<span class="cmt">// Format:</span>
+jdbc:mysql://hostname:port/database_name
+
+<span class="cmt">// Example — connecting to "ilpdb" on your own machine:</span>
+jdbc:mysql://localhost:3306/ilpdb
+</pre>
+
+<table>
+  <tr><th>Part</th><th>Meaning</th><th>Example</th></tr>
+  <tr><td><code>jdbc:mysql://</code></td><td>Protocol — tells JDBC to use MySQL</td><td>Always this for MySQL</td></tr>
+  <tr><td><code>localhost</code></td><td>Hostname — where the DB server runs</td><td><code>localhost</code> or <code>192.168.1.5</code></td></tr>
+  <tr><td><code>3306</code></td><td>Port — MySQL default port</td><td>3306 (default)</td></tr>
+  <tr><td><code>ilpdb</code></td><td>Database name</td><td>Your database name</td></tr>
+</table>
+
+<!-- ============================================ -->
+<!--  7 STEPS                                     -->
+<!-- ============================================ -->
+<h2 id="seven-steps">5. The 7 Steps of JDBC</h2>
+
+<div class="box box-exam">
+  <div class="label">Exam Alert — ALWAYS ASKED</div>
+  The 7 steps of JDBC are asked in almost every PRA and Sprint exam. Memorize the order. Know every line of code.
+</div>
+
+<pre>
+<span class="cmt">// Step 1: Import the java.sql package</span>
+<span class="kw">import</span> java.sql.*;
+
+<span class="kw">public class</span> <span class="type">JDBCDemo</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="type">String</span>[] args) {
+        <span class="kw">try</span> {
+            <span class="cmt">// Step 2: Load/Register the driver</span>
+            <span class="type">Class</span>.<span class="fn">forName</span>(<span class="str">"com.mysql.cj.jdbc.Driver"</span>);
+
+            <span class="cmt">// Step 3: Establish the connection</span>
+            <span class="type">Connection</span> con = <span class="type">DriverManager</span>.<span class="fn">getConnection</span>(
+                <span class="str">"jdbc:mysql://localhost:3306/ilpdb"</span>,  <span class="cmt">// URL</span>
+                <span class="str">"root"</span>,                                <span class="cmt">// username</span>
+                <span class="str">"password"</span>                              <span class="cmt">// password</span>
+            );
+
+            <span class="cmt">// Step 4: Create a Statement object</span>
+            <span class="type">Statement</span> stmt = con.<span class="fn">createStatement</span>();
+
+            <span class="cmt">// Step 5: Execute the SQL query</span>
+            <span class="type">ResultSet</span> rs = stmt.<span class="fn">executeQuery</span>(<span class="str">"SELECT * FROM employees"</span>);
+
+            <span class="cmt">// Step 6: Process the results</span>
+            <span class="kw">while</span> (rs.<span class="fn">next</span>()) {
+                <span class="type">System</span>.out.<span class="fn">println</span>(rs.<span class="fn">getInt</span>(<span class="str">"id"</span>) + <span class="str">" - "</span> + rs.<span class="fn">getString</span>(<span class="str">"name"</span>));
+            }
+
+            <span class="cmt">// Step 7: Close the connection</span>
+            rs.<span class="fn">close</span>();
+            stmt.<span class="fn">close</span>();
+            con.<span class="fn">close</span>();
+
+        } <span class="kw">catch</span> (<span class="type">Exception</span> e) {
+            e.<span class="fn">printStackTrace</span>();
+        }
+    }
+}
+</pre>
+
+<div class="box box-key">
+  <div class="label">7 Steps — Quick Memorization</div>
+  <strong>I-L-E-C-E-P-C</strong> — "I Love Eating Cheese Every Peaceful Christmas"<br><br>
+  1. <strong>I</strong>mport → <code>import java.sql.*;</code><br>
+  2. <strong>L</strong>oad → <code>Class.forName("...")</code><br>
+  3. <strong>E</strong>stablish → <code>DriverManager.getConnection()</code><br>
+  4. <strong>C</strong>reate → <code>con.createStatement()</code><br>
+  5. <strong>E</strong>xecute → <code>stmt.executeQuery()</code> or <code>stmt.executeUpdate()</code><br>
+  6. <strong>P</strong>rocess → <code>while(rs.next()) { ... }</code><br>
+  7. <strong>C</strong>lose → <code>con.close()</code>
+</div>
+
+<!-- ============================================ -->
+<!--  CONNECTION                                  -->
+<!-- ============================================ -->
+<h2 id="connection">6. Connection</h2>
+
+<h3>Getting a Connection</h3>
+<pre>
+<span class="type">Connection</span> con = <span class="type">DriverManager</span>.<span class="fn">getConnection</span>(url, username, password);
+</pre>
+
+<p>The <code>Connection</code> object represents a live session with the database. As long as it's open, you can send queries.</p>
+
+<h3>Important Connection Methods</h3>
+<table>
+  <tr><th>Method</th><th>What It Does</th></tr>
+  <tr><td><code>createStatement()</code></td><td>Creates a Statement object</td></tr>
+  <tr><td><code>prepareStatement(sql)</code></td><td>Creates a PreparedStatement with SQL template</td></tr>
+  <tr><td><code>prepareCall(sql)</code></td><td>Creates a CallableStatement for stored procedures</td></tr>
+  <tr><td><code>setAutoCommit(false)</code></td><td>Turns off auto-commit for manual transactions</td></tr>
+  <tr><td><code>commit()</code></td><td>Commits the current transaction</td></tr>
+  <tr><td><code>rollback()</code></td><td>Rolls back the current transaction</td></tr>
+  <tr><td><code>close()</code></td><td>Closes the connection and releases resources</td></tr>
+  <tr><td><code>isClosed()</code></td><td>Returns true if connection is closed</td></tr>
+</table>
+
+<h3>Try-With-Resources (Best Practice)</h3>
+<p>Always use try-with-resources so connections auto-close even if an exception occurs:</p>
+
+<pre>
+<span class="kw">try</span> (<span class="type">Connection</span> con = <span class="type">DriverManager</span>.<span class="fn">getConnection</span>(url, user, pass);
+     <span class="type">Statement</span> stmt = con.<span class="fn">createStatement</span>();
+     <span class="type">ResultSet</span> rs = stmt.<span class="fn">executeQuery</span>(<span class="str">"SELECT * FROM employees"</span>)) {
+
+    <span class="kw">while</span> (rs.<span class="fn">next</span>()) {
+        <span class="type">System</span>.out.<span class="fn">println</span>(rs.<span class="fn">getString</span>(<span class="str">"name"</span>));
+    }
+    <span class="cmt">// No need to call close() — happens automatically!</span>
+
+} <span class="kw">catch</span> (<span class="type">SQLException</span> e) {
+    e.<span class="fn">printStackTrace</span>();
+}
+</pre>
+
+<div class="box box-warn">
+  <div class="label">Warning</div>
+  If you forget to close a connection, you create a <strong>resource leak</strong>. The database has a limited number of connections — if they're all used up and not returned, new requests will fail. Always close connections.
+</div>
+
+<!-- ============================================ -->
+<!--  STATEMENT TYPES                             -->
+<!-- ============================================ -->
+<h2 id="statement-types">7. Statement Types</h2>
+
+<div class="box box-exam">
+  <div class="label">Exam Alert</div>
+  Statement vs PreparedStatement vs CallableStatement — comparison questions are very common. Know the differences cold.
+</div>
+
+<table>
+  <tr><th>Feature</th><th>Statement</th><th>PreparedStatement</th><th>CallableStatement</th></tr>
+  <tr>
+    <td><strong>Used for</strong></td>
+    <td>Simple, one-time SQL</td>
+    <td>Repeated SQL with parameters</td>
+    <td>Stored procedures</td>
+  </tr>
+  <tr>
+    <td><strong>SQL Injection</strong></td>
+    <td>Vulnerable</td>
+    <td><strong>Safe</strong> (parameterized)</td>
+    <td>Safe</td>
+  </tr>
+  <tr>
+    <td><strong>Performance</strong></td>
+    <td>Slower (compiled every time)</td>
+    <td><strong>Faster</strong> (pre-compiled)</td>
+    <td>Depends on DB</td>
+  </tr>
+  <tr>
+    <td><strong>Parameters</strong></td>
+    <td>None — SQL is a raw string</td>
+    <td>Uses <code>?</code> placeholders</td>
+    <td>Uses <code>?</code> for IN/OUT params</td>
+  </tr>
+  <tr>
+    <td><strong>Creation</strong></td>
+    <td><code>con.createStatement()</code></td>
+    <td><code>con.prepareStatement(sql)</code></td>
+    <td><code>con.prepareCall(sql)</code></td>
+  </tr>
+  <tr>
+    <td><strong>Best for</strong></td>
+    <td>DDL (CREATE, DROP, ALTER)</td>
+    <td>DML (INSERT, UPDATE, SELECT)</td>
+    <td>Calling stored procedures</td>
+  </tr>
+</table>
+
+<h3>Statement Example</h3>
+<pre>
+<span class="type">Statement</span> stmt = con.<span class="fn">createStatement</span>();
+<span class="type">ResultSet</span> rs = stmt.<span class="fn">executeQuery</span>(<span class="str">"SELECT * FROM employees WHERE dept='IT'"</span>);
+</pre>
+
+<h3>Why Statement is Dangerous</h3>
+<pre>
+<span class="cmt">// User enters this as their name: ' OR '1'='1</span>
+<span class="type">String</span> userInput = <span class="str">"' OR '1'='1"</span>;
+<span class="type">String</span> sql = <span class="str">"SELECT * FROM users WHERE name='"</span> + userInput + <span class="str">"'"</span>;
+<span class="cmt">// Becomes: SELECT * FROM users WHERE name='' OR '1'='1'</span>
+<span class="cmt">// This returns ALL rows! This is SQL Injection.</span>
+stmt.<span class="fn">executeQuery</span>(sql);
+</pre>
+
+<!-- ============================================ -->
+<!--  PREPARED STATEMENT                          -->
+<!-- ============================================ -->
+<h2 id="preparedstatement">8. PreparedStatement in Detail</h2>
+
+<p><code>PreparedStatement</code> is the <strong>right way</strong> to execute SQL with user input. It uses <code>?</code> placeholders instead of string concatenation.</p>
+
+<pre>
+<span class="cmt">// Step 1: Write SQL with ? placeholders (no quotes around ?)</span>
+<span class="type">String</span> sql = <span class="str">"SELECT * FROM employees WHERE dept = ? AND salary > ?"</span>;
+
+<span class="cmt">// Step 2: Create the PreparedStatement</span>
+<span class="type">PreparedStatement</span> pstmt = con.<span class="fn">prepareStatement</span>(sql);
+
+<span class="cmt">// Step 3: Set the parameter values (index starts at 1, not 0!)</span>
+pstmt.<span class="fn">setString</span>(<span class="num">1</span>, <span class="str">"IT"</span>);       <span class="cmt">// First ? → "IT"</span>
+pstmt.<span class="fn">setDouble</span>(<span class="num">2</span>, <span class="num">50000.0</span>);   <span class="cmt">// Second ? → 50000.0</span>
+
+<span class="cmt">// Step 4: Execute</span>
+<span class="type">ResultSet</span> rs = pstmt.<span class="fn">executeQuery</span>();
+</pre>
+
+<h3>Common Setter Methods</h3>
+<table>
+  <tr><th>Method</th><th>Java Type</th><th>SQL Type</th></tr>
+  <tr><td><code>setInt(index, value)</code></td><td>int</td><td>INTEGER</td></tr>
+  <tr><td><code>setString(index, value)</code></td><td>String</td><td>VARCHAR</td></tr>
+  <tr><td><code>setDouble(index, value)</code></td><td>double</td><td>DOUBLE</td></tr>
+  <tr><td><code>setFloat(index, value)</code></td><td>float</td><td>FLOAT</td></tr>
+  <tr><td><code>setLong(index, value)</code></td><td>long</td><td>BIGINT</td></tr>
+  <tr><td><code>setDate(index, value)</code></td><td>java.sql.Date</td><td>DATE</td></tr>
+  <tr><td><code>setBoolean(index, value)</code></td><td>boolean</td><td>BOOLEAN</td></tr>
+</table>
+
+<div class="box box-key">
+  <div class="label">Why PreparedStatement Prevents SQL Injection</div>
+  With <code>PreparedStatement</code>, the SQL structure is compiled <strong>first</strong>, then the values are plugged in separately. The database treats the values as <strong>data only</strong>, never as SQL commands.<br><br>
+  Even if a user enters <code>' OR '1'='1</code>, the database sees it as a literal string — not as SQL code. The SQL structure can't be changed after compilation.
+</div>
+
+<div class="box box-warn">
+  <div class="label">Common Mistake</div>
+  Parameter index starts at <strong>1</strong>, not 0! <code>pstmt.setString(1, "value")</code> is correct. <code>pstmt.setString(0, "value")</code> throws an exception.
+</div>
+
+<!-- ============================================ -->
+<!--  EXECUTE METHODS                             -->
+<!-- ============================================ -->
+<h2 id="execute-methods">9. executeQuery() vs executeUpdate() vs execute()</h2>
+
+<table>
+  <tr><th>Method</th><th>Used For</th><th>Returns</th><th>Example SQL</th></tr>
+  <tr>
+    <td><code>executeQuery()</code></td>
+    <td>SELECT statements</td>
+    <td><code>ResultSet</code></td>
+    <td><code>SELECT * FROM users</code></td>
+  </tr>
+  <tr>
+    <td><code>executeUpdate()</code></td>
+    <td>INSERT, UPDATE, DELETE, DDL</td>
+    <td><code>int</code> (rows affected)</td>
+    <td><code>INSERT INTO users VALUES(...)</code></td>
+  </tr>
+  <tr>
+    <td><code>execute()</code></td>
+    <td>Any SQL statement</td>
+    <td><code>boolean</code> (true if ResultSet)</td>
+    <td>Dynamic/unknown SQL type</td>
+  </tr>
+</table>
+
+<pre>
+<span class="cmt">// executeQuery() — for SELECT</span>
+<span class="type">ResultSet</span> rs = stmt.<span class="fn">executeQuery</span>(<span class="str">"SELECT * FROM employees"</span>);
+
+<span class="cmt">// executeUpdate() — for INSERT/UPDATE/DELETE</span>
+<span class="kw">int</span> rowsAffected = stmt.<span class="fn">executeUpdate</span>(<span class="str">"DELETE FROM employees WHERE id=5"</span>);
+<span class="type">System</span>.out.<span class="fn">println</span>(rowsAffected + <span class="str">" row(s) deleted"</span>);
+
+<span class="cmt">// execute() — for any SQL (rarely used in exams)</span>
+<span class="kw">boolean</span> hasResultSet = stmt.<span class="fn">execute</span>(<span class="str">"SELECT * FROM employees"</span>);
+<span class="kw">if</span> (hasResultSet) {
+    <span class="type">ResultSet</span> rs2 = stmt.<span class="fn">getResultSet</span>();
+}
+</pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Alert</div>
+  <strong>Q: What does executeUpdate() return?</strong><br>
+  A: An <code>int</code> — the number of rows affected. For DDL statements (CREATE TABLE, etc.), it returns 0.<br><br>
+  <strong>Q: What does executeQuery() return?</strong><br>
+  A: A <code>ResultSet</code> object containing the query results.
+</div>
+
+<!-- ============================================ -->
+<!--  RESULTSET                                   -->
+<!-- ============================================ -->
+<h2 id="resultset">10. ResultSet</h2>
+
+<p>A <code>ResultSet</code> is like a table of results. It has a <strong>cursor</strong> that starts <em>before</em> the first row. You call <code>next()</code> to move to each row.</p>
+
+<pre>
+<span class="type">ResultSet</span> rs = stmt.<span class="fn">executeQuery</span>(<span class="str">"SELECT id, name, salary FROM employees"</span>);
+
+<span class="cmt">// Cursor starts BEFORE first row</span>
+<span class="cmt">// rs.next() moves to first row, returns true</span>
+<span class="cmt">// rs.next() moves to second row, returns true</span>
+<span class="cmt">// ... when no more rows, returns false</span>
+
+<span class="kw">while</span> (rs.<span class="fn">next</span>()) {
+    <span class="kw">int</span> id = rs.<span class="fn">getInt</span>(<span class="str">"id"</span>);            <span class="cmt">// by column name</span>
+    <span class="type">String</span> name = rs.<span class="fn">getString</span>(<span class="num">2</span>);       <span class="cmt">// by column index (starts at 1!)</span>
+    <span class="kw">double</span> salary = rs.<span class="fn">getDouble</span>(<span class="str">"salary"</span>);
+    <span class="type">System</span>.out.<span class="fn">println</span>(id + <span class="str">" | "</span> + name + <span class="str">" | "</span> + salary);
+}
+</pre>
+
+<h3>ResultSet Navigation Methods</h3>
+<table>
+  <tr><th>Method</th><th>What It Does</th><th>Default Available?</th></tr>
+  <tr><td><code>next()</code></td><td>Move cursor forward one row</td><td>Yes (always)</td></tr>
+  <tr><td><code>previous()</code></td><td>Move cursor back one row</td><td>Only if scrollable</td></tr>
+  <tr><td><code>first()</code></td><td>Move to first row</td><td>Only if scrollable</td></tr>
+  <tr><td><code>last()</code></td><td>Move to last row</td><td>Only if scrollable</td></tr>
+  <tr><td><code>absolute(n)</code></td><td>Move to row number n</td><td>Only if scrollable</td></tr>
+  <tr><td><code>beforeFirst()</code></td><td>Move before first row</td><td>Only if scrollable</td></tr>
+</table>
+
+<h3>ResultSet Types</h3>
+<table>
+  <tr><th>Type Constant</th><th>Scrollable?</th><th>Reflects DB Changes?</th></tr>
+  <tr><td><code>TYPE_FORWARD_ONLY</code></td><td>No — only <code>next()</code></td><td>No</td></tr>
+  <tr><td><code>TYPE_SCROLL_INSENSITIVE</code></td><td>Yes</td><td>No — snapshot at query time</td></tr>
+  <tr><td><code>TYPE_SCROLL_SENSITIVE</code></td><td>Yes</td><td>Yes — sees changes made by others</td></tr>
+</table>
+
+<h3>ResultSet Concurrency</h3>
+<table>
+  <tr><th>Concurrency Constant</th><th>Meaning</th></tr>
+  <tr><td><code>CONCUR_READ_ONLY</code></td><td>Can only read data (default)</td></tr>
+  <tr><td><code>CONCUR_UPDATABLE</code></td><td>Can update data directly through the ResultSet</td></tr>
+</table>
+
+<h3>Creating a Scrollable ResultSet</h3>
+<pre>
+<span class="type">Statement</span> stmt = con.<span class="fn">createStatement</span>(
+    <span class="type">ResultSet</span>.TYPE_SCROLL_INSENSITIVE,  <span class="cmt">// scrollable</span>
+    <span class="type">ResultSet</span>.CONCUR_READ_ONLY           <span class="cmt">// read-only</span>
+);
+<span class="type">ResultSet</span> rs = stmt.<span class="fn">executeQuery</span>(<span class="str">"SELECT * FROM employees"</span>);
+
+rs.<span class="fn">last</span>();                 <span class="cmt">// jump to last row</span>
+<span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"Total rows: "</span> + rs.<span class="fn">getRow</span>());  <span class="cmt">// get current row number</span>
+rs.<span class="fn">beforeFirst</span>();           <span class="cmt">// go back to start</span>
+</pre>
+
+<!-- ============================================ -->
+<!--  CRUD OPERATIONS                             -->
+<!-- ============================================ -->
+<h2 id="crud-operations">11. CRUD Operations — Complete Examples</h2>
+
+<div class="box box-tip">
+  <div class="label">CRUD</div>
+  <strong>C</strong>reate (INSERT) | <strong>R</strong>ead (SELECT) | <strong>U</strong>pdate (UPDATE) | <strong>D</strong>elete (DELETE)<br>
+  Every database application revolves around these four operations. All examples use PreparedStatement.
+</div>
+
+<h3>CREATE — INSERT a New Employee</h3>
+<pre>
+<span class="type">String</span> sql = <span class="str">"INSERT INTO employees (name, dept, salary) VALUES (?, ?, ?)"</span>;
+
+<span class="kw">try</span> (<span class="type">PreparedStatement</span> pstmt = con.<span class="fn">prepareStatement</span>(sql)) {
+    pstmt.<span class="fn">setString</span>(<span class="num">1</span>, <span class="str">"Darshan"</span>);    <span class="cmt">// name</span>
+    pstmt.<span class="fn">setString</span>(<span class="num">2</span>, <span class="str">"Engineering"</span>); <span class="cmt">// dept</span>
+    pstmt.<span class="fn">setDouble</span>(<span class="num">3</span>, <span class="num">75000.0</span>);      <span class="cmt">// salary</span>
+
+    <span class="kw">int</span> rows = pstmt.<span class="fn">executeUpdate</span>();  <span class="cmt">// returns number of rows inserted</span>
+    <span class="type">System</span>.out.<span class="fn">println</span>(rows + <span class="str">" row inserted"</span>);
+}
+</pre>
+
+<h3>READ — SELECT All Employees</h3>
+<pre>
+<span class="type">String</span> sql = <span class="str">"SELECT id, name, dept, salary FROM employees"</span>;
+
+<span class="kw">try</span> (<span class="type">PreparedStatement</span> pstmt = con.<span class="fn">prepareStatement</span>(sql);
+     <span class="type">ResultSet</span> rs = pstmt.<span class="fn">executeQuery</span>()) {
+
+    <span class="kw">while</span> (rs.<span class="fn">next</span>()) {
+        <span class="type">System</span>.out.<span class="fn">println</span>(
+            rs.<span class="fn">getInt</span>(<span class="str">"id"</span>) + <span class="str">" | "</span> +
+            rs.<span class="fn">getString</span>(<span class="str">"name"</span>) + <span class="str">" | "</span> +
+            rs.<span class="fn">getString</span>(<span class="str">"dept"</span>) + <span class="str">" | "</span> +
+            rs.<span class="fn">getDouble</span>(<span class="str">"salary"</span>)
+        );
+    }
+}
+</pre>
+
+<h3>READ — SELECT with WHERE (find by department)</h3>
+<pre>
+<span class="type">String</span> sql = <span class="str">"SELECT * FROM employees WHERE dept = ?"</span>;
+
+<span class="kw">try</span> (<span class="type">PreparedStatement</span> pstmt = con.<span class="fn">prepareStatement</span>(sql)) {
+    pstmt.<span class="fn">setString</span>(<span class="num">1</span>, <span class="str">"IT"</span>);
+    <span class="type">ResultSet</span> rs = pstmt.<span class="fn">executeQuery</span>();
+
+    <span class="kw">while</span> (rs.<span class="fn">next</span>()) {
+        <span class="type">System</span>.out.<span class="fn">println</span>(rs.<span class="fn">getString</span>(<span class="str">"name"</span>) + <span class="str">" — "</span> + rs.<span class="fn">getDouble</span>(<span class="str">"salary"</span>));
+    }
+}
+</pre>
+
+<h3>UPDATE — Change Salary</h3>
+<pre>
+<span class="type">String</span> sql = <span class="str">"UPDATE employees SET salary = ? WHERE id = ?"</span>;
+
+<span class="kw">try</span> (<span class="type">PreparedStatement</span> pstmt = con.<span class="fn">prepareStatement</span>(sql)) {
+    pstmt.<span class="fn">setDouble</span>(<span class="num">1</span>, <span class="num">85000.0</span>);  <span class="cmt">// new salary</span>
+    pstmt.<span class="fn">setInt</span>(<span class="num">2</span>, <span class="num">101</span>);         <span class="cmt">// employee ID</span>
+
+    <span class="kw">int</span> rows = pstmt.<span class="fn">executeUpdate</span>();
+    <span class="type">System</span>.out.<span class="fn">println</span>(rows + <span class="str">" row(s) updated"</span>);
+}
+</pre>
+
+<h3>DELETE — Remove an Employee</h3>
+<pre>
+<span class="type">String</span> sql = <span class="str">"DELETE FROM employees WHERE id = ?"</span>;
+
+<span class="kw">try</span> (<span class="type">PreparedStatement</span> pstmt = con.<span class="fn">prepareStatement</span>(sql)) {
+    pstmt.<span class="fn">setInt</span>(<span class="num">1</span>, <span class="num">101</span>);          <span class="cmt">// ID to delete</span>
+
+    <span class="kw">int</span> rows = pstmt.<span class="fn">executeUpdate</span>();
+    <span class="type">System</span>.out.<span class="fn">println</span>(rows + <span class="str">" row(s) deleted"</span>);
+}
+</pre>
+
+<!-- ============================================ -->
+<!--  TRANSACTIONS                                -->
+<!-- ============================================ -->
+<h2 id="transactions">12. Transaction Management</h2>
+
+<p>By default, JDBC runs in <strong>auto-commit</strong> mode — every SQL statement is committed immediately. But sometimes you need multiple statements to succeed or fail <em>together</em>.</p>
+
+<div class="box box-tip">
+  <div class="label">Analogy — Bank Transfer</div>
+  Transferring Rs. 5000 from Account A to Account B requires two SQL statements:<br>
+  <strong>1.</strong> Deduct 5000 from A → <code>UPDATE accounts SET balance = balance - 5000 WHERE id = 'A'</code><br>
+  <strong>2.</strong> Add 5000 to B → <code>UPDATE accounts SET balance = balance + 5000 WHERE id = 'B'</code><br><br>
+  What if Step 1 succeeds but Step 2 fails? Money vanishes! That's why we need <strong>transactions</strong> — both must succeed, or both must be undone (rolled back).
+</div>
+
+<pre>
+<span class="kw">try</span> {
+    con.<span class="fn">setAutoCommit</span>(<span class="kw">false</span>);   <span class="cmt">// Step 1: Turn OFF auto-commit</span>
+
+    <span class="cmt">// Step 2: Execute multiple statements</span>
+    <span class="type">PreparedStatement</span> ps1 = con.<span class="fn">prepareStatement</span>(
+        <span class="str">"UPDATE accounts SET balance = balance - ? WHERE id = ?"</span>);
+    ps1.<span class="fn">setDouble</span>(<span class="num">1</span>, <span class="num">5000</span>);
+    ps1.<span class="fn">setString</span>(<span class="num">2</span>, <span class="str">"A"</span>);
+    ps1.<span class="fn">executeUpdate</span>();
+
+    <span class="type">PreparedStatement</span> ps2 = con.<span class="fn">prepareStatement</span>(
+        <span class="str">"UPDATE accounts SET balance = balance + ? WHERE id = ?"</span>);
+    ps2.<span class="fn">setDouble</span>(<span class="num">1</span>, <span class="num">5000</span>);
+    ps2.<span class="fn">setString</span>(<span class="num">2</span>, <span class="str">"B"</span>);
+    ps2.<span class="fn">executeUpdate</span>();
+
+    con.<span class="fn">commit</span>();                <span class="cmt">// Step 3: All good — COMMIT both</span>
+    <span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"Transfer successful!"</span>);
+
+} <span class="kw">catch</span> (<span class="type">SQLException</span> e) {
+    con.<span class="fn">rollback</span>();              <span class="cmt">// Step 4: Something failed — ROLLBACK both</span>
+    <span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"Transfer failed, rolled back."</span>);
+    e.<span class="fn">printStackTrace</span>();
+} <span class="kw">finally</span> {
+    con.<span class="fn">setAutoCommit</span>(<span class="kw">true</span>);    <span class="cmt">// Reset auto-commit</span>
+}
+</pre>
+
+<h3>Savepoints</h3>
+<p>A Savepoint marks a point within a transaction. You can rollback to a savepoint instead of rolling back the entire transaction.</p>
+
+<pre>
+con.<span class="fn">setAutoCommit</span>(<span class="kw">false</span>);
+
+stmt.<span class="fn">executeUpdate</span>(<span class="str">"INSERT INTO logs VALUES (1, 'Step 1 done')"</span>);
+
+<span class="type">Savepoint</span> sp = con.<span class="fn">setSavepoint</span>(<span class="str">"afterStep1"</span>);  <span class="cmt">// Mark this point</span>
+
+stmt.<span class="fn">executeUpdate</span>(<span class="str">"INSERT INTO logs VALUES (2, 'Step 2 done')"</span>);
+
+<span class="cmt">// Oops, Step 2 was wrong — rollback only Step 2</span>
+con.<span class="fn">rollback</span>(sp);   <span class="cmt">// Rolls back to savepoint — Step 1 is still intact</span>
+
+con.<span class="fn">commit</span>();        <span class="cmt">// Commits Step 1 only</span>
+</pre>
+
+<div class="box box-key">
+  <div class="label">Transaction Methods Summary</div>
+  <code>setAutoCommit(false)</code> — start manual transaction<br>
+  <code>commit()</code> — save all changes permanently<br>
+  <code>rollback()</code> — undo all changes since last commit<br>
+  <code>setSavepoint("name")</code> — create a checkpoint<br>
+  <code>rollback(savepoint)</code> — undo changes to a specific checkpoint
+</div>
+
+<!-- ============================================ -->
+<!--  BATCH PROCESSING                            -->
+<!-- ============================================ -->
+<h2 id="batch-processing">13. Batch Processing</h2>
+
+<p>When you need to insert 100 or 1000 rows, running them one by one is slow. <strong>Batch processing</strong> sends multiple SQL statements to the database in one go.</p>
+
+<pre>
+<span class="type">String</span> sql = <span class="str">"INSERT INTO employees (name, dept, salary) VALUES (?, ?, ?)"</span>;
+<span class="type">PreparedStatement</span> pstmt = con.<span class="fn">prepareStatement</span>(sql);
+
+con.<span class="fn">setAutoCommit</span>(<span class="kw">false</span>);   <span class="cmt">// Use transaction for batch</span>
+
+<span class="cmt">// Add row 1 to batch</span>
+pstmt.<span class="fn">setString</span>(<span class="num">1</span>, <span class="str">"Alice"</span>);
+pstmt.<span class="fn">setString</span>(<span class="num">2</span>, <span class="str">"HR"</span>);
+pstmt.<span class="fn">setDouble</span>(<span class="num">3</span>, <span class="num">50000</span>);
+pstmt.<span class="fn">addBatch</span>();              <span class="cmt">// Add to batch — not executed yet</span>
+
+<span class="cmt">// Add row 2 to batch</span>
+pstmt.<span class="fn">setString</span>(<span class="num">1</span>, <span class="str">"Bob"</span>);
+pstmt.<span class="fn">setString</span>(<span class="num">2</span>, <span class="str">"IT"</span>);
+pstmt.<span class="fn">setDouble</span>(<span class="num">3</span>, <span class="num">60000</span>);
+pstmt.<span class="fn">addBatch</span>();
+
+<span class="cmt">// Add row 3 to batch</span>
+pstmt.<span class="fn">setString</span>(<span class="num">1</span>, <span class="str">"Charlie"</span>);
+pstmt.<span class="fn">setString</span>(<span class="num">2</span>, <span class="str">"Finance"</span>);
+pstmt.<span class="fn">setDouble</span>(<span class="num">3</span>, <span class="num">55000</span>);
+pstmt.<span class="fn">addBatch</span>();
+
+<span class="kw">int</span>[] results = pstmt.<span class="fn">executeBatch</span>();  <span class="cmt">// Execute all 3 at once!</span>
+con.<span class="fn">commit</span>();                           <span class="cmt">// Commit the transaction</span>
+
+<span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"Inserted "</span> + results.length + <span class="str">" rows"</span>);
+</pre>
+
+<div class="box box-key">
+  <div class="label">Batch Methods</div>
+  <code>addBatch()</code> — adds the current parameters to the batch<br>
+  <code>executeBatch()</code> — sends all batched statements to the DB at once, returns <code>int[]</code><br>
+  <code>clearBatch()</code> — clears the current batch without executing
+</div>
+
+<!-- ============================================ -->
+<!--  CONNECTION POOLING                          -->
+<!-- ============================================ -->
+<h2 id="connection-pooling">14. Connection Pooling (Brief)</h2>
+
+<p>Creating a new database connection is <strong>expensive</strong> (takes time and resources). In a real web app, hundreds of users hit the server — creating a new connection for each request is wasteful.</p>
+
+<p><strong>Connection Pooling</strong> = keep a pool of pre-created connections ready. When a request comes, grab one from the pool. When done, return it to the pool instead of closing it.</p>
+
+<div class="box box-example">
+  <div class="label">Without Pooling vs With Pooling</div>
+  <strong>Without:</strong> User request → Create connection → Use → Close → (next request creates another) — Slow<br>
+  <strong>With:</strong> App starts → Create 10 connections in pool → User request → Grab one → Use → Return to pool — Fast
+</div>
+
+<h3>Popular Connection Pool Libraries</h3>
+<table>
+  <tr><th>Library</th><th>Notes</th></tr>
+  <tr><td><strong>HikariCP</strong></td><td>Fastest. Default in Spring Boot. Industry standard.</td></tr>
+  <tr><td>Apache DBCP</td><td>Older but still used. Part of Apache Commons.</td></tr>
+  <tr><td>C3P0</td><td>Legacy. Rarely used in new projects.</td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">Exam Note</div>
+  You won't need to write connection pooling code in TCS exams. Just know <strong>what</strong> it is and <strong>why</strong> it's used. Answer: "Reuses connections for better performance instead of creating new ones each time."
+</div>
+
+<!-- ============================================ -->
+<!--  EXCEPTIONS                                  -->
+<!-- ============================================ -->
+<h2 id="common-exceptions">15. Common JDBC Exceptions</h2>
+
+<table>
+  <tr><th>Exception</th><th>When It Happens</th><th>Fix</th></tr>
+  <tr>
+    <td><code>ClassNotFoundException</code></td>
+    <td>Driver JAR not in classpath</td>
+    <td>Add <code>mysql-connector-j.jar</code> to your project</td>
+  </tr>
+  <tr>
+    <td><code>SQLException</code></td>
+    <td>Any SQL or connection error</td>
+    <td>Check SQL syntax, URL, credentials</td>
+  </tr>
+  <tr>
+    <td><code>Communications link failure</code></td>
+    <td>Database server is not running</td>
+    <td>Start MySQL server</td>
+  </tr>
+  <tr>
+    <td><code>Access denied for user</code></td>
+    <td>Wrong username or password</td>
+    <td>Check credentials in getConnection()</td>
+  </tr>
+  <tr>
+    <td><code>Unknown database 'xyz'</code></td>
+    <td>Database name in URL doesn't exist</td>
+    <td>Create the database or fix the name</td>
+  </tr>
+  <tr>
+    <td><code>No suitable driver found</code></td>
+    <td>Wrong URL format or driver not loaded</td>
+    <td>Check URL starts with <code>jdbc:mysql://</code></td>
+  </tr>
+</table>
+
+<div class="box box-warn">
+  <div class="label">Debugging Tip</div>
+  When you get a <code>SQLException</code>, always print:<br>
+  <code>e.getMessage()</code> — what went wrong<br>
+  <code>e.getSQLState()</code> — standard SQL error code<br>
+  <code>e.getErrorCode()</code> — database-specific error code
+</div>
+
+<!-- ============================================ -->
+<!--  PRACTICE QUESTIONS                          -->
+<!-- ============================================ -->
+<h2 id="practice">16. Practice Questions</h2>
+
+<!-- Q1 -->
+<div class="practice">
+  <div class="q-label">Question 1</div>
+  <p class="question">Which of the following is the correct order of JDBC steps?</p>
+  <ol class="options">
+    <li>Import → Load Driver → Create Statement → Establish Connection → Execute → Process → Close</li>
+    <li>Import → Load Driver → Establish Connection → Create Statement → Execute → Process → Close</li>
+    <li>Load Driver → Import → Establish Connection → Execute → Create Statement → Process → Close</li>
+    <li>Import → Establish Connection → Load Driver → Create Statement → Execute → Process → Close</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) Import → Load Driver → Establish Connection → Create Statement → Execute → Process → Close. You must establish a connection before creating a statement.</div>
+</div>
+
+<!-- Q2 -->
+<div class="practice">
+  <div class="q-label">Question 2</div>
+  <p class="question">What does Class.forName("com.mysql.cj.jdbc.Driver") do?</p>
+  <ol class="options">
+    <li>Creates a database connection</li>
+    <li>Loads the JDBC driver class into JVM memory</li>
+    <li>Executes a SQL query</li>
+    <li>Creates a Statement object</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) It loads the driver class into JVM memory. The driver's static initializer block registers it with DriverManager automatically.</div>
+</div>
+
+<!-- Q3 -->
+<div class="practice">
+  <div class="q-label">Question 3</div>
+  <p class="question">Which Statement type prevents SQL injection?</p>
+  <ol class="options">
+    <li>Statement</li>
+    <li>PreparedStatement</li>
+    <li>CallableStatement</li>
+    <li>Both B and C</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="3">D) Both PreparedStatement and CallableStatement use parameterized queries, which prevent SQL injection. Statement uses string concatenation and is vulnerable.</div>
+</div>
+
+<!-- Q4 -->
+<div class="practice">
+  <div class="q-label">Question 4</div>
+  <p class="question">What does executeUpdate() return?</p>
+  <ol class="options">
+    <li>ResultSet</li>
+    <li>boolean</li>
+    <li>int (number of rows affected)</li>
+    <li>void</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) executeUpdate() returns an int representing the number of rows affected by INSERT, UPDATE, or DELETE operations.</div>
+</div>
+
+<!-- Q5 -->
+<div class="practice">
+  <div class="q-label">Question 5</div>
+  <p class="question">What does executeQuery() return?</p>
+  <ol class="options">
+    <li>int</li>
+    <li>boolean</li>
+    <li>ResultSet</li>
+    <li>String</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) executeQuery() returns a ResultSet object containing the rows returned by the SELECT query.</div>
+</div>
+
+<!-- Q6 -->
+<div class="practice">
+  <div class="q-label">Question 6</div>
+  <p class="question">In a PreparedStatement, what does the ? represent?</p>
+  <ol class="options">
+    <li>A comment in SQL</li>
+    <li>A wildcard character</li>
+    <li>A parameter placeholder</li>
+    <li>A null value</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) The ? is a parameter placeholder. You set its value using methods like setString(1, "value") or setInt(1, 42). Index starts at 1.</div>
+</div>
+
+<!-- Q7 -->
+<div class="practice">
+  <div class="q-label">Question 7</div>
+  <p class="question">Which is the correct JDBC URL for connecting to a MySQL database named "testdb" on localhost?</p>
+  <ol class="options">
+    <li>mysql://localhost:3306/testdb</li>
+    <li>jdbc:mysql://localhost:3306/testdb</li>
+    <li>jdbc://mysql:localhost:3306/testdb</li>
+    <li>jdbc:mysql:localhost:3306:testdb</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) The correct format is jdbc:mysql://hostname:port/database. The protocol is jdbc:mysql:// followed by host, port, and database name separated by / not colons.</div>
+</div>
+
+<!-- Q8 -->
+<div class="practice">
+  <div class="q-label">Question 8</div>
+  <p class="question">Which method is used to establish a connection in JDBC?</p>
+  <ol class="options">
+    <li>Connection.open(url)</li>
+    <li>DriverManager.getConnection(url, user, password)</li>
+    <li>Driver.connect(url)</li>
+    <li>Database.open(url, user, password)</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) DriverManager.getConnection(url, user, password) is the standard method to establish a JDBC connection.</div>
+</div>
+
+<!-- Q9 -->
+<div class="practice">
+  <div class="q-label">Question 9</div>
+  <p class="question">What is the default ResultSet type in JDBC?</p>
+  <ol class="options">
+    <li>TYPE_SCROLL_INSENSITIVE</li>
+    <li>TYPE_SCROLL_SENSITIVE</li>
+    <li>TYPE_FORWARD_ONLY</li>
+    <li>TYPE_RANDOM_ACCESS</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) TYPE_FORWARD_ONLY is the default. You can only call next() to move forward. To use previous(), first(), last(), you need a scrollable ResultSet.</div>
+</div>
+
+<!-- Q10 -->
+<div class="practice">
+  <div class="q-label">Question 10</div>
+  <p class="question">Which method is used to move the ResultSet cursor to the next row?</p>
+  <ol class="options">
+    <li>rs.moveNext()</li>
+    <li>rs.forward()</li>
+    <li>rs.next()</li>
+    <li>rs.advance()</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) rs.next() moves the cursor to the next row and returns true if there is a row, false if no more rows exist.</div>
+</div>
+
+<!-- Q11 -->
+<div class="practice">
+  <div class="q-label">Question 11</div>
+  <p class="question">To manually control transactions, what must you do first?</p>
+  <ol class="options">
+    <li>Call con.beginTransaction()</li>
+    <li>Call con.setAutoCommit(false)</li>
+    <li>Call con.startTransaction()</li>
+    <li>Call con.disableAutoCommit()</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) con.setAutoCommit(false) disables auto-commit mode. After this, changes are only saved when you explicitly call con.commit().</div>
+</div>
+
+<!-- Q12 -->
+<div class="practice">
+  <div class="q-label">Question 12</div>
+  <p class="question">What happens if a transaction fails and you call con.rollback()?</p>
+  <ol class="options">
+    <li>All changes since the last commit are undone</li>
+    <li>Only the last statement is undone</li>
+    <li>The connection is closed</li>
+    <li>The database is reset to initial state</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="0">A) rollback() undoes ALL changes made since the last commit (or since setAutoCommit(false) was called). The database returns to the state it was in before the transaction started.</div>
+</div>
+
+<!-- Q13 -->
+<div class="practice">
+  <div class="q-label">Question 13</div>
+  <p class="question">Which JDBC driver type is the most commonly used and is written entirely in Java?</p>
+  <ol class="options">
+    <li>Type 1 — JDBC-ODBC Bridge</li>
+    <li>Type 2 — Native API</li>
+    <li>Type 3 — Network Protocol</li>
+    <li>Type 4 — Thin/Pure Java</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="3">D) Type 4 (Thin/Pure Java) is the most used. It communicates directly with the database using Java sockets. MySQL Connector/J is a Type 4 driver.</div>
+</div>
+
+<!-- Q14 -->
+<div class="practice">
+  <div class="q-label">Question 14</div>
+  <p class="question">What exception is thrown when the JDBC driver JAR is not found in the classpath?</p>
+  <ol class="options">
+    <li>SQLException</li>
+    <li>IOException</li>
+    <li>ClassNotFoundException</li>
+    <li>DriverNotFoundException</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) ClassNotFoundException is thrown by Class.forName() when the driver class cannot be found, which means the driver JAR is not on the classpath.</div>
+</div>
+
+<!-- Q15 -->
+<div class="practice">
+  <div class="q-label">Question 15</div>
+  <p class="question">Which method is used to add SQL commands to a batch?</p>
+  <ol class="options">
+    <li>addQuery()</li>
+    <li>addSQL()</li>
+    <li>addBatch()</li>
+    <li>batchAdd()</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) addBatch() adds the current SQL statement (with its parameters) to the batch. executeBatch() then sends all batched statements to the database at once.</div>
+</div>
+
+<!-- Q16 -->
+<div class="practice">
+  <div class="q-label">Question 16</div>
+  <p class="question">In PreparedStatement, what is the index of the first parameter placeholder?</p>
+  <ol class="options">
+    <li>0</li>
+    <li>1</li>
+    <li>-1</li>
+    <li>Depends on the database</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) Parameter indices in PreparedStatement start at 1, not 0. This is different from arrays and lists in Java which start at 0.</div>
+</div>
+
+<!-- Q17 -->
+<div class="practice">
+  <div class="q-label">Question 17</div>
+  <p class="question">What is the purpose of connection pooling?</p>
+  <ol class="options">
+    <li>To encrypt database connections</li>
+    <li>To reuse existing connections instead of creating new ones each time</li>
+    <li>To connect to multiple databases simultaneously</li>
+    <li>To store SQL queries in memory for faster execution</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) Connection pooling maintains a pool of pre-created database connections. Instead of creating and destroying connections for every request (which is expensive), connections are borrowed from and returned to the pool.</div>
+</div>
+
+<!-- Q18 -->
+<div class="practice">
+  <div class="q-label">Question 18</div>
+  <p class="question">Which interface is used to call stored procedures in JDBC?</p>
+  <ol class="options">
+    <li>Statement</li>
+    <li>PreparedStatement</li>
+    <li>CallableStatement</li>
+    <li>StoredProcedureStatement</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) CallableStatement is used to call stored procedures. It is created using con.prepareCall("{call procedureName(?, ?)}").</div>
+</div>
+
+</section>
+
+  <div class="footer">
+    <a href="java.html">← Java</a> |
+    <a href="servlets.html">Servlets →</a>
+  </div>
+</div>
+
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

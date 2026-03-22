@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PL/SQL — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#plsql" class="sub">Overview</a>
+  <a href="#plsql-what" class="sub">What is PL/SQL?</a>
+  <a href="#plsql-block" class="sub">Block Structure</a>
+  <a href="#plsql-vars" class="sub">Variables & Data Types</a>
+  <a href="#plsql-control" class="sub">Control Structures</a>
+  <a href="#plsql-cursors" class="sub">Cursors</a>
+  <a href="#plsql-proc" class="sub">Procedures</a>
+  <a href="#plsql-func" class="sub">Functions</a>
+  <a href="#plsql-triggers" class="sub">Triggers</a>
+  <a href="#plsql-exceptions" class="sub">Exception Handling</a>
+  <a href="#plsql-packages" class="sub">Packages</a>
+  <a href="#plsql-practice" class="sub">Practice Questions</a>
+</nav>
+<div class="main">
+<section id="plsql" class="sec-plsql">
+<h2>PL/SQL</h2>
+
+<div class="box box-exam">
+  <div class="label">📋 Exam scope</div>
+  <strong>PL/SQL appears ONLY in the FA exam — 5 MCQs.</strong> Not in PRA or sprints. If FA is near, study this. Otherwise bookmark it.
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 1: WHAT IS PL/SQL                    -->
+<!-- ============================================ -->
+<h3 id="plsql-what">1. What is PL/SQL?</h3>
+
+<p>Imagine you're at a restaurant. SQL is like pointing at a menu item and saying "give me that" — you can ask for data, but that's it. You can't say "if the pasta is sold out, get me pizza instead" or "keep bringing bread until I say stop." SQL has no logic — no decisions, no loops, no error handling.</p>
+
+<p><strong>PL/SQL</strong> (Procedural Language / SQL) is Oracle's way of adding a brain to SQL. It wraps programming logic — IF/ELSE decisions, loops, variables, error handling — around your SQL statements so they can run as a complete program <em>inside the database itself</em>.</p>
+
+<div class="box box-key">
+  <div class="label">✅ Key fact</div>
+  PL/SQL = SQL + procedural programming. It is <strong>Oracle-specific</strong> (not MySQL, not PostgreSQL). Think of it as writing a small program that lives and runs inside the database — no external application needed.
+</div>
+
+<p><strong>Why does it matter?</strong> Without PL/SQL, your application would need to send dozens of separate SQL commands over the network. With PL/SQL, you bundle all that logic into one block, send it once, and the database handles it. Faster, cleaner, fewer network round trips.</p>
+
+<div class="box box-example">
+  <div class="label">🔍 Real-world analogy</div>
+  SQL alone is like texting a friend one instruction at a time: "Open the fridge." "Is there milk?" "If yes, pour a glass." "If no, go to the store." Each message is a separate trip.<br><br>
+  PL/SQL is like handing them a written note with ALL the instructions at once. They read the whole thing and do it all in one go. That's the efficiency gain.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What does PL/SQL add to regular SQL?</p>
+  <ol class="options"><li>The ability to create tables</li><li>Procedural logic like IF/ELSE, loops, and error handling</li><li>Support for NoSQL databases</li><li>A graphical user interface for queries</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) SQL can already create tables. PL/SQL's purpose is adding programming constructs — decisions, loops, variables, exception handling — on top of SQL. It turns SQL from a "question-answer" tool into a full programming language inside the database.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">PL/SQL is specific to which database system?</p>
+  <ol class="options"><li>MySQL</li><li>PostgreSQL</li><li>Oracle</li><li>SQL Server</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) PL/SQL is Oracle's proprietary procedural extension. MySQL uses stored procedures with a different syntax, PostgreSQL has PL/pgSQL, and SQL Server has T-SQL. If the exam asks about PL/SQL, it's always Oracle.</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 2: BLOCK STRUCTURE                   -->
+<!-- ============================================ -->
+<h3 id="plsql-block">2. Block Structure — The #1 Exam Topic</h3>
+
+<p>Every PL/SQL program is organized into <strong>blocks</strong>. Think of a block like a recipe card:</p>
+<ul>
+  <li><strong>Ingredients list (DECLARE)</strong> — what you need before you start. Variables, constants, cursors go here. <em>Optional</em> — some recipes need no prep.</li>
+  <li><strong>Cooking steps (BEGIN...END)</strong> — the actual work. Your SQL statements and logic go here. <em>Mandatory</em> — a recipe with no steps isn't a recipe.</li>
+  <li><strong>What to do if something goes wrong (EXCEPTION)</strong> — burned the toast? Ran out of sugar? Handle it here instead of crashing. <em>Optional</em> — but smart cooks always have a backup plan.</li>
+</ul>
+
+<pre><span class="cmt">-- PL/SQL block structure</span>
+<span class="kw">DECLARE</span>
+  <span class="cmt">-- Variables (OPTIONAL) — "ingredients list"</span>
+  v_name <span class="kw">VARCHAR2</span>(<span class="num">50</span>);
+<span class="kw">BEGIN</span>
+  <span class="cmt">-- Your logic (MANDATORY) — "cooking steps"</span>
+  v_name := <span class="str">'Darshan'</span>;
+  DBMS_OUTPUT.PUT_LINE(<span class="str">'Hello, '</span> || v_name);
+<span class="kw">EXCEPTION</span>
+  <span class="cmt">-- Error handling (OPTIONAL) — "backup plan"</span>
+  <span class="kw">WHEN OTHERS THEN</span>
+    DBMS_OUTPUT.PUT_LINE(<span class="str">'Error occurred'</span>);
+<span class="kw">END</span>;
+/</pre>
+
+<div class="box box-warn">
+  <div class="label">⚠️ Common trap</div>
+  The block ends with <strong>END;</strong> (semicolon) followed by <strong>/</strong> on the next line. The <strong>/</strong> tells Oracle to execute the block. Forgetting the <strong>/</strong> means your block just sits there doing nothing.
+</div>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  "Which section is mandatory?" → <strong>BEGIN</strong>. DECLARE and EXCEPTION are optional. The simplest valid block is just <code>BEGIN ... END;</code>
+</div>
+
+<div class="box box-key">
+  <div class="label">✅ Section order — memorize</div>
+  <strong>DECLARE</strong> (optional) → <strong>BEGIN</strong> (mandatory) → <strong>EXCEPTION</strong> (optional) → <strong>END;</strong> (mandatory)<br>
+  Memory trick: <strong>D-B-E-E</strong> — "Don't Bother Except Errors"
+</div>
+
+<p><strong>Anonymous blocks vs Named blocks:</strong> The block above is <em>anonymous</em> — it runs once and disappears. When you save a block as a procedure, function, or trigger, it becomes a <em>named block</em> stored in the database. Same structure, just reusable.</p>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which section of a PL/SQL block is MANDATORY?</p>
+  <ol class="options"><li>DECLARE</li><li>BEGIN</li><li>EXCEPTION</li><li>Both DECLARE and EXCEPTION</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) BEGIN is the only mandatory section. You can write a valid block with just BEGIN and END — no DECLARE, no EXCEPTION. The simplest block: <code>BEGIN NULL; END;</code></div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Correct order of PL/SQL block sections?</p>
+  <ol class="options"><li>BEGIN → DECLARE → EXCEPTION → END</li><li>DECLARE → BEGIN → EXCEPTION → END</li><li>DECLARE → EXCEPTION → BEGIN → END</li><li>BEGIN → EXCEPTION → DECLARE → END</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) DECLARE → BEGIN → EXCEPTION → END. Always. You can't handle exceptions before you've done the work, and you can't do work before declaring your tools. Think recipe: ingredients first, steps second, backup plan last.</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 3: VARIABLES & DATA TYPES            -->
+<!-- ============================================ -->
+<h3 id="plsql-vars">3. Variables &amp; Data Types</h3>
+
+<p><strong>Why do we need variables?</strong> Imagine you're a cashier. A customer buys 3 items. You need a temporary place to hold the running total while you scan each one. That's a variable — a named container that holds a value while your program runs.</p>
+
+<p>In PL/SQL, variables live in the DECLARE section. You give each one a name, a type (what kind of data it holds), and optionally an initial value.</p>
+
+<pre><span class="kw">DECLARE</span>
+  v_salary   <span class="kw">NUMBER</span>(<span class="num">10</span>, <span class="num">2</span>);          <span class="cmt">-- number with 2 decimals</span>
+  v_name     <span class="kw">VARCHAR2</span>(<span class="num">100</span>);          <span class="cmt">-- variable-length text (up to 100 chars)</span>
+  v_dob      <span class="kw">DATE</span>;                   <span class="cmt">-- date + time</span>
+  v_active   <span class="kw">BOOLEAN</span>;               <span class="cmt">-- TRUE / FALSE / NULL</span>
+<span class="kw">BEGIN</span>
+  v_salary := <span class="num">75000</span>;  <span class="cmt">-- Assignment uses := (not =)</span>
+<span class="kw">END</span>;
+/</pre>
+
+<div class="box box-warn">
+  <div class="label">⚠️ := not =</div>
+  PL/SQL uses <strong>:=</strong> for assignment (put a value into a variable). The single <strong>=</strong> is only used for comparison. This trips up every beginner. If you write <code>v_salary = 75000</code>, Oracle will throw an error.
+</div>
+
+<h4>Anchor Types — The Smart Way</h4>
+
+<p><strong>The problem:</strong> You declare <code>v_name VARCHAR2(50)</code>, but the actual column in the employees table is VARCHAR2(100). Now your variable is too small and your program crashes. Worse — if someone changes the column size later, your code silently breaks.</p>
+
+<p><strong>The solution:</strong> Instead of hardcoding the type, <em>anchor</em> your variable to the column itself. "Whatever type that column is, make me the same."</p>
+
+<pre><span class="kw">DECLARE</span>
+  <span class="cmt">-- %TYPE — borrows type from ONE column</span>
+  v_emp_name employees.first_name<span class="kw">%TYPE</span>;     <span class="cmt">-- "same type as first_name column"</span>
+
+  <span class="cmt">-- %ROWTYPE — borrows structure of ENTIRE row</span>
+  v_emp_row  employees<span class="kw">%ROWTYPE</span>;            <span class="cmt">-- has .first_name, .salary, .dept_id, etc.</span>
+
+  <span class="cmt">-- CONSTANT — a value that NEVER changes</span>
+  c_tax_rate <span class="kw">CONSTANT NUMBER</span> := <span class="num">0.18</span>;     <span class="cmt">-- must assign value immediately</span>
+<span class="kw">BEGIN</span>
+  <span class="kw">NULL</span>;
+<span class="kw">END</span>;
+/</pre>
+
+<div class="box box-key">
+  <div class="label">✅ %TYPE vs %ROWTYPE — know the difference</div>
+  <strong>%TYPE</strong> = copies a single column's data type. Use when you need one value.<br>
+  <strong>%ROWTYPE</strong> = copies the entire row structure. Use when you need a whole record.<br><br>
+  Think of it this way: %TYPE is like copying one column header from a spreadsheet. %ROWTYPE is like copying the entire header row.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What does %TYPE do?</p>
+  <ol class="options"><li>Matches an entire table row</li><li>Matches a specific column's data type</li><li>Creates a record type</li><li>Defines function return type</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) %TYPE anchors a variable to a single column's type. If the column is VARCHAR2(100), your variable automatically becomes VARCHAR2(100). %ROWTYPE is the one that matches a whole row.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">How is a CONSTANT declared in PL/SQL?</p>
+  <ol class="options"><li>CONST c_rate NUMBER := 0.18;</li><li>c_rate CONSTANT NUMBER := 0.18;</li><li>DECLARE CONSTANT c_rate = 0.18;</li><li>FIXED c_rate NUMBER := 0.18;</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) The syntax is: <code>name CONSTANT datatype := value;</code> — the keyword CONSTANT goes between the name and the type. It must be initialized on the same line (you can't assign it later).</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 4: CONTROL STRUCTURES                -->
+<!-- ============================================ -->
+<h3 id="plsql-control">4. Control Structures</h3>
+
+<p><strong>Why?</strong> Without control structures, your program runs top to bottom like a conveyor belt — every line executes, no matter what. But real problems need decisions ("is this employee eligible for a bonus?") and repetition ("process every row in this table"). Control structures give your program a brain.</p>
+
+<h4>IF Statement — Making Decisions</h4>
+
+<p>Works exactly like you'd expect: check a condition, do something if true, something else if false.</p>
+
+<pre><span class="kw">IF</span> v_score >= <span class="num">85</span> <span class="kw">THEN</span>
+  DBMS_OUTPUT.PUT_LINE(<span class="str">'Distinction'</span>);
+<span class="kw">ELSIF</span> v_score >= <span class="num">60</span> <span class="kw">THEN</span>    <span class="cmt">-- Note: ELSIF not ELSEIF</span>
+  DBMS_OUTPUT.PUT_LINE(<span class="str">'First Class'</span>);
+<span class="kw">ELSE</span>
+  DBMS_OUTPUT.PUT_LINE(<span class="str">'Pass'</span>);
+<span class="kw">END IF</span>;</pre>
+
+<div class="box box-warn">
+  <div class="label">⚠️ Spelling trap</div>
+  It's <strong>ELSIF</strong> — not ELSEIF, not ELSE IF. The exam will offer all three as options. Pick ELSIF every time.
+</div>
+
+<h4>CASE Statement — Cleaner Multi-Way Branching</h4>
+<p>When you have many specific values to check (like a grade or status code), CASE is cleaner than chaining IF/ELSIF.</p>
+
+<pre><span class="kw">CASE</span> v_grade
+  <span class="kw">WHEN</span> <span class="str">'A'</span> <span class="kw">THEN</span> DBMS_OUTPUT.PUT_LINE(<span class="str">'Excellent'</span>);
+  <span class="kw">WHEN</span> <span class="str">'B'</span> <span class="kw">THEN</span> DBMS_OUTPUT.PUT_LINE(<span class="str">'Good'</span>);
+  <span class="kw">ELSE</span>          DBMS_OUTPUT.PUT_LINE(<span class="str">'Average'</span>);
+<span class="kw">END CASE</span>;</pre>
+
+<h4>Loops — Doing Things Repeatedly</h4>
+
+<p>PL/SQL gives you three types of loops. Think of them as three ways to eat a bag of chips:</p>
+<ul>
+  <li><strong>Basic LOOP</strong> — keep eating until you decide to stop (you must explicitly say "EXIT"). Dangerous if you forget to stop.</li>
+  <li><strong>WHILE LOOP</strong> — keep eating while there are chips left (checks before each bite).</li>
+  <li><strong>FOR LOOP</strong> — eat exactly 10 chips (you know the count upfront).</li>
+</ul>
+
+<pre><span class="cmt">-- 1. Basic LOOP — needs EXIT to stop (or it runs forever!)</span>
+<span class="kw">LOOP</span>
+  DBMS_OUTPUT.PUT_LINE(v_i);
+  v_i := v_i + <span class="num">1</span>;
+  <span class="kw">EXIT WHEN</span> v_i > <span class="num">5</span>;
+<span class="kw">END LOOP</span>;
+
+<span class="cmt">-- 2. WHILE LOOP — checks condition FIRST, then executes</span>
+<span class="kw">WHILE</span> v_j <= <span class="num">5</span> <span class="kw">LOOP</span>
+  DBMS_OUTPUT.PUT_LINE(v_j);
+  v_j := v_j + <span class="num">1</span>;
+<span class="kw">END LOOP</span>;
+
+<span class="cmt">-- 3. FOR LOOP — counter managed automatically, no manual increment</span>
+<span class="kw">FOR</span> i <span class="kw">IN</span> <span class="num">1</span>..<span class="num">5</span> <span class="kw">LOOP</span>
+  DBMS_OUTPUT.PUT_LINE(i);
+<span class="kw">END LOOP</span>;</pre>
+
+<table>
+<tr><th>Loop type</th><th>When to use</th><th>Stops via</th></tr>
+<tr><td><strong>LOOP</strong></td><td>Unknown iterations, exit mid-loop</td><td>EXIT / EXIT WHEN</td></tr>
+<tr><td><strong>WHILE LOOP</strong></td><td>Condition checked before each iteration</td><td>Condition becomes FALSE</td></tr>
+<tr><td><strong>FOR LOOP</strong></td><td>Known count (1 to N)</td><td>Range exhausted automatically</td></tr>
+</table>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which loop MUST have EXIT or EXIT WHEN to prevent infinite execution?</p>
+  <ol class="options"><li>FOR LOOP</li><li>WHILE LOOP</li><li>Basic LOOP...END LOOP</li><li>Cursor FOR loop</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) The basic LOOP has no built-in stop condition. Without EXIT or EXIT WHEN, it loops forever. WHILE stops when its condition is false. FOR stops when the range is exhausted. Only the basic LOOP needs an explicit exit.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What is the correct keyword for "else if" in PL/SQL?</p>
+  <ol class="options"><li>ELSE IF</li><li>ELSEIF</li><li>ELSIF</li><li>ELIF</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) ELSIF — no space, no second E. This is one of the most commonly tested spelling traps. ELSE IF (two words) is wrong. ELSEIF (one word with E) is wrong. ELIF is Python, not PL/SQL.</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 5: CURSORS                           -->
+<!-- ============================================ -->
+<h3 id="plsql-cursors">5. Cursors</h3>
+
+<p><strong>The problem:</strong> When you use <code>SELECT INTO</code> in PL/SQL, it expects exactly ONE row back. But what if your query returns 50 employees? <code>SELECT INTO</code> crashes with TOO_MANY_ROWS. You need a way to process rows one at a time.</p>
+
+<p><strong>That's what a cursor is.</strong> Think of it as a bookmark in a book. The database runs your query and gets back a stack of results. The cursor points to the current row — you read it, process it, then move the cursor to the next row. Repeat until done.</p>
+
+<div class="box box-example">
+  <div class="label">🔍 Analogy</div>
+  Imagine a stack of student exam papers on your desk. You can't grade them all at once — you pick up the top one (FETCH), grade it (process), then pick the next. The cursor is your hand pointing at "which paper am I on right now?" When the stack is empty, you stop.
+</div>
+
+<div class="box box-key">
+  <div class="label">✅ Two types of cursors</div>
+  <strong>Implicit cursor:</strong> Oracle creates it automatically behind the scenes for every INSERT, UPDATE, DELETE, and SELECT INTO. You don't declare it — Oracle handles everything. You can check what happened using SQL%FOUND, SQL%NOTFOUND, SQL%ROWCOUNT.<br><br>
+  <strong>Explicit cursor:</strong> YOU declare it for multi-row SELECT queries. You control the whole lifecycle: OPEN → FETCH → CLOSE. Use this when a query returns multiple rows.
+</div>
+
+<h4>Implicit Cursor — Automatic</h4>
+<p>Every time you run a DML statement, Oracle silently creates an implicit cursor. You don't see it, but you can ask it questions:</p>
+
+<pre><span class="kw">BEGIN</span>
+  <span class="kw">UPDATE</span> employees <span class="kw">SET</span> salary = salary * <span class="num">1.1</span> <span class="kw">WHERE</span> dept_id = <span class="num">10</span>;
+
+  <span class="cmt">-- SQL%ROWCOUNT tells you how many rows were affected</span>
+  DBMS_OUTPUT.PUT_LINE(SQL%ROWCOUNT || <span class="str">' employees got a raise'</span>);
+
+  <span class="kw">IF</span> SQL%NOTFOUND <span class="kw">THEN</span>
+    DBMS_OUTPUT.PUT_LINE(<span class="str">'No employees in dept 10'</span>);
+  <span class="kw">END IF</span>;
+<span class="kw">END</span>;
+/</pre>
+
+<h4>Explicit Cursor — 4-Step Pattern</h4>
+<p>When your SELECT returns many rows, you declare an explicit cursor and follow this strict sequence:</p>
+<ol>
+  <li><strong>DECLARE</strong> — define the query the cursor will run</li>
+  <li><strong>OPEN</strong> — execute the query and create the result set</li>
+  <li><strong>FETCH</strong> — grab one row at a time (in a loop)</li>
+  <li><strong>CLOSE</strong> — release the resources</li>
+</ol>
+
+<pre><span class="kw">DECLARE</span>
+  <span class="cmt">-- Step 1: DECLARE the cursor (define the query)</span>
+  <span class="kw">CURSOR</span> c_emp <span class="kw">IS</span>
+    <span class="kw">SELECT</span> first_name, salary <span class="kw">FROM</span> employees <span class="kw">WHERE</span> dept_id = <span class="num">10</span>;
+  v_name employees.first_name<span class="kw">%TYPE</span>;
+  v_sal  employees.salary<span class="kw">%TYPE</span>;
+<span class="kw">BEGIN</span>
+  <span class="kw">OPEN</span> c_emp;           <span class="cmt">-- Step 2: OPEN (runs the query)</span>
+  <span class="kw">LOOP</span>
+    <span class="kw">FETCH</span> c_emp <span class="kw">INTO</span> v_name, v_sal;  <span class="cmt">-- Step 3: FETCH one row</span>
+    <span class="kw">EXIT WHEN</span> c_emp<span class="kw">%NOTFOUND</span>;       <span class="cmt">-- stop when no more rows</span>
+    DBMS_OUTPUT.PUT_LINE(v_name || <span class="str">' earns '</span> || v_sal);
+  <span class="kw">END LOOP</span>;
+  <span class="kw">CLOSE</span> c_emp;          <span class="cmt">-- Step 4: CLOSE (free resources)</span>
+<span class="kw">END</span>;
+/</pre>
+
+<div class="box box-warn">
+  <div class="label">⚠️ Always CLOSE your cursors</div>
+  An unclosed cursor is like leaving a file open on your computer — it wastes memory. Oracle has a limit on open cursors. If you forget to close them, eventually you'll hit ORA-01000: maximum open cursors exceeded.
+</div>
+
+<h4>Cursor Attributes</h4>
+<table>
+<tr><th>Attribute</th><th>Returns</th><th>Meaning</th></tr>
+<tr><td><code>%FOUND</code></td><td>BOOLEAN</td><td>TRUE if last FETCH got a row</td></tr>
+<tr><td><code>%NOTFOUND</code></td><td>BOOLEAN</td><td>TRUE if last FETCH found nothing (used to exit loops)</td></tr>
+<tr><td><code>%ROWCOUNT</code></td><td>NUMBER</td><td>How many rows fetched so far</td></tr>
+<tr><td><code>%ISOPEN</code></td><td>BOOLEAN</td><td>TRUE if cursor is currently open</td></tr>
+</table>
+
+<h4>Cursor FOR Loop — The Shortcut</h4>
+<p>The 4-step pattern works, but it's verbose. PL/SQL offers a shortcut that handles OPEN, FETCH, and CLOSE automatically:</p>
+
+<pre><span class="kw">BEGIN</span>
+  <span class="kw">FOR</span> emp <span class="kw">IN</span> (<span class="kw">SELECT</span> first_name, salary <span class="kw">FROM</span> employees) <span class="kw">LOOP</span>
+    DBMS_OUTPUT.PUT_LINE(emp.first_name || <span class="str">' — '</span> || emp.salary);
+  <span class="kw">END LOOP</span>;  <span class="cmt">-- auto OPEN, FETCH, CLOSE — no manual work</span>
+<span class="kw">END</span>;
+/</pre>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  The cursor FOR loop is the preferred way in real code because it's shorter and Oracle handles cleanup. But the exam loves to test the 4-step pattern (DECLARE → OPEN → FETCH → CLOSE), so know both.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Correct sequence for an explicit cursor?</p>
+  <ol class="options"><li>OPEN → DECLARE → FETCH → CLOSE</li><li>DECLARE → FETCH → OPEN → CLOSE</li><li>DECLARE → OPEN → FETCH → CLOSE</li><li>OPEN → FETCH → DECLARE → CLOSE</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) DECLARE → OPEN → FETCH → CLOSE. You must define the query first (DECLARE), then execute it (OPEN), then read rows one by one (FETCH), and finally release resources (CLOSE). You can't FETCH from a cursor that hasn't been OPENed.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Cursor attribute that returns TRUE when the last FETCH got a row?</p>
+  <ol class="options"><li>%NOTFOUND</li><li>%ISOPEN</li><li>%ROWCOUNT</li><li>%FOUND</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="3">D) %FOUND returns TRUE when the last FETCH successfully retrieved a row. %NOTFOUND is the opposite — TRUE when there are no more rows. %ROWCOUNT returns a number, not a boolean. %ISOPEN checks if the cursor is open, not if data was found.</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 6: PROCEDURES                        -->
+<!-- ============================================ -->
+<h3 id="plsql-proc">6. Procedures</h3>
+
+<p><strong>The problem:</strong> You've written a PL/SQL block that gives an employee a raise. It works great. But now you need to use the same logic in 5 different places. Are you going to copy-paste the block 5 times? What happens when the logic changes — do you update all 5 copies?</p>
+
+<p><strong>A procedure is a named, reusable block of code stored in the database.</strong> Write it once, call it from anywhere. It's like saving a recipe in a cookbook — you don't rewrite it every time you cook; you just say "follow the raise recipe."</p>
+
+<div class="box box-example">
+  <div class="label">🔍 Analogy</div>
+  A procedure is like a vending machine. You put in inputs (coins + selection), it does its job internally (retrieves the item), and optionally gives you something back (change through OUT parameter). The key insight: <strong>a procedure DOES something</strong> — it performs an action. It doesn't have to return a value.
+</div>
+
+<pre><span class="kw">CREATE OR REPLACE PROCEDURE</span> give_raise (
+  p_emp_id  <span class="kw">IN</span>  employees.employee_id<span class="kw">%TYPE</span>,  <span class="cmt">-- input: which employee</span>
+  p_amount  <span class="kw">IN</span>  <span class="kw">NUMBER</span>,                     <span class="cmt">-- input: raise amount</span>
+  p_new_sal <span class="kw">OUT</span> <span class="kw">NUMBER</span>                      <span class="cmt">-- output: new salary after raise</span>
+) <span class="kw">IS</span>
+  v_old_sal <span class="kw">NUMBER</span>;
+<span class="kw">BEGIN</span>
+  <span class="kw">SELECT</span> salary <span class="kw">INTO</span> v_old_sal <span class="kw">FROM</span> employees <span class="kw">WHERE</span> employee_id = p_emp_id;
+  p_new_sal := v_old_sal + p_amount;
+  <span class="kw">UPDATE</span> employees <span class="kw">SET</span> salary = p_new_sal <span class="kw">WHERE</span> employee_id = p_emp_id;
+<span class="kw">END</span> give_raise;
+/</pre>
+
+<div class="box box-key">
+  <div class="label">✅ Parameter modes — critical for exam</div>
+  <strong>IN</strong> — read-only input. The procedure can read it but not change it. This is the <strong>default</strong> if you don't specify a mode.<br>
+  <strong>OUT</strong> — write-only output. The procedure sets a value that the caller can read after the call.<br>
+  <strong>IN OUT</strong> — both directions. The caller passes a value in, the procedure can modify it, and the caller sees the change.
+</div>
+
+<div class="box box-tip">
+  <div class="label">💡 Naming convention</div>
+  Notice the prefixes: <code>p_</code> for parameters, <code>v_</code> for local variables, <code>c_</code> for constants. This isn't required by Oracle, but it's standard practice and helps you instantly know what something is.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What is the default parameter mode in a PL/SQL procedure?</p>
+  <ol class="options"><li>OUT</li><li>IN</li><li>IN OUT</li><li>RETURN</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) If you don't specify a mode, it defaults to IN (read-only). So <code>p_name VARCHAR2</code> is the same as <code>p_name IN VARCHAR2</code>. The procedure can read the value but cannot modify it.</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 7: FUNCTIONS                         -->
+<!-- ============================================ -->
+<h3 id="plsql-func">7. Functions</h3>
+
+<p><strong>Functions are like procedures with one key difference: a function MUST return exactly one value.</strong></p>
+
+<p>Think of the difference this way: A <em>procedure</em> is like telling someone "go clean the room" — they do it, but they don't hand you anything back. A <em>function</em> is like asking "what's 2 + 2?" — they MUST give you an answer back.</p>
+
+<pre><span class="kw">CREATE OR REPLACE FUNCTION</span> get_annual_salary (
+  p_emp_id <span class="kw">IN</span> employees.employee_id<span class="kw">%TYPE</span>
+) <span class="kw">RETURN NUMBER IS</span>
+  v_monthly <span class="kw">NUMBER</span>;
+<span class="kw">BEGIN</span>
+  <span class="kw">SELECT</span> salary <span class="kw">INTO</span> v_monthly <span class="kw">FROM</span> employees <span class="kw">WHERE</span> employee_id = p_emp_id;
+  <span class="kw">RETURN</span> v_monthly * <span class="num">12</span>;  <span class="cmt">-- MUST have a RETURN statement</span>
+<span class="kw">END</span>;
+/</pre>
+
+<div class="box box-key">
+  <div class="label">✅ Function vs Procedure — know this cold</div>
+  <table>
+  <tr><th>Feature</th><th>Procedure</th><th>Function</th></tr>
+  <tr><td>Returns a value?</td><td>No (uses OUT params optionally)</td><td><strong>Yes, MUST return exactly one</strong></td></tr>
+  <tr><td>RETURN keyword?</td><td>Not required</td><td><strong>Required in header AND body</strong></td></tr>
+  <tr><td>Can use in SQL SELECT?</td><td>No</td><td><strong>Yes!</strong></td></tr>
+  <tr><td>Primary purpose</td><td>Perform an action (update, insert, etc.)</td><td>Calculate and return a value</td></tr>
+  </table>
+</div>
+
+<p><strong>The big advantage of functions:</strong> You can use them directly inside SQL queries. This is something procedures cannot do.</p>
+
+<pre><span class="cmt">-- Using a function inside a SELECT — procedures CAN'T do this</span>
+<span class="kw">SELECT</span> first_name, get_annual_salary(employee_id) <span class="kw">AS</span> annual
+<span class="kw">FROM</span> employees;</pre>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Key difference between PROCEDURE and FUNCTION?</p>
+  <ol class="options"><li>Procedures can have parameters; functions cannot</li><li>Functions must return a value; procedures need not</li><li>Procedures are stored; functions are not</li><li>Functions cannot call procedures</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) A function MUST return exactly one value using the RETURN keyword. A procedure performs an action but doesn't have to return anything (though it can pass values back through OUT parameters). Both can have parameters, both are stored in the database.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Where CAN a function be used that a procedure CANNOT?</p>
+  <ol class="options"><li>Inside a PL/SQL block</li><li>Inside a SQL SELECT statement</li><li>Inside a trigger</li><li>Inside another procedure</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) Functions can be called directly inside SQL statements (SELECT, WHERE, etc.) because they return a value that SQL can use. Procedures cannot appear in SQL — they must be called with EXECUTE or from within a PL/SQL block.</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 8: TRIGGERS                          -->
+<!-- ============================================ -->
+<h3 id="plsql-triggers">8. Triggers</h3>
+
+<p><strong>Why do triggers exist?</strong> Sometimes you want something to happen automatically every time data changes — without relying on the application to remember. For example: "Every time someone inserts a new employee, automatically set the created_at timestamp." Or: "If someone tries to insert a negative salary, block it."</p>
+
+<p><strong>A trigger is a PL/SQL block that fires automatically</strong> when a specific event (INSERT, UPDATE, DELETE) happens on a table. You don't call a trigger — Oracle calls it for you. It's like a burglar alarm: you set it up once, and it activates on its own when someone opens the door.</p>
+
+<div class="box box-example">
+  <div class="label">🔍 Analogy</div>
+  Think of a trigger as a security guard at a building entrance. A <strong>BEFORE trigger</strong> is a guard who checks your ID before you enter — they can stop you or modify your entry pass. An <strong>AFTER trigger</strong> is a CCTV camera that records your entry after you've already walked in — it can log what happened but can't change it.
+</div>
+
+<pre><span class="kw">CREATE OR REPLACE TRIGGER</span> trg_before_insert
+<span class="kw">BEFORE INSERT ON</span> employees
+<span class="kw">FOR EACH ROW</span>
+<span class="kw">BEGIN</span>
+  <span class="cmt">-- Validation: reject bad data BEFORE it enters the table</span>
+  <span class="kw">IF</span> :NEW.salary < <span class="num">0</span> <span class="kw">THEN</span>
+    RAISE_APPLICATION_ERROR(-<span class="num">20001</span>, <span class="str">'Salary cannot be negative'</span>);
+  <span class="kw">END IF</span>;
+  <span class="cmt">-- Auto-fill: set timestamp automatically</span>
+  :NEW.created_at := SYSDATE;
+<span class="kw">END</span>;
+/</pre>
+
+<h4>:NEW and :OLD — The Two Magic Variables</h4>
+<p>Inside a row-level trigger, you have access to the data being changed:</p>
+<ul>
+  <li><strong>:NEW</strong> — the values AFTER the change (what's being inserted or updated TO)</li>
+  <li><strong>:OLD</strong> — the values BEFORE the change (what was there before)</li>
+</ul>
+
+<table>
+<tr><th>Operation</th><th>:OLD</th><th>:NEW</th></tr>
+<tr><td><strong>INSERT</strong></td><td>NULL (nothing existed before)</td><td>Values being inserted</td></tr>
+<tr><td><strong>UPDATE</strong></td><td>Values before update</td><td>Values after update</td></tr>
+<tr><td><strong>DELETE</strong></td><td>Values being deleted</td><td>NULL (nothing will exist after)</td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  In a DELETE trigger, <strong>:NEW is NULL</strong> (the row is being removed — there's no "new" version). In an INSERT trigger, <strong>:OLD is NULL</strong> (the row didn't exist before). Only UPDATE has BOTH :OLD and :NEW.
+</div>
+
+<table>
+<tr><th>Concept</th><th>Detail</th></tr>
+<tr><td><strong>BEFORE trigger</strong></td><td>Fires before DML executes. Can modify :NEW values. Best for validation and auto-filling fields.</td></tr>
+<tr><td><strong>AFTER trigger</strong></td><td>Fires after DML completes. Cannot modify :NEW. Best for logging and auditing.</td></tr>
+<tr><td><strong>FOR EACH ROW</strong></td><td>Makes it a row-level trigger — fires once per affected row. Required to use :NEW/:OLD.</td></tr>
+<tr><td><strong>Statement-level</strong></td><td>Without FOR EACH ROW — fires once per statement regardless of how many rows are affected.</td></tr>
+</table>
+
+<div class="box box-warn">
+  <div class="label">⚠️ BEFORE vs AFTER — key distinction</div>
+  Only <strong>BEFORE</strong> triggers can modify :NEW values (because the data hasn't been written yet). AFTER triggers see the data after it's already committed — too late to change it. If the exam asks "which trigger can modify :NEW?" the answer is always BEFORE.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">In a BEFORE INSERT trigger, which holds the values being inserted?</p>
+  <ol class="options"><li>:OLD</li><li>:NEW</li><li>:INSERTED</li><li>Both :OLD and :NEW</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) :NEW holds the incoming values for INSERT. :OLD is NULL because nothing existed before the insert — there's no "old" version of a row that's being created for the first time. :INSERTED doesn't exist in PL/SQL.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which trigger can modify :NEW values?</p>
+  <ol class="options"><li>AFTER trigger</li><li>INSTEAD OF trigger</li><li>BEFORE trigger</li><li>AUTONOMOUS trigger</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) BEFORE triggers fire before the data is written to the table, so :NEW can still be changed. AFTER triggers fire after the write — :NEW is read-only at that point. Think: a guard at the door can change your entry pass (BEFORE), but the security camera that recorded you walking in can't change what happened (AFTER).</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 9: EXCEPTION HANDLING                -->
+<!-- ============================================ -->
+<h3 id="plsql-exceptions">9. Exception Handling</h3>
+
+<p><strong>Why?</strong> Programs break. A query returns zero rows when you expected one. Someone divides by zero. A value doesn't fit into a variable. Without exception handling, your entire block crashes and the user sees a cryptic Oracle error. With exception handling, you catch the error, handle it gracefully, and keep control.</p>
+
+<div class="box box-example">
+  <div class="label">🔍 Analogy</div>
+  Exception handling is like the safety net under a trapeze artist. The artist (your code in BEGIN) does the risky work. If they fall (an error occurs), the net (EXCEPTION section) catches them instead of letting them hit the ground. Without the net, one mistake and the show is over.
+</div>
+
+<p>The EXCEPTION section goes right before END; and catches specific errors using WHEN:</p>
+
+<pre><span class="kw">BEGIN</span>
+  <span class="kw">SELECT</span> salary <span class="kw">INTO</span> v_salary <span class="kw">FROM</span> employees <span class="kw">WHERE</span> employee_id = <span class="num">9999</span>;
+  <span class="cmt">-- If employee 9999 doesn't exist, this crashes... unless we catch it:</span>
+<span class="kw">EXCEPTION</span>
+  <span class="kw">WHEN</span> NO_DATA_FOUND <span class="kw">THEN</span>
+    DBMS_OUTPUT.PUT_LINE(<span class="str">'No employee found.'</span>);
+  <span class="kw">WHEN</span> TOO_MANY_ROWS <span class="kw">THEN</span>
+    DBMS_OUTPUT.PUT_LINE(<span class="str">'Multiple rows returned.'</span>);
+  <span class="kw">WHEN</span> ZERO_DIVIDE <span class="kw">THEN</span>
+    DBMS_OUTPUT.PUT_LINE(<span class="str">'Cannot divide by zero.'</span>);
+  <span class="kw">WHEN OTHERS THEN</span>
+    DBMS_OUTPUT.PUT_LINE(SQLCODE || <span class="str">' — '</span> || SQLERRM);
+<span class="kw">END</span>;
+/</pre>
+
+<div class="box box-key">
+  <div class="label">✅ The 4 predefined exceptions — memorize these</div>
+  <strong>NO_DATA_FOUND</strong> — your SELECT INTO returned 0 rows. The employee/record doesn't exist.<br>
+  <strong>TOO_MANY_ROWS</strong> — your SELECT INTO returned more than 1 row. It expected exactly one.<br>
+  <strong>ZERO_DIVIDE</strong> — you tried to divide a number by zero.<br>
+  <strong>VALUE_ERROR</strong> — wrong type or value doesn't fit (e.g., putting 'abc' into a NUMBER variable).<br><br>
+  <strong>WHEN OTHERS</strong> — the catch-all. Catches any exception not handled above. Always put it LAST.
+</div>
+
+<h4>SQLCODE and SQLERRM — Debugging Tools</h4>
+<p>Inside WHEN OTHERS, you often want to know what went wrong:</p>
+<ul>
+  <li><strong>SQLCODE</strong> — returns the numeric error code (e.g., -1 for unique constraint violation)</li>
+  <li><strong>SQLERRM</strong> — returns the human-readable error message text</li>
+</ul>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  "Which keyword handles exceptions in PL/SQL?" → <strong>WHEN</strong>. Not CATCH (that's Java), not HANDLE, not RESCUE (that's Ruby). The syntax is always <code>WHEN exception_name THEN</code>.
+</div>
+
+<h4>User-Defined Exceptions</h4>
+<p>Oracle's predefined exceptions cover common cases, but what about your business rules? "Salary can't exceed 500000" isn't a database error — it's YOUR rule. You can create custom exceptions:</p>
+
+<pre><span class="kw">DECLARE</span>
+  e_salary_too_high <span class="kw">EXCEPTION</span>;    <span class="cmt">-- Step 1: declare it</span>
+  v_salary <span class="kw">NUMBER</span> := <span class="num">600000</span>;
+<span class="kw">BEGIN</span>
+  <span class="kw">IF</span> v_salary > <span class="num">500000</span> <span class="kw">THEN</span>
+    <span class="kw">RAISE</span> e_salary_too_high;       <span class="cmt">-- Step 2: raise it</span>
+  <span class="kw">END IF</span>;
+<span class="kw">EXCEPTION</span>
+  <span class="kw">WHEN</span> e_salary_too_high <span class="kw">THEN</span>    <span class="cmt">-- Step 3: handle it</span>
+    DBMS_OUTPUT.PUT_LINE(<span class="str">'Salary exceeds maximum limit!'</span>);
+<span class="kw">END</span>;
+/</pre>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which keyword handles exceptions in PL/SQL?</p>
+  <ol class="options"><li>CATCH</li><li>HANDLE</li><li>WHEN</li><li>RESCUE</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) WHEN. The syntax is <code>WHEN exception_name THEN handler_code</code>. PL/SQL doesn't use CATCH (Java), HANDLE, or RESCUE (Ruby). Every exception handler starts with WHEN.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Exception raised when SELECT INTO returns more than one row?</p>
+  <ol class="options"><li>NO_DATA_FOUND</li><li>VALUE_ERROR</li><li>TOO_MANY_ROWS</li><li>CURSOR_ALREADY_OPEN</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) TOO_MANY_ROWS. SELECT INTO expects exactly one row. Zero rows gives NO_DATA_FOUND. More than one gives TOO_MANY_ROWS. If you need multiple rows, use a cursor instead.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What does SQLCODE return in an exception handler?</p>
+  <ol class="options"><li>Error text message</li><li>Numeric error code</li><li>Exception name</li><li>Line number of error</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) SQLCODE returns the numeric error code (like -1, -1422, etc.). SQLERRM returns the text description. Together they give you the full picture of what went wrong.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which exception is raised for division by zero?</p>
+  <ol class="options"><li>VALUE_ERROR</li><li>ARITHMETIC_ERROR</li><li>ZERO_DIVIDE</li><li>NUMERIC_OVERFLOW</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) ZERO_DIVIDE is the predefined Oracle exception for division by zero. ARITHMETIC_ERROR and NUMERIC_OVERFLOW don't exist as standard PL/SQL exceptions. VALUE_ERROR is for type mismatches, not division errors.</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 10: PACKAGES                         -->
+<!-- ============================================ -->
+<h3 id="plsql-packages">10. Packages</h3>
+
+<p><strong>Why packages?</strong> As your database grows, you might have 20 procedures and 15 functions scattered everywhere. A package groups related procedures, functions, variables, and cursors into one organized unit — like putting related files into a folder instead of dumping everything on your desktop.</p>
+
+<div class="box box-example">
+  <div class="label">🔍 Analogy</div>
+  A package is like a TV remote control. The <strong>specification</strong> (public interface) is the front of the remote — the buttons you can see and press. The <strong>body</strong> (implementation) is the circuit board inside — the actual code that makes things work. Users only interact with the buttons; they don't need to know what's inside.
+</div>
+
+<p>Every package has two parts:</p>
+<ul>
+  <li><strong>Specification (spec)</strong> — declares WHAT the package offers (public procedure/function signatures). This is the "menu" other code can call.</li>
+  <li><strong>Body</strong> — contains the actual implementation code. This is where the real work happens.</li>
+</ul>
+
+<pre><span class="cmt">-- Specification: the public menu (what others can call)</span>
+<span class="kw">CREATE OR REPLACE PACKAGE</span> emp_pkg <span class="kw">AS</span>
+  <span class="kw">PROCEDURE</span> hire(p_name <span class="kw">VARCHAR2</span>, p_sal <span class="kw">NUMBER</span>);
+  <span class="kw">FUNCTION</span> get_salary(p_id <span class="kw">NUMBER</span>) <span class="kw">RETURN NUMBER</span>;
+<span class="kw">END</span> emp_pkg;
+/
+
+<span class="cmt">-- Body: the actual implementation (hidden from callers)</span>
+<span class="kw">CREATE OR REPLACE PACKAGE BODY</span> emp_pkg <span class="kw">AS</span>
+  <span class="kw">PROCEDURE</span> hire(p_name <span class="kw">VARCHAR2</span>, p_sal <span class="kw">NUMBER</span>) <span class="kw">IS BEGIN</span>
+    <span class="kw">INSERT INTO</span> employees(first_name, salary) <span class="kw">VALUES</span>(p_name, p_sal);
+  <span class="kw">END</span>;
+  <span class="kw">FUNCTION</span> get_salary(p_id <span class="kw">NUMBER</span>) <span class="kw">RETURN NUMBER IS</span> v_sal <span class="kw">NUMBER</span>;
+  <span class="kw">BEGIN</span>
+    <span class="kw">SELECT</span> salary <span class="kw">INTO</span> v_sal <span class="kw">FROM</span> employees <span class="kw">WHERE</span> employee_id = p_id;
+    <span class="kw">RETURN</span> v_sal;
+  <span class="kw">END</span>;
+<span class="kw">END</span> emp_pkg;
+/</pre>
+
+<p><strong>Calling package members:</strong> Use dot notation — <code>emp_pkg.hire('Darshan', 50000);</code></p>
+
+<div class="box box-key">
+  <div class="label">✅ Spec vs Body</div>
+  <strong>Specification</strong> = public contract. Change it and all dependent code must be recompiled.<br>
+  <strong>Body</strong> = private implementation. You can change the body without affecting any calling code (as long as the spec stays the same).<br><br>
+  This is <em>encapsulation</em> — the same idea as public/private in Java.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Package SPECIFICATION contains:</p>
+  <ol class="options"><li>Implementation code</li><li>Private variables only</li><li>Public declarations — procedure/function signatures</li><li>Only cursor definitions</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) The specification is the public interface — it declares what procedures and functions the package offers (their names, parameters, return types). The actual implementation code lives in the body. Think of the spec as the restaurant menu (what's available) and the body as the kitchen (where the food is made).</div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECTION 11: MIXED PRACTICE                   -->
+<!-- ============================================ -->
+<h3 id="plsql-practice">Practice Questions — PL/SQL (Mixed)</h3>
+
+<p>These questions mix all topics. If you can get 80%+ right, you're ready for the FA exam's PL/SQL section.</p>
+
+<div class="practice">
+  <div class="q-label">Question 1</div>
+  <p class="question">What is the assignment operator in PL/SQL?</p>
+  <ol class="options"><li>=</li><li>:=</li><li>==</li><li>=></li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) := is the assignment operator. = is for comparison only. == doesn't exist in PL/SQL. => is used for named parameter notation in procedure calls.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 2</div>
+  <p class="question">What does %ROWTYPE do?</p>
+  <ol class="options"><li>Returns the number of rows in a table</li><li>Declares a variable matching one column's type</li><li>Declares a record matching an entire row's structure</li><li>Counts rows affected by a cursor</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) %ROWTYPE creates a record variable with the same structure as an entire table row — one field for each column. %TYPE (without ROW) matches a single column. %ROWCOUNT counts cursor rows.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 3</div>
+  <p class="question">In a cursor FOR loop, which steps are handled AUTOMATICALLY by Oracle?</p>
+  <ol class="options"><li>Only OPEN</li><li>OPEN and CLOSE</li><li>OPEN, FETCH, and CLOSE</li><li>Only FETCH</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) The cursor FOR loop automatically handles all three: OPEN (executes the query), FETCH (gets each row), and CLOSE (releases resources). That's why it's the preferred shortcut — you just write the loop body and Oracle handles the plumbing.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 4</div>
+  <p class="question">Which DML operation has BOTH :OLD and :NEW available in a trigger?</p>
+  <ol class="options"><li>INSERT</li><li>DELETE</li><li>UPDATE</li><li>SELECT</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) UPDATE is the only operation that has both a "before" state (:OLD) and an "after" state (:NEW). INSERT has only :NEW (nothing existed before). DELETE has only :OLD (nothing will exist after). SELECT doesn't fire triggers.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 5</div>
+  <p class="question">What happens if you use SELECT INTO and the query returns 0 rows?</p>
+  <ol class="options"><li>The variable stays NULL — no error</li><li>TOO_MANY_ROWS exception is raised</li><li>NO_DATA_FOUND exception is raised</li><li>The block silently exits</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) NO_DATA_FOUND is raised immediately. Unlike some languages where a missing result just returns null, PL/SQL treats zero rows from SELECT INTO as an error. You must either handle it with EXCEPTION or ensure the query will always return exactly one row.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 6</div>
+  <p class="question">Can a function be called inside a SQL SELECT statement?</p>
+  <ol class="options"><li>No, only procedures can</li><li>Yes, because functions return a value</li><li>Only if it has no parameters</li><li>Only if it returns VARCHAR2</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) Functions return a value, so SQL can use that value in a column, WHERE clause, etc. Procedures don't return values in a way SQL can use, so they can't appear in SELECT statements.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 7</div>
+  <p class="question">What is the purpose of RAISE_APPLICATION_ERROR?</p>
+  <ol class="options"><li>Re-raises the current exception</li><li>Creates a custom error with a user-defined message and error number</li><li>Logs errors to a table</li><li>Exits the current block silently</li></ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) RAISE_APPLICATION_ERROR(error_number, message) creates a custom Oracle error. The error number must be between -20000 and -20999. This is how you enforce business rules — e.g., blocking a negative salary with a meaningful error message.</div>
+</div>
+
+</section>
+
+
+  <div class="footer">
+    <a href="sql.html">← SQL</a> |
+    <a href="java.html">Java →</a>
+  </div>
+</div>
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

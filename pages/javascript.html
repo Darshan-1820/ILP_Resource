@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#javascript" class="sub">Overview</a>
+  <a href="#js-what" class="sub">What is JavaScript?</a>
+  <a href="#js-types" class="sub">Data Types & typeof</a>
+  <a href="#js-vars" class="sub">var vs let vs const</a>
+  <a href="#js-ops" class="sub">Operators</a>
+  <a href="#js-coercion" class="sub">Type Coercion</a>
+  <a href="#js-functions" class="sub">Functions</a>
+  <a href="#js-arrays" class="sub">Arrays & Methods</a>
+  <a href="#js-strings" class="sub">String Methods</a>
+  <a href="#js-loops" class="sub">Loops</a>
+  <a href="#js-objects" class="sub">Objects</a>
+  <a href="#js-dom" class="sub">DOM Manipulation</a>
+  <a href="#js-events" class="sub">Events</a>
+  <a href="#js-closures" class="sub">Closures</a>
+  <a href="#js-this" class="sub">this Keyword</a>
+  <a href="#js-hoisting" class="sub">Hoisting</a>
+  <a href="#js-truthy" class="sub">Truthy & Falsy</a>
+  <a href="#js-nan" class="sub">NaN</a>
+  <a href="#js-json" class="sub">JSON parse/stringify</a>
+  <a href="#js-timers" class="sub">Timers</a>
+  <a href="#js-errors" class="sub">Error Handling</a>
+  <a href="#js-dialogs" class="sub">Browser Dialogs</a>
+  <a href="#js-practice" class="sub">Practice Questions</a>
+</nav>
+<div class="main">
+<section id="javascript" class="sec-js">
+<h2>JavaScript</h2>
+
+<!-- ─── 1. WHAT IS JAVASCRIPT ─── -->
+<h3>1. What is JavaScript?</h3>
+<p>JavaScript is a <strong>lightweight, interpreted, dynamically-typed scripting language</strong> that runs inside web browsers (and on servers via Node.js). It makes web pages interactive — responding to clicks, validating forms, updating content without page reloads.</p>
+
+<table>
+  <tr><th>Feature</th><th>JavaScript</th><th>Java</th></tr>
+  <tr><td>Type</td><td>Scripting language</td><td>Object-oriented programming language</td></tr>
+  <tr><td>Typing</td><td>Dynamic (types checked at runtime)</td><td>Static (types checked at compile time)</td></tr>
+  <tr><td>Compiled?</td><td>Interpreted (by browser/Node.js)</td><td>Compiled to bytecode, run on JVM</td></tr>
+  <tr><td>Where it runs</td><td>Browser + Node.js</td><td>JVM (any platform)</td></tr>
+  <tr><td>Syntax style</td><td>C-like but loosely typed</td><td>Strictly typed, verbose</td></tr>
+  <tr><td>Relation</td><td colspan="2">None — the name is purely a marketing decision. They are completely different languages.</td></tr>
+</table>
+
+<div class="box box-exam">
+  <div class="label">📋 Exam Fact</div>
+  JavaScript was created by Brendan Eich in <strong>1995</strong> at Netscape. The official standard is called <strong>ECMAScript (ES)</strong>. ES6 (2015) introduced major features: <code>let</code>, <code>const</code>, arrow functions, classes, template literals.
+</div>
+
+<!-- ─── 2. DATA TYPES ─── -->
+<h3>2. Data Types &amp; typeof</h3>
+<p>JavaScript has <strong>7 primitive types</strong> and 1 structural type:</p>
+
+<table>
+  <tr><th>Type</th><th>Example</th><th>typeof result</th></tr>
+  <tr><td>string</td><td><code>"hello"</code>, <code>'world'</code></td><td><code>"string"</code></td></tr>
+  <tr><td>number</td><td><code>42</code>, <code>3.14</code>, <code>NaN</code>, <code>Infinity</code></td><td><code>"number"</code></td></tr>
+  <tr><td>boolean</td><td><code>true</code>, <code>false</code></td><td><code>"boolean"</code></td></tr>
+  <tr><td>undefined</td><td><code>undefined</code> (variable declared, not assigned)</td><td><code>"undefined"</code></td></tr>
+  <tr><td>null</td><td><code>null</code> (intentional empty value)</td><td><code>"object"</code> ⚠️ (historic bug)</td></tr>
+  <tr><td>symbol</td><td><code>Symbol("id")</code></td><td><code>"symbol"</code></td></tr>
+  <tr><td>bigint</td><td><code>9007199254740991n</code></td><td><code>"bigint"</code></td></tr>
+  <tr><td>object</td><td><code>{}</code>, <code>[]</code>, <code>null</code></td><td><code>"object"</code></td></tr>
+  <tr><td>function</td><td><code>function() {}</code></td><td><code>"function"</code></td></tr>
+</table>
+
+<pre><span class="kw">typeof</span> <span class="str">"hello"</span>       <span class="cmt">// "string"</span>
+<span class="kw">typeof</span> <span class="num">42</span>            <span class="cmt">// "number"</span>
+<span class="kw">typeof</span> <span class="kw">true</span>          <span class="cmt">// "boolean"</span>
+<span class="kw">typeof</span> <span class="kw">undefined</span>     <span class="cmt">// "undefined"</span>
+<span class="kw">typeof</span> <span class="kw">null</span>          <span class="cmt">// "object"  ← famous JavaScript bug, memorise this!</span>
+<span class="kw">typeof</span> <span class="kw">NaN</span>           <span class="cmt">// "number"  ← NaN is technically a number type!</span>
+<span class="kw">typeof</span> []            <span class="cmt">// "object"  ← arrays are objects</span>
+<span class="kw">typeof</span> <span class="kw">function</span>(){}  <span class="cmt">// "function"</span></pre>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  <code>typeof null === "object"</code> and <code>typeof NaN === "number"</code> are the two most-tested typeof surprises. Memorise both.
+</div>
+
+<!-- ─── 3. VAR LET CONST ─── -->
+<h3>3. var vs let vs const</h3>
+
+<table>
+  <tr><th>Feature</th><th>var</th><th>let</th><th>const</th></tr>
+  <tr><td>Scope</td><td>Function scope</td><td>Block scope <code>{}</code></td><td>Block scope <code>{}</code></td></tr>
+  <tr><td>Hoisted?</td><td>Yes — initialised as <code>undefined</code></td><td>Yes — but in TDZ (not usable)</td><td>Yes — but in TDZ (not usable)</td></tr>
+  <tr><td>Re-declare same scope?</td><td>✅ Yes</td><td>❌ No</td><td>❌ No</td></tr>
+  <tr><td>Reassign value?</td><td>✅ Yes</td><td>✅ Yes</td><td>❌ No</td></tr>
+  <tr><td>Must initialise?</td><td>No</td><td>No</td><td>✅ Yes</td></tr>
+</table>
+
+<pre><span class="cmt">// var — function scoped</span>
+<span class="kw">function</span> <span class="fn">test</span>() {
+  <span class="kw">if</span> (<span class="kw">true</span>) {
+    <span class="kw">var</span> x = <span class="num">10</span>;
+  }
+  console.<span class="fn">log</span>(x); <span class="cmt">// 10 — var leaks out of the if block!</span>
+}
+
+<span class="cmt">// let — block scoped</span>
+<span class="kw">function</span> <span class="fn">test2</span>() {
+  <span class="kw">if</span> (<span class="kw">true</span>) {
+    <span class="kw">let</span> y = <span class="num">20</span>;
+  }
+  console.<span class="fn">log</span>(y); <span class="cmt">// ReferenceError: y is not defined</span>
+}
+
+<span class="cmt">// const — cannot reassign</span>
+<span class="kw">const</span> PI = <span class="num">3.14</span>;
+PI = <span class="num">3</span>; <span class="cmt">// TypeError: Assignment to constant variable</span>
+
+<span class="cmt">// const with objects — the reference is fixed, but contents can change</span>
+<span class="kw">const</span> obj = { a: <span class="num">1</span> };
+obj.a = <span class="num">99</span>; <span class="cmt">// ✅ allowed — changing a property</span>
+obj = {};    <span class="cmt">// ❌ not allowed — reassigning the variable</span></pre>
+
+<div class="box box-warn">
+  <div class="label">⚠️ Warning — Hoisting Trap</div>
+  <code>var</code> declarations are moved to the top of their function and set to <code>undefined</code>. <code>let</code> and <code>const</code> are hoisted but sit in the <strong>Temporal Dead Zone (TDZ)</strong> — accessing them before declaration throws a <strong>ReferenceError</strong>, not undefined.
+</div>
+
+<pre><span class="cmt">// var hoisting — classic exam question</span>
+console.<span class="fn">log</span>(a); <span class="cmt">// undefined (hoisted, but not yet assigned)</span>
+<span class="kw">var</span> a = <span class="num">5</span>;
+console.<span class="fn">log</span>(a); <span class="cmt">// 5</span>
+
+<span class="cmt">// let TDZ — throws error</span>
+console.<span class="fn">log</span>(b); <span class="cmt">// ReferenceError: Cannot access 'b' before initialization</span>
+<span class="kw">let</span> b = <span class="num">5</span>;</pre>
+
+<!-- ─── 4. OPERATORS ─── -->
+<h3>4. Operators</h3>
+
+<h4>Arithmetic Operators</h4>
+<pre>+   <span class="cmt">// addition (also string concatenation)</span>
+-   <span class="cmt">// subtraction</span>
+*   <span class="cmt">// multiplication</span>
+/   <span class="cmt">// division</span>
+%   <span class="cmt">// modulo (remainder): 10 % 3 → 1</span>
+**  <span class="cmt">// exponentiation: 2 ** 3 → 8</span>
+++  <span class="cmt">// increment: x++ (post), ++x (pre)</span>
+--  <span class="cmt">// decrement</span>
+
+<span class="kw">let</span> x = <span class="num">5</span>;
+console.<span class="fn">log</span>(x++); <span class="cmt">// 5 — returns THEN increments</span>
+console.<span class="fn">log</span>(x);   <span class="cmt">// 6</span>
+console.<span class="fn">log</span>(++x); <span class="cmt">// 7 — increments THEN returns</span></pre>
+
+<h4>Comparison: == vs ===</h4>
+<pre><span class="cmt">// == (loose equality) — converts types before comparing</span>
+<span class="num">1</span> == <span class="str">"1"</span>    <span class="cmt">// true  — string "1" is converted to number 1</span>
+<span class="num">0</span> == <span class="kw">false</span>  <span class="cmt">// true  — false converts to 0</span>
+<span class="kw">null</span> == <span class="kw">undefined</span> <span class="cmt">// true</span>
+
+<span class="cmt">// === (strict equality) — NO type conversion</span>
+<span class="num">1</span> === <span class="str">"1"</span>   <span class="cmt">// false — different types</span>
+<span class="num">0</span> === <span class="kw">false</span> <span class="cmt">// false — different types</span>
+<span class="kw">null</span> === <span class="kw">undefined</span> <span class="cmt">// false</span></pre>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  Always prefer <code>===</code> in real code. The exam tests <code>==</code> heavily because its type coercion produces surprising results. When in doubt: <code>==</code> converts types, <code>===</code> does not.
+</div>
+
+<h4>Logical &amp; Ternary Operators</h4>
+<pre><span class="cmt">// Logical</span>
+<span class="kw">true</span> &amp;&amp; <span class="kw">false</span>  <span class="cmt">// false (AND — both must be true)</span>
+<span class="kw">true</span> || <span class="kw">false</span>  <span class="cmt">// true  (OR  — one must be true)</span>
+!<span class="kw">true</span>          <span class="cmt">// false (NOT)</span>
+
+<span class="cmt">// Ternary — shorthand if/else</span>
+<span class="cmt">// condition ? valueIfTrue : valueIfFalse</span>
+<span class="kw">let</span> age = <span class="num">18</span>;
+<span class="kw">let</span> status = age >= <span class="num">18</span> ? <span class="str">"adult"</span> : <span class="str">"minor"</span>;
+console.<span class="fn">log</span>(status); <span class="cmt">// "adult"</span></pre>
+
+<!-- ─── 5. TYPE COERCION ─── -->
+<h3>5. Type Coercion — The #1 Tricky Topic</h3>
+<p>JavaScript automatically converts values from one type to another. This is called <strong>implicit type coercion</strong> and it causes many surprising results.</p>
+
+<div class="box box-key">
+  <div class="label">🔑 Key Rule</div>
+  The <code>+</code> operator: if <strong>either operand is a string</strong>, it concatenates. All other arithmetic operators (<code>-</code>, <code>*</code>, <code>/</code>, <code>%</code>) convert strings to numbers first.
+</div>
+
+<pre><span class="cmt">// + with strings = concatenation</span>
+<span class="str">"1"</span> + <span class="num">2</span>        <span class="cmt">// "12"  — number 2 becomes string "2"</span>
+<span class="num">1</span> + <span class="str">"2"</span>        <span class="cmt">// "12"  — same result</span>
+<span class="str">"5"</span> + <span class="num">3</span> + <span class="num">2</span>   <span class="cmt">// "532" — left to right: "5"+3="53", "53"+2="532"</span>
+<span class="num">5</span> + <span class="num">3</span> + <span class="str">"2"</span>   <span class="cmt">// "82"  — 5+3=8 first (numbers), then 8+"2"="82"</span>
+
+<span class="cmt">// - * / always convert to number</span>
+<span class="str">"5"</span> - <span class="num">3</span>        <span class="cmt">// 2   — "5" becomes number 5</span>
+<span class="str">"6"</span> * <span class="str">"2"</span>      <span class="cmt">// 12  — both become numbers</span>
+<span class="str">"10"</span> / <span class="str">"2"</span>    <span class="cmt">// 5</span>
+<span class="str">"abc"</span> - <span class="num">1</span>     <span class="cmt">// NaN — "abc" can't be a number</span>
+
+<span class="cmt">// Boolean coercion</span>
+<span class="kw">true</span> + <span class="num">1</span>       <span class="cmt">// 2  — true becomes 1</span>
+<span class="kw">false</span> + <span class="num">1</span>      <span class="cmt">// 1  — false becomes 0</span>
+<span class="kw">true</span> + <span class="kw">true</span>    <span class="cmt">// 2</span>
+
+<span class="cmt">// null and undefined</span>
+<span class="kw">null</span> + <span class="num">1</span>       <span class="cmt">// 1  — null becomes 0</span>
+<span class="kw">undefined</span> + <span class="num">1</span>  <span class="cmt">// NaN</span>
+
+<span class="cmt">// Floating point trap</span>
+<span class="num">0.1</span> + <span class="num">0.2</span>       <span class="cmt">// 0.30000000000000004 — NOT 0.3!</span>
+<span class="num">0.1</span> + <span class="num">0.2</span> == <span class="num">0.3</span> <span class="cmt">// false — floating point precision issue</span></pre>
+
+<div class="box box-exam">
+  <div class="label">📋 Exam Pattern</div>
+  Output prediction questions on type coercion appear in nearly every JS exam. Memorise: <strong>"1" + 2 = "12"</strong> and <strong>"5" - 3 = 2</strong>. The key: + concatenates strings, everything else forces numeric conversion.
+</div>
+
+<!-- ─── 6. FUNCTIONS ─── -->
+<h3>6. Functions</h3>
+
+<pre><span class="cmt">// 1. Function Declaration — hoisted, can be called before it's written</span>
+<span class="kw">function</span> <span class="fn">greet</span>(name) {
+  <span class="kw">return</span> <span class="str">"Hello, "</span> + name;
+}
+console.<span class="fn">log</span>(<span class="fn">greet</span>(<span class="str">"Darshan"</span>)); <span class="cmt">// "Hello, Darshan"</span>
+
+<span class="cmt">// 2. Function Expression — NOT hoisted</span>
+<span class="kw">const</span> add = <span class="kw">function</span>(a, b) {
+  <span class="kw">return</span> a + b;
+};
+console.<span class="fn">log</span>(<span class="fn">add</span>(<span class="num">3</span>, <span class="num">4</span>)); <span class="cmt">// 7</span>
+
+<span class="cmt">// 3. Arrow Function (ES6) — shorter syntax</span>
+<span class="kw">const</span> multiply = (a, b) => a * b;
+console.<span class="fn">log</span>(<span class="fn">multiply</span>(<span class="num">3</span>, <span class="num">4</span>)); <span class="cmt">// 12</span>
+
+<span class="cmt">// Arrow with body block (multiple statements)</span>
+<span class="kw">const</span> square = (n) => {
+  <span class="kw">let</span> result = n * n;
+  <span class="kw">return</span> result;
+};
+
+<span class="cmt">// Default parameters</span>
+<span class="kw">function</span> <span class="fn">say</span>(msg = <span class="str">"Hi"</span>) {
+  console.<span class="fn">log</span>(msg);
+}
+<span class="fn">say</span>();        <span class="cmt">// "Hi"</span>
+<span class="fn">say</span>(<span class="str">"Hello"</span>); <span class="cmt">// "Hello"</span></pre>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  Arrow functions do <strong>not</strong> have their own <code>this</code>. They inherit <code>this</code> from the enclosing scope. Function declarations are hoisted — expressions are not.
+</div>
+
+<!-- ─── 7. ARRAYS ─── -->
+<h3>7. Arrays &amp; Array Methods</h3>
+
+<pre><span class="kw">let</span> arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>];
+
+<span class="cmt">// Add / Remove</span>
+arr.<span class="fn">push</span>(<span class="num">6</span>);        <span class="cmt">// adds to END   → [1,2,3,4,5,6]</span>
+arr.<span class="fn">pop</span>();          <span class="cmt">// removes END   → [1,2,3,4,5], returns 6</span>
+arr.<span class="fn">unshift</span>(<span class="num">0</span>);    <span class="cmt">// adds to START → [0,1,2,3,4,5]</span>
+arr.<span class="fn">shift</span>();        <span class="cmt">// removes START → [1,2,3,4,5], returns 0</span>
+
+<span class="cmt">// splice(start, deleteCount, ...items) — modifies original</span>
+arr.<span class="fn">splice</span>(<span class="num">1</span>, <span class="num">2</span>);      <span class="cmt">// removes 2 elements from index 1 → [1,4,5]</span>
+arr.<span class="fn">splice</span>(<span class="num">1</span>, <span class="num">0</span>, <span class="num">9</span>);  <span class="cmt">// inserts 9 at index 1, deletes nothing</span>
+
+<span class="cmt">// slice(start, end) — returns new array, does NOT modify original</span>
+<span class="kw">let</span> part = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>].<span class="fn">slice</span>(<span class="num">1</span>, <span class="num">3</span>); <span class="cmt">// [2, 3]  (index 1 up to but NOT including 3)</span>
+
+<span class="cmt">// Search</span>
+[<span class="num">10</span>,<span class="num">20</span>,<span class="num">30</span>].<span class="fn">indexOf</span>(<span class="num">20</span>);   <span class="cmt">// 1  (index of value 20)</span>
+[<span class="num">10</span>,<span class="num">20</span>,<span class="num">30</span>].<span class="fn">indexOf</span>(<span class="num">99</span>);   <span class="cmt">// -1 (not found)</span>
+[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>].<span class="fn">includes</span>(<span class="num">2</span>);       <span class="cmt">// true</span>
+
+<span class="cmt">// Iterate / Transform</span>
+[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>].<span class="fn">map</span>(x => x * <span class="num">2</span>);      <span class="cmt">// [2, 4, 6]  — new array, every element transformed</span>
+[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>].<span class="fn">filter</span>(x => x > <span class="num">2</span>); <span class="cmt">// [3, 4]    — new array, only matching elements</span>
+[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>].<span class="fn">reduce</span>((acc, x) => acc + x, <span class="num">0</span>); <span class="cmt">// 10 — reduces to single value (sum here)</span></pre>
+
+<table>
+  <tr><th>Method</th><th>Mutates original?</th><th>Returns</th></tr>
+  <tr><td>push()</td><td>✅ Yes</td><td>New length</td></tr>
+  <tr><td>pop()</td><td>✅ Yes</td><td>Removed element</td></tr>
+  <tr><td>shift()</td><td>✅ Yes</td><td>Removed element</td></tr>
+  <tr><td>unshift()</td><td>✅ Yes</td><td>New length</td></tr>
+  <tr><td>splice()</td><td>✅ Yes</td><td>Array of removed elements</td></tr>
+  <tr><td>slice()</td><td>❌ No</td><td>New array (copy)</td></tr>
+  <tr><td>map()</td><td>❌ No</td><td>New array (transformed)</td></tr>
+  <tr><td>filter()</td><td>❌ No</td><td>New array (filtered)</td></tr>
+  <tr><td>reduce()</td><td>❌ No</td><td>Single accumulated value</td></tr>
+</table>
+
+<!-- ─── 8. STRING METHODS ─── -->
+<h3>8. String Methods</h3>
+
+<pre><span class="kw">let</span> s = <span class="str">"  Hello, World!  "</span>;
+
+s.<span class="fn">length</span>                 <span class="cmt">// 18 (including spaces)</span>
+s.<span class="fn">trim</span>()                 <span class="cmt">// "Hello, World!"  — removes leading/trailing whitespace</span>
+s.<span class="fn">toUpperCase</span>()          <span class="cmt">// "  HELLO, WORLD!  "</span>
+s.<span class="fn">toLowerCase</span>()          <span class="cmt">// "  hello, world!  "</span>
+s.<span class="fn">indexOf</span>(<span class="str">"World"</span>)       <span class="cmt">// 9  (first occurrence index, -1 if not found)</span>
+s.<span class="fn">includes</span>(<span class="str">"Hello"</span>)      <span class="cmt">// true</span>
+s.<span class="fn">charAt</span>(<span class="num">2</span>)              <span class="cmt">// "H"  (character at index 2)</span>
+s.<span class="fn">substring</span>(<span class="num">2</span>, <span class="num">7</span>)        <span class="cmt">// "Hello"  (from index 2 up to but not including 7)</span>
+s.<span class="fn">replace</span>(<span class="str">"World"</span>, <span class="str">"JS"</span>) <span class="cmt">// "  Hello, JS!  "  (replaces first match)</span>
+s.<span class="fn">split</span>(<span class="str">","</span>)             <span class="cmt">// ["  Hello", " World!  "]  — splits into array</span>
+<span class="str">"hello"</span>[<span class="num">0</span>]               <span class="cmt">// "h"  — strings are indexable</span>
+
+<span class="cmt">// Template literals (ES6) — backtick strings</span>
+<span class="kw">let</span> name = <span class="str">"Darshan"</span>;
+<span class="kw">let</span> msg = `Hello, ${name}! You are ${<span class="num">20</span>+<span class="num">1</span>} years old.`;
+<span class="cmt">// "Hello, Darshan! You are 21 years old."</span></pre>
+
+<!-- ─── 9. LOOPS ─── -->
+<h3>9. Loops</h3>
+
+<pre><span class="cmt">// for loop</span>
+<span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
+  console.<span class="fn">log</span>(i); <span class="cmt">// 0, 1, 2</span>
+}
+
+<span class="cmt">// while loop</span>
+<span class="kw">let</span> i = <span class="num">0</span>;
+<span class="kw">while</span> (i &lt; <span class="num">3</span>) {
+  console.<span class="fn">log</span>(i); <span class="cmt">// 0, 1, 2</span>
+  i++;
+}
+
+<span class="cmt">// do-while — runs at LEAST once even if condition is false</span>
+<span class="kw">let</span> j = <span class="num">5</span>;
+<span class="kw">do</span> {
+  console.<span class="fn">log</span>(j); <span class="cmt">// 5 — runs once even though 5 &lt; 3 is false</span>
+} <span class="kw">while</span> (j &lt; <span class="num">3</span>);
+
+<span class="cmt">// for...in — iterates over KEYS of an object (or indexes of array)</span>
+<span class="kw">const</span> person = { name: <span class="str">"Ali"</span>, age: <span class="num">25</span> };
+<span class="kw">for</span> (<span class="kw">let</span> key <span class="kw">in</span> person) {
+  console.<span class="fn">log</span>(key); <span class="cmt">// "name", "age"</span>
+}
+
+<span class="cmt">// for...of — iterates over VALUES of iterable (array, string, etc.)</span>
+<span class="kw">const</span> nums = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>];
+<span class="kw">for</span> (<span class="kw">let</span> val <span class="kw">of</span> nums) {
+  console.<span class="fn">log</span>(val); <span class="cmt">// 10, 20, 30</span>
+}</pre>
+
+<div class="box box-key">
+  <div class="label">🔑 Key Fact</div>
+  <code>for...in</code> → keys/indexes. <code>for...of</code> → values. Use <code>for...of</code> for arrays, <code>for...in</code> for objects.
+</div>
+
+<!-- ─── 10. OBJECTS ─── -->
+<h3>10. Objects</h3>
+
+<pre><span class="cmt">// Creating an object</span>
+<span class="kw">const</span> car = {
+  brand: <span class="str">"Toyota"</span>,
+  year: <span class="num">2022</span>,
+  <span class="fn">start</span>: <span class="kw">function</span>() {
+    <span class="kw">return</span> <span class="str">"Engine started!"</span>;
+  }
+};
+
+<span class="cmt">// Accessing properties — dot notation</span>
+console.<span class="fn">log</span>(car.brand);    <span class="cmt">// "Toyota"</span>
+console.<span class="fn">log</span>(car.year);     <span class="cmt">// 2022</span>
+
+<span class="cmt">// Accessing properties — bracket notation (useful for dynamic keys)</span>
+console.<span class="fn">log</span>(car[<span class="str">"brand"</span>]); <span class="cmt">// "Toyota"</span>
+<span class="kw">let</span> prop = <span class="str">"year"</span>;
+console.<span class="fn">log</span>(car[prop]);   <span class="cmt">// 2022</span>
+
+<span class="cmt">// Calling a method</span>
+console.<span class="fn">log</span>(car.<span class="fn">start</span>()); <span class="cmt">// "Engine started!"</span>
+
+<span class="cmt">// Adding / modifying properties</span>
+car.color = <span class="str">"red"</span>;  <span class="cmt">// adds new property</span>
+car.year = <span class="num">2023</span>;   <span class="cmt">// modifies existing</span>
+
+<span class="cmt">// Deleting a property</span>
+<span class="kw">delete</span> car.color;</pre>
+
+<!-- ─── 11. DOM MANIPULATION ─── -->
+<h3>11. DOM Manipulation</h3>
+<p>The DOM (Document Object Model) is the browser's representation of the HTML page as a tree of objects. JavaScript can read and change it.</p>
+
+<pre><span class="cmt">// Selecting elements</span>
+document.<span class="fn">getElementById</span>(<span class="str">"myBtn"</span>)         <span class="cmt">// by id — returns single element</span>
+document.<span class="fn">querySelector</span>(<span class="str">".myClass"</span>)       <span class="cmt">// CSS selector — returns FIRST match</span>
+document.<span class="fn">querySelectorAll</span>(<span class="str">"p"</span>)           <span class="cmt">// CSS selector — returns ALL matches (NodeList)</span>
+document.<span class="fn">getElementsByClassName</span>(<span class="str">"btn"</span>) <span class="cmt">// by class — returns HTMLCollection</span>
+
+<span class="cmt">// Changing content</span>
+<span class="kw">let</span> el = document.<span class="fn">getElementById</span>(<span class="str">"title"</span>);
+el.innerHTML = <span class="str">"&lt;b&gt;New Title&lt;/b&gt;"</span>;  <span class="cmt">// sets HTML content</span>
+el.textContent = <span class="str">"Plain text"</span>;       <span class="cmt">// sets text only (safer — no HTML parsing)</span>
+
+<span class="cmt">// Changing styles</span>
+el.style.color = <span class="str">"red"</span>;
+el.style.display = <span class="str">"none"</span>;
+
+<span class="cmt">// Changing attributes</span>
+el.<span class="fn">setAttribute</span>(<span class="str">"href"</span>, <span class="str">"https://example.com"</span>);
+el.<span class="fn">getAttribute</span>(<span class="str">"href"</span>);
+
+<span class="cmt">// Adding event listener</span>
+el.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, <span class="kw">function</span>() {
+  console.<span class="fn">log</span>(<span class="str">"Clicked!"</span>);
+});</pre>
+
+<!-- ─── 12. EVENTS ─── -->
+<h3>12. Events</h3>
+
+<table>
+  <tr><th>Event</th><th>When it fires</th></tr>
+  <tr><td>onclick</td><td>Element is clicked</td></tr>
+  <tr><td>onchange</td><td>Value of input/select changes</td></tr>
+  <tr><td>onsubmit</td><td>Form is submitted</td></tr>
+  <tr><td>onload</td><td>Page or image finishes loading</td></tr>
+  <tr><td>onmouseover</td><td>Mouse enters element</td></tr>
+  <tr><td>onkeydown</td><td>Key is pressed down</td></tr>
+  <tr><td>onfocus</td><td>Input element gets focus</td></tr>
+  <tr><td>onblur</td><td>Input element loses focus</td></tr>
+</table>
+
+<pre><span class="cmt">// Inline HTML (older style)</span>
+&lt;button onclick=<span class="str">"<span class="fn">sayHi</span>()"</span>&gt;Click Me&lt;/button&gt;
+
+<span class="cmt">// addEventListener (preferred)</span>
+document.<span class="fn">getElementById</span>(<span class="str">"btn"</span>).<span class="fn">addEventListener</span>(<span class="str">"click"</span>, <span class="kw">function</span>(event) {
+  event.<span class="fn">preventDefault</span>(); <span class="cmt">// stops default behavior (e.g., form submission)</span>
+  console.<span class="fn">log</span>(<span class="str">"Button clicked"</span>);
+});</pre>
+
+<!-- ─── 13. CLOSURES ─── -->
+<h3>13. Closures</h3>
+<p>A closure is when an inner function <strong>remembers variables from its outer function</strong>, even after the outer function has finished executing.</p>
+
+<pre><span class="kw">function</span> <span class="fn">makeCounter</span>() {
+  <span class="kw">let</span> count = <span class="num">0</span>;          <span class="cmt">// this variable lives in makeCounter's scope</span>
+
+  <span class="kw">return</span> <span class="kw">function</span>() {     <span class="cmt">// inner function — this is the closure</span>
+    count++;
+    <span class="kw">return</span> count;
+  };
+}
+
+<span class="kw">const</span> counter = <span class="fn">makeCounter</span>(); <span class="cmt">// makeCounter finished, but count survives</span>
+console.<span class="fn">log</span>(<span class="fn">counter</span>()); <span class="cmt">// 1</span>
+console.<span class="fn">log</span>(<span class="fn">counter</span>()); <span class="cmt">// 2</span>
+console.<span class="fn">log</span>(<span class="fn">counter</span>()); <span class="cmt">// 3</span>
+
+<span class="cmt">// Each call to makeCounter() creates a SEPARATE closure</span>
+<span class="kw">const</span> counter2 = <span class="fn">makeCounter</span>();
+console.<span class="fn">log</span>(<span class="fn">counter2</span>()); <span class="cmt">// 1 — independent from counter</span></pre>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  Closures are used for <strong>data privacy</strong> — variables inside a closure can't be accessed from outside. The inner function "closes over" the outer variables.
+</div>
+
+<!-- ─── 14. THIS KEYWORD ─── -->
+<h3>14. The <code>this</code> Keyword</h3>
+<p><code>this</code> refers to the object that is currently executing the function. Its value depends on <em>how</em> the function is called.</p>
+
+<pre><span class="cmt">// In a method — this = the object</span>
+<span class="kw">const</span> person = {
+  name: <span class="str">"Darshan"</span>,
+  <span class="fn">greet</span>() {
+    console.<span class="fn">log</span>(<span class="kw">this</span>.name); <span class="cmt">// "Darshan"</span>
+  }
+};
+person.<span class="fn">greet</span>();
+
+<span class="cmt">// In a regular function (non-strict mode) — this = global (window)</span>
+<span class="kw">function</span> <span class="fn">show</span>() {
+  console.<span class="fn">log</span>(<span class="kw">this</span>); <span class="cmt">// window (browser) or global (Node.js)</span>
+}
+
+<span class="cmt">// Arrow functions — NO own this, inherits from enclosing scope</span>
+<span class="kw">const</span> obj = {
+  name: <span class="str">"Test"</span>,
+  regular: <span class="kw">function</span>() {
+    console.<span class="fn">log</span>(<span class="kw">this</span>.name); <span class="cmt">// "Test" — this = obj</span>
+  },
+  arrow: () => {
+    console.<span class="fn">log</span>(<span class="kw">this</span>.name); <span class="cmt">// undefined — arrow uses outer this (window)</span>
+  }
+};</pre>
+
+<!-- ─── 15. HOISTING ─── -->
+<h3>15. Hoisting</h3>
+
+<div class="box box-key">
+  <div class="label">🔑 Key Fact — Hoisting Summary</div>
+  <ul>
+    <li><strong>var declarations</strong> → hoisted to top of function, initialised as <code>undefined</code></li>
+    <li><strong>var assignments</strong> → NOT hoisted, stay where they are</li>
+    <li><strong>function declarations</strong> → fully hoisted (name + body), callable anywhere</li>
+    <li><strong>let / const</strong> → hoisted but in <strong>Temporal Dead Zone (TDZ)</strong> — throws ReferenceError if accessed before declaration</li>
+    <li><strong>function expressions / arrow functions</strong> → follow the rules of the variable they're assigned to</li>
+  </ul>
+</div>
+
+<pre><span class="cmt">// var hoisting</span>
+console.<span class="fn">log</span>(x); <span class="cmt">// undefined — declaration hoisted, assignment not</span>
+<span class="kw">var</span> x = <span class="num">10</span>;
+console.<span class="fn">log</span>(x); <span class="cmt">// 10</span>
+
+<span class="cmt">// Function declaration hoisting — fully hoisted</span>
+<span class="fn">sayHello</span>(); <span class="cmt">// "Hello!" — works even before the function definition</span>
+<span class="kw">function</span> <span class="fn">sayHello</span>() { console.<span class="fn">log</span>(<span class="str">"Hello!"</span>); }
+
+<span class="cmt">// let TDZ</span>
+console.<span class="fn">log</span>(y); <span class="cmt">// ReferenceError: Cannot access 'y' before initialization</span>
+<span class="kw">let</span> y = <span class="num">5</span>;
+
+<span class="cmt">// Function expression — NOT hoisted</span>
+<span class="fn">greet</span>(); <span class="cmt">// TypeError: greet is not a function</span>
+<span class="kw">var</span> greet = <span class="kw">function</span>() { console.<span class="fn">log</span>(<span class="str">"Hi"</span>); };</pre>
+
+<!-- ─── 16. TRUTHY / FALSY ─── -->
+<h3>16. Truthy &amp; Falsy Values</h3>
+<p>In JavaScript, every value is either truthy or falsy when evaluated in a boolean context (like an <code>if</code> statement).</p>
+
+<div class="box box-warn">
+  <div class="label">⚠️ The 6 Falsy Values — Memorise These</div>
+  <code>false</code> &nbsp;|&nbsp; <code>0</code> &nbsp;|&nbsp; <code>""</code> (empty string) &nbsp;|&nbsp; <code>null</code> &nbsp;|&nbsp; <code>undefined</code> &nbsp;|&nbsp; <code>NaN</code>
+  <br><br>Everything else is <strong>truthy</strong> — including <code>"0"</code>, <code>"false"</code>, <code>[]</code>, <code>{}</code>.
+</div>
+
+<pre><span class="cmt">// Falsy — all these if-blocks do NOT run</span>
+<span class="kw">if</span> (<span class="num">0</span>)         { <span class="cmt">/* skipped */</span> }
+<span class="kw">if</span> (<span class="str">""</span>)        { <span class="cmt">/* skipped */</span> }
+<span class="kw">if</span> (<span class="kw">null</span>)      { <span class="cmt">/* skipped */</span> }
+<span class="kw">if</span> (<span class="kw">undefined</span>) { <span class="cmt">/* skipped */</span> }
+<span class="kw">if</span> (<span class="kw">NaN</span>)       { <span class="cmt">/* skipped */</span> }
+
+<span class="cmt">// Truthy — these DO run</span>
+<span class="kw">if</span> (<span class="str">"0"</span>)        { <span class="cmt">/* runs — non-empty string, even if "0" */</span> }
+<span class="kw">if</span> ([])         { <span class="cmt">/* runs — empty array is truthy! */</span> }
+<span class="kw">if</span> ({})         { <span class="cmt">/* runs — empty object is truthy! */</span> }
+<span class="kw">if</span> (<span class="str">"false"</span>)    { <span class="cmt">/* runs — non-empty string is truthy */</span> }
+<span class="kw">if</span> (-<span class="num">1</span>)         { <span class="cmt">/* runs — any non-zero number is truthy */</span> }</pre>
+
+<!-- ─── 17. NaN ─── -->
+<h3>17. NaN — Not a Number</h3>
+
+<pre><span class="kw">typeof</span> <span class="kw">NaN</span>         <span class="cmt">// "number" — NaN is paradoxically of type number</span>
+<span class="fn">isNaN</span>(<span class="kw">NaN</span>)        <span class="cmt">// true</span>
+<span class="fn">isNaN</span>(<span class="str">"abc"</span>)      <span class="cmt">// true  — "abc" gets coerced to NaN</span>
+<span class="fn">isNaN</span>(<span class="str">"123"</span>)      <span class="cmt">// false — "123" coerces to number 123</span>
+<span class="fn">isNaN</span>(<span class="kw">undefined</span>) <span class="cmt">// true  — undefined is NaN when converted</span>
+
+<span class="kw">NaN</span> === <span class="kw">NaN</span>       <span class="cmt">// false — NaN is NOT equal to itself!</span>
+<span class="kw">NaN</span> == <span class="kw">NaN</span>        <span class="cmt">// false — same rule</span>
+
+<span class="cmt">// How to properly check for NaN:</span>
+Number.<span class="fn">isNaN</span>(<span class="kw">NaN</span>)   <span class="cmt">// true  — stricter, doesn't coerce</span>
+Number.<span class="fn">isNaN</span>(<span class="str">"abc"</span>) <span class="cmt">// false — "abc" is not NaN, it's a string</span></pre>
+
+<div class="box box-tip">
+  <div class="label">💡 Exam tip</div>
+  <code>NaN !== NaN</code> is one of the most surprising facts in JavaScript. It is the only value in JS not equal to itself. Use <code>isNaN()</code> or <code>Number.isNaN()</code> to check for it.
+</div>
+
+<!-- ─── 18. JSON ─── -->
+<h3>18. JSON.parse() and JSON.stringify()</h3>
+<p>JSON (JavaScript Object Notation) is a text format for exchanging data. Two key methods convert between JSON strings and JS objects.</p>
+
+<pre><span class="cmt">// JavaScript object → JSON string</span>
+<span class="kw">const</span> user = { name: <span class="str">"Darshan"</span>, age: <span class="num">21</span> };
+<span class="kw">const</span> json = JSON.<span class="fn">stringify</span>(user);
+console.<span class="fn">log</span>(json);          <span class="cmt">// '{"name":"Darshan","age":21}'</span>
+console.<span class="fn">log</span>(<span class="kw">typeof</span> json); <span class="cmt">// "string"</span>
+
+<span class="cmt">// JSON string → JavaScript object</span>
+<span class="kw">const</span> str = <span class="str">'{"name":"Darshan","age":21}'</span>;
+<span class="kw">const</span> obj = JSON.<span class="fn">parse</span>(str);
+console.<span class="fn">log</span>(obj.name);      <span class="cmt">// "Darshan"</span>
+console.<span class="fn">log</span>(<span class="kw">typeof</span> obj);   <span class="cmt">// "object"</span>
+
+<span class="cmt">// JSON rules — keys must be double-quoted strings</span>
+<span class="cmt">// Invalid JSON: { name: "Darshan" }  — key must be "name"</span>
+<span class="cmt">// Valid JSON:   { "name": "Darshan" }</span></pre>
+
+<!-- ─── 19. SETTIMEOUT / SETINTERVAL ─── -->
+<h3>19. setTimeout and setInterval</h3>
+
+<pre><span class="cmt">// setTimeout — run code ONCE after a delay (milliseconds)</span>
+<span class="fn">setTimeout</span>(<span class="kw">function</span>() {
+  console.<span class="fn">log</span>(<span class="str">"Runs after 2 seconds"</span>);
+}, <span class="num">2000</span>);
+
+<span class="cmt">// setTimeout with arrow function</span>
+<span class="fn">setTimeout</span>(() => console.<span class="fn">log</span>(<span class="str">"Hello!"</span>), <span class="num">1000</span>);
+
+<span class="cmt">// setInterval — run code REPEATEDLY every N milliseconds</span>
+<span class="kw">const</span> id = <span class="fn">setInterval</span>(() => {
+  console.<span class="fn">log</span>(<span class="str">"Runs every 1 second"</span>);
+}, <span class="num">1000</span>);
+
+<span class="cmt">// Stop the interval</span>
+<span class="fn">clearInterval</span>(id);
+
+<span class="cmt">// Cancel a timeout before it fires</span>
+<span class="kw">const</span> t = <span class="fn">setTimeout</span>(() => console.<span class="fn">log</span>(<span class="str">"Never runs"</span>), <span class="num">5000</span>);
+<span class="fn">clearTimeout</span>(t);</pre>
+
+<!-- ─── 20. ERROR HANDLING ─── -->
+<h3>20. Error Handling — try / catch / finally</h3>
+
+<pre><span class="kw">try</span> {
+  <span class="cmt">// code that might throw an error</span>
+  <span class="kw">let</span> result = <span class="num">10</span> / <span class="num">0</span>;
+  JSON.<span class="fn">parse</span>(<span class="str">"invalid json {"</span>); <span class="cmt">// throws SyntaxError</span>
+} <span class="kw">catch</span> (error) {
+  <span class="cmt">// runs if an error is thrown inside try</span>
+  console.<span class="fn">log</span>(error.message); <span class="cmt">// "Unexpected token i in JSON..."</span>
+  console.<span class="fn">log</span>(error.name);    <span class="cmt">// "SyntaxError"</span>
+} <span class="kw">finally</span> {
+  <span class="cmt">// ALWAYS runs — error or not</span>
+  console.<span class="fn">log</span>(<span class="str">"Cleanup done"</span>);
+}
+
+<span class="cmt">// Throw your own error</span>
+<span class="kw">function</span> <span class="fn">divide</span>(a, b) {
+  <span class="kw">if</span> (b === <span class="num">0</span>) <span class="kw">throw new</span> Error(<span class="str">"Cannot divide by zero"</span>);
+  <span class="kw">return</span> a / b;
+}</pre>
+
+<div class="box box-key">
+  <div class="label">🔑 Key Fact</div>
+  <strong>try</strong> — monitored block. <strong>catch</strong> — runs only on error. <strong>finally</strong> — always runs regardless of error. <code>finally</code> is commonly used for cleanup (closing files, stopping loaders).
+</div>
+
+<!-- ─── 21. PROMPT ALERT CONFIRM ─── -->
+<h3>21. Browser Dialogs — prompt(), alert(), confirm()</h3>
+
+<pre><span class="fn">alert</span>(<span class="str">"Hello!"</span>);
+<span class="cmt">// Shows a message box. Returns undefined.</span>
+
+<span class="kw">let</span> name = <span class="fn">prompt</span>(<span class="str">"What is your name?"</span>);
+<span class="cmt">// Shows input box. Returns the string entered, or null if cancelled.</span>
+
+<span class="kw">let</span> confirmed = <span class="fn">confirm</span>(<span class="str">"Are you sure?"</span>);
+<span class="cmt">// Shows OK/Cancel dialog. Returns true (OK) or false (Cancel).</span>
+
+console.<span class="fn">log</span>(<span class="kw">typeof</span> <span class="fn">prompt</span>(<span class="str">"test"</span>)); <span class="cmt">// "string" or "object" (null)</span></pre>
+
+<table>
+  <tr><th>Function</th><th>Returns</th><th>Use for</th></tr>
+  <tr><td>alert(msg)</td><td>undefined</td><td>Showing messages</td></tr>
+  <tr><td>prompt(msg)</td><td>string or null</td><td>Getting user input</td></tr>
+  <tr><td>confirm(msg)</td><td>true or false</td><td>Yes/No decisions</td></tr>
+</table>
+
+<!-- ─── PRACTICE QUESTIONS ─── -->
+<h3>Practice Questions — Output Prediction &amp; Concepts</h3>
+
+<div class="practice">
+  <div class="q-label">Question 1</div>
+  <div class="question">What is the output of the following code?<br><code>console.log(1 + "2" + 3);</code></div>
+  <ol class="options">
+    <li>6</li>
+    <li>"123"</li>
+    <li>"15"</li>
+    <li>NaN</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) "123" — <code>1 + "2"</code> hits a string so becomes <code>"12"</code>, then <code>"12" + 3</code> = <code>"123"</code>. Left-to-right evaluation.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 2</div>
+  <div class="question">What does <code>typeof null</code> return?</div>
+  <ol class="options">
+    <li>"null"</li>
+    <li>"undefined"</li>
+    <li>"object"</li>
+    <li>"string"</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) "object" — This is a well-known historic bug in JavaScript that was never fixed to preserve backward compatibility.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 3</div>
+  <div class="question">What does <code>typeof NaN</code> return?</div>
+  <ol class="options">
+    <li>"NaN"</li>
+    <li>"undefined"</li>
+    <li>"boolean"</li>
+    <li>"number"</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="3">✅ D) "number" — NaN stands for "Not a Number" but is paradoxically of type "number". Always a top exam question.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 4</div>
+  <div class="question">What is the output?<br><code>console.log(0.1 + 0.2 == 0.3);</code></div>
+  <ol class="options">
+    <li>true</li>
+    <li>false</li>
+    <li>NaN</li>
+    <li>undefined</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) false — Due to floating-point precision, <code>0.1 + 0.2</code> equals <code>0.30000000000000004</code>, not exactly <code>0.3</code>.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 5</div>
+  <div class="question">What is the output?
+<pre style="margin:8px 0"><span class="kw">var</span> x = <span class="num">5</span>;
+console.<span class="fn">log</span>(x++);
+console.<span class="fn">log</span>(x);</pre></div>
+  <ol class="options">
+    <li>5, 5</li>
+    <li>6, 6</li>
+    <li>5, 6</li>
+    <li>6, 5</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) 5, 6 — Post-increment <code>x++</code> returns the current value (5) THEN increments. Next line x is now 6.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 6</div>
+  <div class="question">What is the output?
+<pre style="margin:8px 0">console.<span class="fn">log</span>(a);
+<span class="kw">var</span> a = <span class="num">10</span>;</pre></div>
+  <ol class="options">
+    <li>10</li>
+    <li>ReferenceError</li>
+    <li>null</li>
+    <li>undefined</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="3">✅ D) undefined — <code>var a</code> is hoisted to the top and initialised as <code>undefined</code>. The assignment <code>a = 10</code> happens later.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 7</div>
+  <div class="question">What is the output?<br><code>console.log(1 == "1");</code><br><code>console.log(1 === "1");</code></div>
+  <ol class="options">
+    <li>true, true</li>
+    <li>false, false</li>
+    <li>true, false</li>
+    <li>false, true</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) true, false — <code>==</code> converts "1" to number 1 before comparing (equal). <code>===</code> checks type too: number ≠ string (not equal).</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 8</div>
+  <div class="question">What is the output?<br><code>console.log("5" - 3);</code></div>
+  <ol class="options">
+    <li>"53"</li>
+    <li>"5-3"</li>
+    <li>2</li>
+    <li>NaN</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) 2 — The <code>-</code> operator only does subtraction (no string concatenation). "5" is coerced to number 5, then 5 - 3 = 2.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 9</div>
+  <div class="question">What is the output?
+<pre style="margin:8px 0"><span class="kw">let</span> arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>];
+<span class="kw">let</span> result = arr.<span class="fn">filter</span>(x => x > <span class="num">2</span>);
+console.<span class="fn">log</span>(result);</pre></div>
+  <ol class="options">
+    <li>[1, 2]</li>
+    <li>[3, 4]</li>
+    <li>[2, 3, 4]</li>
+    <li>true</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) [3, 4] — <code>filter</code> returns a new array with elements where the callback returns <code>true</code>. Only 3 and 4 are greater than 2.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 10</div>
+  <div class="question">What is the output?
+<pre style="margin:8px 0"><span class="kw">let</span> arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+console.<span class="fn">log</span>(arr.<span class="fn">map</span>(x => x * <span class="num">2</span>));
+console.<span class="fn">log</span>(arr);</pre></div>
+  <ol class="options">
+    <li>[2, 4, 6], [2, 4, 6]</li>
+    <li>[2, 4, 6], [1, 2, 3]</li>
+    <li>[1, 2, 3], [2, 4, 6]</li>
+    <li>[2, 4, 6], undefined</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) [2, 4, 6], [1, 2, 3] — <code>map</code> does NOT mutate the original array. It returns a new array. The original <code>arr</code> is unchanged.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 11</div>
+  <div class="question">What is the output?
+<pre style="margin:8px 0"><span class="kw">function</span> <span class="fn">makeAdder</span>(x) {
+  <span class="kw">return</span> <span class="kw">function</span>(y) {
+    <span class="kw">return</span> x + y;
+  };
+}
+<span class="kw">const</span> add5 = <span class="fn">makeAdder</span>(<span class="num">5</span>);
+console.<span class="fn">log</span>(<span class="fn">add5</span>(<span class="num">3</span>));</pre></div>
+  <ol class="options">
+    <li>undefined</li>
+    <li>3</li>
+    <li>5</li>
+    <li>8</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="3">✅ D) 8 — This is a closure. <code>add5</code> "closes over" <code>x = 5</code>. When called with <code>3</code>, it returns <code>5 + 3 = 8</code>.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 12</div>
+  <div class="question">What is the output?<br><code>console.log(NaN === NaN);</code></div>
+  <ol class="options">
+    <li>true</li>
+    <li>false</li>
+    <li>undefined</li>
+    <li>TypeError</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) false — NaN is the only value in JavaScript that is not equal to itself. Use <code>isNaN()</code> or <code>Number.isNaN()</code> to check for NaN.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 13</div>
+  <div class="question">What is the output?
+<pre style="margin:8px 0"><span class="kw">let</span> a = <span class="num">10</span>;
+<span class="kw">function</span> <span class="fn">test</span>() {
+  console.<span class="fn">log</span>(a);
+  <span class="kw">var</span> a = <span class="num">20</span>;
+}
+<span class="fn">test</span>();</pre></div>
+  <ol class="options">
+    <li>10</li>
+    <li>20</li>
+    <li>undefined</li>
+    <li>ReferenceError</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) undefined — Inside <code>test()</code>, <code>var a</code> is hoisted within the function scope. At <code>console.log(a)</code>, the local <code>a</code> exists but is <code>undefined</code> (not yet assigned). The outer <code>a = 10</code> is shadowed.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 14</div>
+  <div class="question">What is the output?<br><code>console.log(true + true + "1");</code></div>
+  <ol class="options">
+    <li>"111"</li>
+    <li>3</li>
+    <li>"21"</li>
+    <li>"true true 1"</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) "21" — Left to right: <code>true + true</code> → <code>1 + 1</code> → <code>2</code> (both booleans convert to numbers). Then <code>2 + "1"</code> → <code>"21"</code> (string concatenation).</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 15</div>
+  <div class="question">Which of the following values is TRUTHY in JavaScript?</div>
+  <ol class="options">
+    <li>0</li>
+    <li>""</li>
+    <li>[]</li>
+    <li>null</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) [] — An empty array is truthy in JavaScript. Only these 6 values are falsy: <code>false</code>, <code>0</code>, <code>""</code>, <code>null</code>, <code>undefined</code>, <code>NaN</code>. Empty arrays and objects are NOT falsy.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 16</div>
+  <div class="question">What is the output?
+<pre style="margin:8px 0"><span class="kw">let</span> arr = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>];
+console.<span class="fn">log</span>(arr.<span class="fn">indexOf</span>(<span class="num">20</span>));
+console.<span class="fn">log</span>(arr.<span class="fn">indexOf</span>(<span class="num">99</span>));</pre></div>
+  <ol class="options">
+    <li>1, 0</li>
+    <li>2, -1</li>
+    <li>1, -1</li>
+    <li>20, undefined</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">✅ C) 1, -1 — <code>indexOf</code> returns the index of the element (20 is at index 1). If not found, it returns -1 (99 is not in the array).</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 17</div>
+  <div class="question">What is the output?<br><code>console.log(typeof undefined === typeof null);</code></div>
+  <ol class="options">
+    <li>true</li>
+    <li>false</li>
+    <li>undefined</li>
+    <li>TypeError</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) false — <code>typeof undefined</code> is <code>"undefined"</code>. <code>typeof null</code> is <code>"object"</code>. <code>"undefined" === "object"</code> is false.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 18</div>
+  <div class="question">What is the output?
+<pre style="margin:8px 0"><span class="kw">let</span> s = <span class="str">"Hello, World"</span>;
+console.<span class="fn">log</span>(s.<span class="fn">substring</span>(<span class="num">7</span>, <span class="num">12</span>));</pre></div>
+  <ol class="options">
+    <li>"Hello"</li>
+    <li>"World"</li>
+    <li>"orld"</li>
+    <li>"World,"</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) "World" — <code>substring(7, 12)</code> extracts characters from index 7 up to (but not including) index 12. H(0)e(1)l(2)l(3)o(4),(5) (6)W(7)o(8)r(9)l(10)d(11) → "World".</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 19</div>
+  <div class="question">What is the output?
+<pre style="margin:8px 0"><span class="kw">const</span> obj = { name: <span class="str">"test"</span> };
+<span class="kw">const</span> key = <span class="str">"name"</span>;
+console.<span class="fn">log</span>(obj.key);
+console.<span class="fn">log</span>(obj[key]);</pre></div>
+  <ol class="options">
+    <li>"test", "test"</li>
+    <li>undefined, "test"</li>
+    <li>"test", undefined</li>
+    <li>undefined, undefined</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) undefined, "test" — <code>obj.key</code> looks for a property literally named "key" (not the variable) → undefined. <code>obj[key]</code> uses the variable's value "name" → <code>obj["name"]</code> → "test".</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 20</div>
+  <div class="question">What is the output?
+<pre style="margin:8px 0"><span class="kw">let</span> x = <span class="num">10</span>;
+<span class="kw">let</span> y = <span class="num">3</span>;
+console.<span class="fn">log</span>(x % y);
+console.<span class="fn">log</span>(x ** y);</pre></div>
+  <ol class="options">
+    <li>3, 30</li>
+    <li>1, 1000</li>
+    <li>3, 1000</li>
+    <li>1, 30</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">✅ B) 1, 1000 — <code>%</code> is modulo: 10 ÷ 3 = 3 remainder <strong>1</strong>. <code>**</code> is exponentiation: 10³ = <strong>1000</strong>.</div>
+</div>
+
+</section>
+
+
+
+  <div class="footer">
+    <a href="css.html">← CSS</a> |
+    <a href="unix.html">Unix →</a>
+  </div>
+</div>
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

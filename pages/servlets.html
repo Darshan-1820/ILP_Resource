@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servlets — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#what-is-servlet">What is a Servlet?</a>
+  <a href="#lifecycle">Servlet Lifecycle</a>
+  <a href="#servlet-api">Servlet API</a>
+  <a href="#creating-servlet">Creating a Servlet</a>
+  <a href="#get-vs-post">doGet() vs doPost()</a>
+  <a href="#request-response">Request &amp; Response</a>
+  <a href="#forward-redirect">forward() vs sendRedirect()</a>
+  <a href="#session-management">Session Management</a>
+  <a href="#filters">Filters</a>
+  <a href="#listeners">Listeners</a>
+  <a href="#web-xml">web.xml Configuration</a>
+  <a href="#servlet-vs-jsp">Servlet vs JSP</a>
+  <a href="#practice">Practice Questions</a>
+</nav>
+<div class="main">
+<section class="sec-servlets">
+
+<h2 id="what-is-servlet">1. What is a Servlet?</h2>
+
+<p>A <strong>Servlet</strong> is a Java class that runs on a web server. Its job is simple: receive an HTTP request from a browser, process it, and send back an HTTP response.</p>
+
+<p>Think of it like this: when you fill out a login form on a website and click "Submit," that request goes to a Servlet on the server. The Servlet checks your credentials, talks to a database if needed, and sends back either a "Welcome" page or an "Invalid login" page.</p>
+
+<div class="box box-key">
+  <div class="label">Key Concept</div>
+  <strong>Servlet = A Java program that lives on the server and handles HTTP requests/responses.</strong><br>
+  It runs inside a <strong>Servlet Container</strong> (like Apache Tomcat), which manages the Servlet's lifecycle.
+</div>
+
+<h3>How a Request Flows</h3>
+<pre>
+<span class="cmt">Client (Browser)</span>
+     |
+     |  HTTP Request (GET /login)
+     v
+<span class="cmt">Web Server (Tomcat)</span>
+     |
+     v
+<span class="cmt">Servlet Container</span>  ← manages servlet lifecycle
+     |
+     v
+<span class="cmt">Your Servlet</span>  ← your Java code runs here
+     |
+     |  HTTP Response (HTML page)
+     v
+<span class="cmt">Client (Browser)</span>  ← sees the result
+</pre>
+
+<h3>CGI vs Servlet</h3>
+<p>Before Servlets, websites used <strong>CGI (Common Gateway Interface)</strong> — a separate process for every request. Servlets replaced CGI because they are faster and more efficient.</p>
+
+<table>
+<tr><th>Feature</th><th>CGI</th><th>Servlet</th></tr>
+<tr><td>Process per request</td><td>New process each time (heavy)</td><td>New thread each time (lightweight)</td></tr>
+<tr><td>Language</td><td>Any (Perl, C, etc.)</td><td>Java only</td></tr>
+<tr><td>Performance</td><td>Slow — process creation overhead</td><td>Fast — thread reuse, stays in memory</td></tr>
+<tr><td>Portability</td><td>Platform-dependent</td><td>Platform-independent (Java)</td></tr>
+<tr><td>Memory</td><td>High — each process has own memory</td><td>Low — threads share memory</td></tr>
+</table>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  "Why are Servlets better than CGI?" is a classic PRA question. Key answer: <strong>Servlets use threads (not processes), so they are faster and use less memory.</strong>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="lifecycle">2. Servlet Lifecycle (ALWAYS ASKED)</h2>
+
+<p>The Servlet Container (Tomcat) manages every Servlet through three methods. You do not call these methods — the container calls them automatically.</p>
+
+<h3>The Three Lifecycle Methods</h3>
+
+<pre>
+<span class="cmt">// 1. init() — Called ONCE when the servlet is first loaded</span>
+<span class="kw">public void</span> <span class="fn">init</span>() {
+    <span class="cmt">// Setup code: open DB connections, read config, etc.</span>
+}
+
+<span class="cmt">// 2. service() — Called for EVERY request</span>
+<span class="kw">public void</span> <span class="fn">service</span>(<span class="type">HttpServletRequest</span> req, <span class="type">HttpServletResponse</span> res) {
+    <span class="cmt">// Dispatches to doGet() or doPost() based on request type</span>
+}
+
+<span class="cmt">// 3. destroy() — Called ONCE when the servlet is being removed</span>
+<span class="kw">public void</span> <span class="fn">destroy</span>() {
+    <span class="cmt">// Cleanup: close DB connections, release resources</span>
+}
+</pre>
+
+<h3>Lifecycle Flow</h3>
+<pre>
+<span class="cmt">Servlet Class loaded into memory</span>
+         |
+         v
+   <span class="fn">init()</span>  ← called ONCE (servlet is born)
+         |
+         v
+  <span class="fn">service()</span>  ← called for EVERY request
+    |         |
+    v         v
+ <span class="fn">doGet()</span>   <span class="fn">doPost()</span>    ← your code handles the request
+         |
+         v
+  <span class="fn">destroy()</span>  ← called ONCE (servlet is dying)
+         |
+         v
+<span class="cmt">Servlet is garbage collected</span>
+</pre>
+
+<div class="box box-key">
+  <div class="label">Remember This</div>
+  <ul>
+    <li><code>init()</code> — called <strong>once</strong> when servlet is first loaded</li>
+    <li><code>service()</code> — called for <strong>every</strong> request (you usually don't override this directly)</li>
+    <li><code>destroy()</code> — called <strong>once</strong> before servlet is removed from memory</li>
+  </ul>
+</div>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  The lifecycle order <strong>init() → service() → destroy()</strong> is asked in almost every PRA exam. The service() method internally calls doGet() or doPost() depending on the HTTP method. You typically override doGet()/doPost(), not service() directly.
+</div>
+
+<div class="box box-warn">
+  <div class="label">Common Mistake</div>
+  Students confuse the order or think <code>init()</code> is called for every request. It is NOT. <code>init()</code> runs only once. Only <code>service()</code> runs for every request.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="servlet-api">3. Servlet API</h2>
+
+<p>Servlets use classes and interfaces from two packages. You need to know which classes come from which package.</p>
+
+<h3>javax.servlet (Generic)</h3>
+<table>
+<tr><th>Class/Interface</th><th>What It Does</th></tr>
+<tr><td><code>Servlet</code></td><td>Base interface — defines init(), service(), destroy()</td></tr>
+<tr><td><code>GenericServlet</code></td><td>Abstract class that implements Servlet. Protocol-independent.</td></tr>
+<tr><td><code>ServletRequest</code></td><td>Generic request object</td></tr>
+<tr><td><code>ServletResponse</code></td><td>Generic response object</td></tr>
+<tr><td><code>ServletConfig</code></td><td>Config info for one servlet (init-params)</td></tr>
+<tr><td><code>ServletContext</code></td><td>Shared info for the entire web application</td></tr>
+<tr><td><code>RequestDispatcher</code></td><td>For forwarding/including requests</td></tr>
+<tr><td><code>Filter</code></td><td>Intercepts requests before they reach the servlet</td></tr>
+</table>
+
+<h3>javax.servlet.http (HTTP-specific)</h3>
+<table>
+<tr><th>Class/Interface</th><th>What It Does</th></tr>
+<tr><td><code>HttpServlet</code></td><td>Abstract class you extend to create HTTP servlets</td></tr>
+<tr><td><code>HttpServletRequest</code></td><td>HTTP request — has getParameter(), getSession(), etc.</td></tr>
+<tr><td><code>HttpServletResponse</code></td><td>HTTP response — has setContentType(), getWriter(), etc.</td></tr>
+<tr><td><code>HttpSession</code></td><td>Stores user session data across requests</td></tr>
+<tr><td><code>Cookie</code></td><td>Small data stored on the client browser</td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">Tip</div>
+  In ILP, you will always extend <code>HttpServlet</code> (not GenericServlet). HttpServlet already handles HTTP-specific details for you.
+</div>
+
+<h3>Important HttpServletRequest Methods</h3>
+<table>
+<tr><th>Method</th><th>Returns</th><th>Use</th></tr>
+<tr><td><code>getParameter("name")</code></td><td>String</td><td>Get form field value</td></tr>
+<tr><td><code>getAttribute("key")</code></td><td>Object</td><td>Get attribute set by another servlet</td></tr>
+<tr><td><code>getSession()</code></td><td>HttpSession</td><td>Get or create a session</td></tr>
+<tr><td><code>getRequestDispatcher("path")</code></td><td>RequestDispatcher</td><td>Get dispatcher for forward/include</td></tr>
+<tr><td><code>getMethod()</code></td><td>String</td><td>Returns "GET" or "POST"</td></tr>
+<tr><td><code>getCookies()</code></td><td>Cookie[]</td><td>Get all cookies sent by client</td></tr>
+<tr><td><code>getContextPath()</code></td><td>String</td><td>Returns the application's context path</td></tr>
+</table>
+
+<h3>Important HttpServletResponse Methods</h3>
+<table>
+<tr><th>Method</th><th>Use</th></tr>
+<tr><td><code>setContentType("text/html")</code></td><td>Tell browser the response is HTML</td></tr>
+<tr><td><code>getWriter()</code></td><td>Returns PrintWriter to write response body</td></tr>
+<tr><td><code>sendRedirect("url")</code></td><td>Redirect browser to a different URL</td></tr>
+<tr><td><code>addCookie(cookie)</code></td><td>Send a cookie to the client</td></tr>
+<tr><td><code>setStatus(code)</code></td><td>Set HTTP status code (200, 404, etc.)</td></tr>
+<tr><td><code>setHeader("name", "value")</code></td><td>Set a response header</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="creating-servlet">4. Creating a Servlet</h2>
+
+<h3>Step-by-Step: Your First Servlet</h3>
+
+<pre>
+<span class="kw">import</span> java.io.*;
+<span class="kw">import</span> javax.servlet.*;
+<span class="kw">import</span> javax.servlet.http.*;
+
+<span class="cmt">// Step 1: Extend HttpServlet</span>
+<span class="kw">public class</span> <span class="type">HelloServlet</span> <span class="kw">extends</span> <span class="type">HttpServlet</span> {
+
+    <span class="cmt">// Step 2: Override doGet() to handle GET requests</span>
+    <span class="kw">protected void</span> <span class="fn">doGet</span>(<span class="type">HttpServletRequest</span> request, <span class="type">HttpServletResponse</span> response)
+            <span class="kw">throws</span> <span class="type">ServletException</span>, <span class="type">IOException</span> {
+
+        <span class="cmt">// Step 3: Set the content type of the response</span>
+        response.<span class="fn">setContentType</span>(<span class="str">"text/html"</span>);
+
+        <span class="cmt">// Step 4: Get a PrintWriter to write output</span>
+        <span class="type">PrintWriter</span> out = response.<span class="fn">getWriter</span>();
+
+        <span class="cmt">// Step 5: Write HTML to the response</span>
+        out.<span class="fn">println</span>(<span class="str">"&lt;html&gt;&lt;body&gt;"</span>);
+        out.<span class="fn">println</span>(<span class="str">"&lt;h1&gt;Hello from Servlet!&lt;/h1&gt;"</span>);
+        out.<span class="fn">println</span>(<span class="str">"&lt;/body&gt;&lt;/html&gt;"</span>);
+    }
+}
+</pre>
+
+<h3>Configuring with web.xml</h3>
+<p>The <code>web.xml</code> file tells the Servlet Container (Tomcat) which URL maps to which Servlet class.</p>
+
+<pre>
+<span class="cmt">&lt;!-- web.xml — inside WEB-INF folder --&gt;</span>
+&lt;<span class="kw">web-app</span>&gt;
+
+    <span class="cmt">&lt;!-- Step 1: Register the servlet --&gt;</span>
+    &lt;<span class="kw">servlet</span>&gt;
+        &lt;<span class="kw">servlet-name</span>&gt;<span class="str">HelloServlet</span>&lt;/<span class="kw">servlet-name</span>&gt;
+        &lt;<span class="kw">servlet-class</span>&gt;<span class="str">com.example.HelloServlet</span>&lt;/<span class="kw">servlet-class</span>&gt;
+    &lt;/<span class="kw">servlet</span>&gt;
+
+    <span class="cmt">&lt;!-- Step 2: Map a URL pattern to the servlet --&gt;</span>
+    &lt;<span class="kw">servlet-mapping</span>&gt;
+        &lt;<span class="kw">servlet-name</span>&gt;<span class="str">HelloServlet</span>&lt;/<span class="kw">servlet-name</span>&gt;
+        &lt;<span class="kw">url-pattern</span>&gt;<span class="str">/hello</span>&lt;/<span class="kw">url-pattern</span>&gt;
+    &lt;/<span class="kw">servlet-mapping</span>&gt;
+
+&lt;/<span class="kw">web-app</span>&gt;
+</pre>
+
+<div class="box box-tip">
+  <div class="label">How it connects</div>
+  When someone visits <code>http://localhost:8080/myapp/hello</code>:<br>
+  1. Tomcat reads web.xml<br>
+  2. Finds url-pattern <code>/hello</code> → mapped to servlet-name <code>HelloServlet</code><br>
+  3. Finds servlet-class <code>com.example.HelloServlet</code><br>
+  4. Runs that class's <code>doGet()</code> method<br>
+  5. Returns the HTML response to the browser
+</div>
+
+<h3>Annotation-Based Configuration (Modern Way)</h3>
+<p>Instead of writing web.xml, you can use the <code>@WebServlet</code> annotation directly on the class. This is simpler and preferred in newer projects.</p>
+
+<pre>
+<span class="kw">import</span> javax.servlet.annotation.WebServlet;
+
+<span class="cmt">// The annotation replaces the web.xml configuration</span>
+<span class="kw">@WebServlet</span>(<span class="str">"/hello"</span>)     <span class="cmt">// URL pattern — same as url-pattern in web.xml</span>
+<span class="kw">public class</span> <span class="type">HelloServlet</span> <span class="kw">extends</span> <span class="type">HttpServlet</span> {
+
+    <span class="kw">protected void</span> <span class="fn">doGet</span>(<span class="type">HttpServletRequest</span> request, <span class="type">HttpServletResponse</span> response)
+            <span class="kw">throws</span> <span class="type">ServletException</span>, <span class="type">IOException</span> {
+        response.<span class="fn">setContentType</span>(<span class="str">"text/html"</span>);
+        response.<span class="fn">getWriter</span>().<span class="fn">println</span>(<span class="str">"&lt;h1&gt;Hello!&lt;/h1&gt;"</span>);
+    }
+}
+</pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  Both web.xml and @WebServlet approaches are tested in PRA. Know both. The exam might give you web.xml and ask what URL triggers the servlet, or give you an annotation and ask the same.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="get-vs-post">5. doGet() vs doPost()</h2>
+
+<table>
+<tr><th>Feature</th><th>doGet() / GET</th><th>doPost() / POST</th></tr>
+<tr><td>Data location</td><td>Appended to URL as query string</td><td>Sent in request body (hidden)</td></tr>
+<tr><td>Data size</td><td>Limited (~2048 chars)</td><td>Unlimited</td></tr>
+<tr><td>Visibility</td><td>Visible in URL bar and browser history</td><td>Not visible in URL</td></tr>
+<tr><td>Bookmarkable</td><td>Yes</td><td>No</td></tr>
+<tr><td>Security</td><td>Less secure (data in URL)</td><td>More secure (data in body)</td></tr>
+<tr><td>Caching</td><td>Can be cached by browser</td><td>Not cached</td></tr>
+<tr><td>Idempotent</td><td>Yes (same request = same result)</td><td>No (can cause side effects)</td></tr>
+<tr><td>Use case</td><td>Fetching data (search, view page)</td><td>Submitting data (login, signup, payment)</td></tr>
+</table>
+
+<div class="box box-example">
+  <div class="label">Example — GET request URL</div>
+  <code>http://example.com/search?query=java&page=1</code><br>
+  The data (<code>query=java</code> and <code>page=1</code>) is visible right in the URL. Anyone can see it, bookmark it, share it.
+</div>
+
+<pre>
+<span class="cmt">// Handling a GET request — e.g., showing a search page</span>
+<span class="kw">protected void</span> <span class="fn">doGet</span>(<span class="type">HttpServletRequest</span> request, <span class="type">HttpServletResponse</span> response)
+        <span class="kw">throws</span> <span class="type">ServletException</span>, <span class="type">IOException</span> {
+    <span class="type">String</span> query = request.<span class="fn">getParameter</span>(<span class="str">"query"</span>);  <span class="cmt">// reads from URL</span>
+    response.<span class="fn">setContentType</span>(<span class="str">"text/html"</span>);
+    response.<span class="fn">getWriter</span>().<span class="fn">println</span>(<span class="str">"You searched for: "</span> + query);
+}
+
+<span class="cmt">// Handling a POST request — e.g., login form submission</span>
+<span class="kw">protected void</span> <span class="fn">doPost</span>(<span class="type">HttpServletRequest</span> request, <span class="type">HttpServletResponse</span> response)
+        <span class="kw">throws</span> <span class="type">ServletException</span>, <span class="type">IOException</span> {
+    <span class="type">String</span> username = request.<span class="fn">getParameter</span>(<span class="str">"username"</span>);  <span class="cmt">// reads from body</span>
+    <span class="type">String</span> password = request.<span class="fn">getParameter</span>(<span class="str">"password"</span>);
+    <span class="cmt">// Validate and respond...</span>
+}
+</pre>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  "When should you use GET vs POST?" — Use <strong>GET for reading</strong> data (search results, viewing pages) and <strong>POST for writing</strong> data (form submissions, creating records). If the form sends sensitive data like passwords, always use POST.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="request-response">6. Request and Response Objects</h2>
+
+<p>Every time a request comes in, the Servlet Container creates two objects and passes them to your doGet()/doPost() method:</p>
+<ul>
+  <li><strong>HttpServletRequest</strong> — contains everything the client sent (form data, headers, cookies, URL info)</li>
+  <li><strong>HttpServletResponse</strong> — you use this to send data back to the client</li>
+</ul>
+
+<h3>Reading Form Data</h3>
+<p>Suppose you have this HTML form:</p>
+
+<pre>
+<span class="cmt">&lt;!-- HTML form that sends data to the servlet --&gt;</span>
+&lt;<span class="kw">form</span> action=<span class="str">"register"</span> method=<span class="str">"post"</span>&gt;
+    Name:  &lt;<span class="kw">input</span> type=<span class="str">"text"</span> name=<span class="str">"name"</span>&gt;
+    Email: &lt;<span class="kw">input</span> type=<span class="str">"email"</span> name=<span class="str">"email"</span>&gt;
+    Age:   &lt;<span class="kw">input</span> type=<span class="str">"number"</span> name=<span class="str">"age"</span>&gt;
+    &lt;<span class="kw">button</span> type=<span class="str">"submit"</span>&gt;Register&lt;/<span class="kw">button</span>&gt;
+&lt;/<span class="kw">form</span>&gt;
+</pre>
+
+<p>Here's how the Servlet reads that data:</p>
+
+<pre>
+<span class="kw">@WebServlet</span>(<span class="str">"/register"</span>)
+<span class="kw">public class</span> <span class="type">RegisterServlet</span> <span class="kw">extends</span> <span class="type">HttpServlet</span> {
+
+    <span class="kw">protected void</span> <span class="fn">doPost</span>(<span class="type">HttpServletRequest</span> request, <span class="type">HttpServletResponse</span> response)
+            <span class="kw">throws</span> <span class="type">ServletException</span>, <span class="type">IOException</span> {
+
+        <span class="cmt">// getParameter() reads the value of the form field by its "name" attribute</span>
+        <span class="type">String</span> name  = request.<span class="fn">getParameter</span>(<span class="str">"name"</span>);   <span class="cmt">// "name" matches name="name"</span>
+        <span class="type">String</span> email = request.<span class="fn">getParameter</span>(<span class="str">"email"</span>);  <span class="cmt">// "email" matches name="email"</span>
+        <span class="type">String</span> age   = request.<span class="fn">getParameter</span>(<span class="str">"age"</span>);    <span class="cmt">// Always returns String!</span>
+
+        <span class="cmt">// If you need age as int, parse it</span>
+        <span class="kw">int</span> ageNum = <span class="type">Integer</span>.<span class="fn">parseInt</span>(age);
+
+        <span class="cmt">// Set response content type</span>
+        response.<span class="fn">setContentType</span>(<span class="str">"text/html"</span>);
+
+        <span class="cmt">// Get the writer and send HTML back</span>
+        <span class="type">PrintWriter</span> out = response.<span class="fn">getWriter</span>();
+        out.<span class="fn">println</span>(<span class="str">"&lt;h1&gt;Welcome, "</span> + name + <span class="str">"!&lt;/h1&gt;"</span>);
+        out.<span class="fn">println</span>(<span class="str">"&lt;p&gt;Email: "</span> + email + <span class="str">"&lt;/p&gt;"</span>);
+        out.<span class="fn">println</span>(<span class="str">"&lt;p&gt;Age: "</span> + ageNum + <span class="str">"&lt;/p&gt;"</span>);
+    }
+}
+</pre>
+
+<div class="box box-warn">
+  <div class="label">Important</div>
+  <code>getParameter()</code> always returns a <strong>String</strong>, even for number inputs. You must use <code>Integer.parseInt()</code> or <code>Double.parseDouble()</code> to convert if you need a number.
+</div>
+
+<div class="box box-key">
+  <div class="label">Request vs Response Summary</div>
+  <strong>Request</strong> = what the client sends TO the server (form data, cookies, headers).<br>
+  <strong>Response</strong> = what the server sends BACK to the client (HTML page, redirect, cookies).
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="forward-redirect">7. RequestDispatcher — forward() vs sendRedirect()</h2>
+
+<p>Two ways to move the user from one page/servlet to another. They look similar but behave very differently.</p>
+
+<h3>forward() — Server-side</h3>
+<pre>
+<span class="cmt">// forward(): the server internally sends the request to another resource</span>
+<span class="cmt">// The browser URL does NOT change</span>
+<span class="type">RequestDispatcher</span> rd = request.<span class="fn">getRequestDispatcher</span>(<span class="str">"welcome.jsp"</span>);
+rd.<span class="fn">forward</span>(request, response);    <span class="cmt">// same request & response objects are passed</span>
+</pre>
+
+<h3>sendRedirect() — Client-side</h3>
+<pre>
+<span class="cmt">// sendRedirect(): tells the browser to make a NEW request to a different URL</span>
+<span class="cmt">// The browser URL DOES change</span>
+response.<span class="fn">sendRedirect</span>(<span class="str">"welcome.jsp"</span>);    <span class="cmt">// browser sends a brand new request</span>
+</pre>
+
+<h3>include() — Include another resource's output</h3>
+<pre>
+<span class="cmt">// include(): adds another resource's output to the current response</span>
+<span class="cmt">// Useful for including headers, footers, etc.</span>
+<span class="type">RequestDispatcher</span> rd = request.<span class="fn">getRequestDispatcher</span>(<span class="str">"header.jsp"</span>);
+rd.<span class="fn">include</span>(request, response);    <span class="cmt">// output is added to current response</span>
+</pre>
+
+<h3>Comparison Table (HIGH PRIORITY for exam)</h3>
+<table>
+<tr><th>Feature</th><th>forward()</th><th>sendRedirect()</th></tr>
+<tr><td>Happens on</td><td>Server side</td><td>Client side (browser)</td></tr>
+<tr><td>URL in browser</td><td>Does NOT change</td><td>Changes to new URL</td></tr>
+<tr><td>Request object</td><td>Same request is passed</td><td>New request is created</td></tr>
+<tr><td>Speed</td><td>Faster (no extra round trip)</td><td>Slower (browser → server → browser → server)</td></tr>
+<tr><td>Data sharing</td><td>Request attributes are available</td><td>Request attributes are lost</td></tr>
+<tr><td>Can go to</td><td>Same web application only</td><td>Any URL (even external sites)</td></tr>
+<tr><td>HTTP status</td><td>No redirect status sent</td><td>302 status sent to browser</td></tr>
+</table>
+
+<div class="box box-exam">
+  <div class="label">Exam Favorite</div>
+  "What is the difference between forward() and sendRedirect()?" appears in almost every PRA paper. Memorize the table above. The key points: forward keeps the same request (URL doesn't change), sendRedirect creates a new request (URL changes).
+</div>
+
+<div class="box box-example">
+  <div class="label">When to use which</div>
+  <strong>forward()</strong> — After processing a form, show a result JSP page (internal navigation).<br>
+  <strong>sendRedirect()</strong> — After login, redirect to dashboard. After logout, redirect to login page. Redirecting to an external website.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="session-management">8. Session Management (IMPORTANT)</h2>
+
+<h3>Why Do We Need Sessions?</h3>
+<p><strong>HTTP is stateless.</strong> This means the server does not remember you between requests. Every request is treated as a brand new one. But in a real app (like a shopping cart), the server needs to remember who you are across multiple pages.</p>
+
+<p>Session management solves this. There are four ways to track users:</p>
+
+<h3>Method 1: HttpSession (Most Common)</h3>
+<pre>
+<span class="cmt">// CREATING/GETTING a session</span>
+<span class="type">HttpSession</span> session = request.<span class="fn">getSession</span>();  <span class="cmt">// creates new if none exists</span>
+
+<span class="cmt">// STORING data in the session</span>
+session.<span class="fn">setAttribute</span>(<span class="str">"username"</span>, <span class="str">"Darshan"</span>);  <span class="cmt">// key-value pair</span>
+session.<span class="fn">setAttribute</span>(<span class="str">"role"</span>, <span class="str">"admin"</span>);
+
+<span class="cmt">// READING data from the session (in another servlet/page)</span>
+<span class="type">String</span> user = (<span class="type">String</span>) session.<span class="fn">getAttribute</span>(<span class="str">"username"</span>);  <span class="cmt">// returns Object, must cast</span>
+
+<span class="cmt">// REMOVING a specific attribute</span>
+session.<span class="fn">removeAttribute</span>(<span class="str">"role"</span>);
+
+<span class="cmt">// DESTROYING the entire session (logout)</span>
+session.<span class="fn">invalidate</span>();    <span class="cmt">// session is gone, user is logged out</span>
+</pre>
+
+<div class="box box-key">
+  <div class="label">How HttpSession Works Internally</div>
+  1. First request: server creates a session with a unique ID (e.g., <code>JSESSIONID=abc123</code>)<br>
+  2. Server sends this ID to the browser as a cookie<br>
+  3. Every subsequent request: browser automatically sends the cookie back<br>
+  4. Server reads the ID, finds the matching session, and knows who you are
+</div>
+
+<h3>Method 2: Cookies</h3>
+<pre>
+<span class="cmt">// CREATING and sending a cookie to the browser</span>
+<span class="type">Cookie</span> cookie = <span class="kw">new</span> <span class="type">Cookie</span>(<span class="str">"username"</span>, <span class="str">"Darshan"</span>);  <span class="cmt">// name-value pair</span>
+cookie.<span class="fn">setMaxAge</span>(<span class="num">60</span> * <span class="num">60</span>);        <span class="cmt">// expires in 1 hour (seconds)</span>
+response.<span class="fn">addCookie</span>(cookie);         <span class="cmt">// sends it to the browser</span>
+
+<span class="cmt">// READING cookies from the request</span>
+<span class="type">Cookie</span>[] cookies = request.<span class="fn">getCookies</span>();  <span class="cmt">// returns array of all cookies</span>
+<span class="kw">if</span> (cookies != <span class="kw">null</span>) {
+    <span class="kw">for</span> (<span class="type">Cookie</span> c : cookies) {
+        <span class="kw">if</span> (c.<span class="fn">getName</span>().<span class="fn">equals</span>(<span class="str">"username"</span>)) {
+            <span class="type">String</span> user = c.<span class="fn">getValue</span>();   <span class="cmt">// "Darshan"</span>
+        }
+    }
+}
+
+<span class="cmt">// DELETING a cookie — set maxAge to 0</span>
+<span class="type">Cookie</span> deleteCookie = <span class="kw">new</span> <span class="type">Cookie</span>(<span class="str">"username"</span>, <span class="str">""</span>);
+deleteCookie.<span class="fn">setMaxAge</span>(<span class="num">0</span>);           <span class="cmt">// 0 = delete immediately</span>
+response.<span class="fn">addCookie</span>(deleteCookie);
+</pre>
+
+<h3>Method 3: URL Rewriting</h3>
+<p>When cookies are disabled, the session ID is added to the URL.</p>
+<pre>
+<span class="cmt">// URL rewriting — appends session ID to the URL</span>
+<span class="type">String</span> encodedURL = response.<span class="fn">encodeURL</span>(<span class="str">"nextpage.jsp"</span>);
+<span class="cmt">// Result: nextpage.jsp;jsessionid=abc123</span>
+out.<span class="fn">println</span>(<span class="str">"&lt;a href='"</span> + encodedURL + <span class="str">"'&gt;Next Page&lt;/a&gt;"</span>);
+</pre>
+
+<h3>Method 4: Hidden Form Fields</h3>
+<pre>
+<span class="cmt">&lt;!-- Hidden field carries data that the user cannot see --&gt;</span>
+&lt;<span class="kw">form</span> action=<span class="str">"nextServlet"</span> method=<span class="str">"post"</span>&gt;
+    &lt;<span class="kw">input</span> type=<span class="str">"hidden"</span> name=<span class="str">"userId"</span> value=<span class="str">"12345"</span>&gt;
+    &lt;<span class="kw">button</span> type=<span class="str">"submit"</span>&gt;Continue&lt;/<span class="kw">button</span>&gt;
+&lt;/<span class="kw">form</span>&gt;
+</pre>
+
+<h3>Comparison of All Four Methods</h3>
+<table>
+<tr><th>Method</th><th>Stored On</th><th>Works Without Cookies?</th><th>Security</th><th>Use Case</th></tr>
+<tr><td>HttpSession</td><td>Server</td><td>No (uses cookie for session ID)</td><td>Most secure</td><td>Login sessions, shopping carts</td></tr>
+<tr><td>Cookies</td><td>Client (browser)</td><td>N/A (it IS cookies)</td><td>Less secure (can be tampered)</td><td>Remember me, preferences</td></tr>
+<tr><td>URL Rewriting</td><td>URL</td><td>Yes</td><td>Least secure (visible in URL)</td><td>Fallback when cookies disabled</td></tr>
+<tr><td>Hidden Form Fields</td><td>HTML form</td><td>Yes</td><td>Moderate</td><td>Multi-step forms</td></tr>
+</table>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  "List session tracking techniques in Servlets" — answer all four: HttpSession, Cookies, URL Rewriting, Hidden Form Fields. Most common follow-up: "Which is most commonly used?" — <strong>HttpSession</strong>.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="filters">9. Filters</h2>
+
+<p>A <strong>Filter</strong> intercepts requests <em>before</em> they reach the Servlet and responses <em>after</em> the Servlet processes them. Think of it as a security guard at the door.</p>
+
+<h3>Use Cases</h3>
+<ul>
+  <li>Logging every request (who accessed what, when)</li>
+  <li>Authentication check (is the user logged in?)</li>
+  <li>Input validation</li>
+  <li>Response compression</li>
+  <li>Setting character encoding</li>
+</ul>
+
+<h3>Filter Lifecycle</h3>
+<p>Same pattern as Servlet: <code>init()</code> → <code>doFilter()</code> → <code>destroy()</code></p>
+
+<pre>
+<span class="kw">import</span> javax.servlet.*;
+<span class="kw">import</span> java.io.*;
+
+<span class="kw">public class</span> <span class="type">LoggingFilter</span> <span class="kw">implements</span> <span class="type">Filter</span> {
+
+    <span class="cmt">// Called once when filter is loaded</span>
+    <span class="kw">public void</span> <span class="fn">init</span>(<span class="type">FilterConfig</span> config) {
+        <span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"Filter initialized"</span>);
+    }
+
+    <span class="cmt">// Called for every matching request</span>
+    <span class="kw">public void</span> <span class="fn">doFilter</span>(<span class="type">ServletRequest</span> request, <span class="type">ServletResponse</span> response,
+                         <span class="type">FilterChain</span> chain)
+            <span class="kw">throws</span> <span class="type">IOException</span>, <span class="type">ServletException</span> {
+
+        <span class="cmt">// Code here runs BEFORE the servlet</span>
+        <span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"Request received at: "</span> + <span class="kw">new</span> java.util.<span class="type">Date</span>());
+
+        <span class="cmt">// Pass the request to the next filter or servlet</span>
+        chain.<span class="fn">doFilter</span>(request, response);  <span class="cmt">// THIS LINE IS CRITICAL</span>
+
+        <span class="cmt">// Code here runs AFTER the servlet has processed the request</span>
+        <span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"Response sent"</span>);
+    }
+
+    <span class="cmt">// Called once when filter is destroyed</span>
+    <span class="kw">public void</span> <span class="fn">destroy</span>() {
+        <span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"Filter destroyed"</span>);
+    }
+}
+</pre>
+
+<div class="box box-warn">
+  <div class="label">Critical</div>
+  If you forget to call <code>chain.doFilter(request, response)</code>, the request will NEVER reach the servlet. The user will see a blank page. Always call it unless you intentionally want to block the request (e.g., unauthorized user).
+</div>
+
+<h3>Configuring a Filter in web.xml</h3>
+<pre>
+&lt;<span class="kw">filter</span>&gt;
+    &lt;<span class="kw">filter-name</span>&gt;<span class="str">LoggingFilter</span>&lt;/<span class="kw">filter-name</span>&gt;
+    &lt;<span class="kw">filter-class</span>&gt;<span class="str">com.example.LoggingFilter</span>&lt;/<span class="kw">filter-class</span>&gt;
+&lt;/<span class="kw">filter</span>&gt;
+&lt;<span class="kw">filter-mapping</span>&gt;
+    &lt;<span class="kw">filter-name</span>&gt;<span class="str">LoggingFilter</span>&lt;/<span class="kw">filter-name</span>&gt;
+    &lt;<span class="kw">url-pattern</span>&gt;<span class="str">/*</span>&lt;/<span class="kw">url-pattern</span>&gt;    <span class="cmt">&lt;!-- applies to ALL URLs --&gt;</span>
+&lt;/<span class="kw">filter-mapping</span>&gt;
+</pre>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="listeners">10. Listeners</h2>
+
+<p>Listeners "listen" for events in the web application — like when the app starts, a session is created, or an attribute changes. You write code that runs automatically when these events happen.</p>
+
+<h3>Common Listeners</h3>
+<table>
+<tr><th>Listener</th><th>Listens For</th><th>Methods</th></tr>
+<tr><td><code>ServletContextListener</code></td><td>App startup and shutdown</td><td><code>contextInitialized()</code>, <code>contextDestroyed()</code></td></tr>
+<tr><td><code>HttpSessionListener</code></td><td>Session created/destroyed</td><td><code>sessionCreated()</code>, <code>sessionDestroyed()</code></td></tr>
+<tr><td><code>ServletRequestListener</code></td><td>Request created/destroyed</td><td><code>requestInitialized()</code>, <code>requestDestroyed()</code></td></tr>
+<tr><td><code>HttpSessionAttributeListener</code></td><td>Session attribute added/removed/replaced</td><td><code>attributeAdded()</code>, <code>attributeRemoved()</code>, <code>attributeReplaced()</code></td></tr>
+</table>
+
+<pre>
+<span class="kw">import</span> javax.servlet.*;
+<span class="kw">import</span> javax.servlet.annotation.WebListener;
+
+<span class="kw">@WebListener</span>       <span class="cmt">// annotation-based registration</span>
+<span class="kw">public class</span> <span class="type">AppStartListener</span> <span class="kw">implements</span> <span class="type">ServletContextListener</span> {
+
+    <span class="cmt">// Runs when the web application STARTS</span>
+    <span class="kw">public void</span> <span class="fn">contextInitialized</span>(<span class="type">ServletContextEvent</span> event) {
+        <span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"Application started!"</span>);
+        <span class="cmt">// Good place to: load config, initialize DB connection pool, etc.</span>
+    }
+
+    <span class="cmt">// Runs when the web application STOPS</span>
+    <span class="kw">public void</span> <span class="fn">contextDestroyed</span>(<span class="type">ServletContextEvent</span> event) {
+        <span class="type">System</span>.out.<span class="fn">println</span>(<span class="str">"Application stopped!"</span>);
+        <span class="cmt">// Good place to: close connections, cleanup resources</span>
+    }
+}
+</pre>
+
+<div class="box box-tip">
+  <div class="label">When to use Listeners</div>
+  <strong>ServletContextListener</strong> — run code when the app starts (load config) or stops (cleanup).<br>
+  <strong>HttpSessionListener</strong> — track how many users are currently logged in by counting active sessions.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="web-xml">11. web.xml Configuration</h2>
+
+<p>The <code>web.xml</code> file is the <strong>deployment descriptor</strong>. It lives inside the <code>WEB-INF</code> folder and tells Tomcat how to configure your web application.</p>
+
+<pre>
+&lt;?xml version=<span class="str">"1.0"</span> encoding=<span class="str">"UTF-8"</span>?&gt;
+&lt;<span class="kw">web-app</span> xmlns=<span class="str">"http://xmlns.jcp.org/xml/ns/javaee"</span> version=<span class="str">"4.0"</span>&gt;
+
+    <span class="cmt">&lt;!-- 1. SERVLET REGISTRATION --&gt;</span>
+    &lt;<span class="kw">servlet</span>&gt;
+        &lt;<span class="kw">servlet-name</span>&gt;<span class="str">MyServlet</span>&lt;/<span class="kw">servlet-name</span>&gt;
+        &lt;<span class="kw">servlet-class</span>&gt;<span class="str">com.example.MyServlet</span>&lt;/<span class="kw">servlet-class</span>&gt;
+
+        <span class="cmt">&lt;!-- Init parameters — specific to this servlet --&gt;</span>
+        &lt;<span class="kw">init-param</span>&gt;
+            &lt;<span class="kw">param-name</span>&gt;<span class="str">dbURL</span>&lt;/<span class="kw">param-name</span>&gt;
+            &lt;<span class="kw">param-value</span>&gt;<span class="str">jdbc:mysql://localhost:3306/mydb</span>&lt;/<span class="kw">param-value</span>&gt;
+        &lt;/<span class="kw">init-param</span>&gt;
+    &lt;/<span class="kw">servlet</span>&gt;
+
+    <span class="cmt">&lt;!-- 2. URL MAPPING --&gt;</span>
+    &lt;<span class="kw">servlet-mapping</span>&gt;
+        &lt;<span class="kw">servlet-name</span>&gt;<span class="str">MyServlet</span>&lt;/<span class="kw">servlet-name</span>&gt;
+        &lt;<span class="kw">url-pattern</span>&gt;<span class="str">/myservlet</span>&lt;/<span class="kw">url-pattern</span>&gt;
+    &lt;/<span class="kw">servlet-mapping</span>&gt;
+
+    <span class="cmt">&lt;!-- 3. CONTEXT PARAMETERS — shared across ALL servlets --&gt;</span>
+    &lt;<span class="kw">context-param</span>&gt;
+        &lt;<span class="kw">param-name</span>&gt;<span class="str">appName</span>&lt;/<span class="kw">param-name</span>&gt;
+        &lt;<span class="kw">param-value</span>&gt;<span class="str">My Web App</span>&lt;/<span class="kw">param-value</span>&gt;
+    &lt;/<span class="kw">context-param</span>&gt;
+
+    <span class="cmt">&lt;!-- 4. WELCOME FILE — default page when visiting root URL --&gt;</span>
+    &lt;<span class="kw">welcome-file-list</span>&gt;
+        &lt;<span class="kw">welcome-file</span>&gt;<span class="str">index.html</span>&lt;/<span class="kw">welcome-file</span>&gt;
+        &lt;<span class="kw">welcome-file</span>&gt;<span class="str">index.jsp</span>&lt;/<span class="kw">welcome-file</span>&gt;
+    &lt;/<span class="kw">welcome-file-list</span>&gt;
+
+    <span class="cmt">&lt;!-- 5. ERROR PAGE — custom error pages --&gt;</span>
+    &lt;<span class="kw">error-page</span>&gt;
+        &lt;<span class="kw">error-code</span>&gt;<span class="num">404</span>&lt;/<span class="kw">error-code</span>&gt;
+        &lt;<span class="kw">location</span>&gt;<span class="str">/error404.html</span>&lt;/<span class="kw">location</span>&gt;
+    &lt;/<span class="kw">error-page</span>&gt;
+    &lt;<span class="kw">error-page</span>&gt;
+        &lt;<span class="kw">error-code</span>&gt;<span class="num">500</span>&lt;/<span class="kw">error-code</span>&gt;
+        &lt;<span class="kw">location</span>&gt;<span class="str">/error500.html</span>&lt;/<span class="kw">location</span>&gt;
+    &lt;/<span class="kw">error-page</span>&gt;
+
+&lt;/<span class="kw">web-app</span>&gt;
+</pre>
+
+<h3>init-param vs context-param</h3>
+<table>
+<tr><th>Feature</th><th>init-param</th><th>context-param</th></tr>
+<tr><td>Scope</td><td>Specific to one servlet</td><td>Shared across entire application</td></tr>
+<tr><td>Defined inside</td><td><code>&lt;servlet&gt;</code> tag</td><td>Directly inside <code>&lt;web-app&gt;</code> tag</td></tr>
+<tr><td>Access via</td><td><code>getServletConfig().getInitParameter("name")</code></td><td><code>getServletContext().getInitParameter("name")</code></td></tr>
+<tr><td>Use case</td><td>DB URL for a specific servlet</td><td>App name, admin email — shared info</td></tr>
+</table>
+
+<div class="box box-exam">
+  <div class="label">Exam Tip</div>
+  "How do you read an init-param in a servlet?" — <code>getServletConfig().getInitParameter("paramName")</code><br>
+  "How do you read a context-param?" — <code>getServletContext().getInitParameter("paramName")</code><br>
+  Notice: both use <code>getInitParameter()</code>, but one uses <code>ServletConfig</code> and the other uses <code>ServletContext</code>.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="servlet-vs-jsp">12. Servlet vs JSP</h2>
+
+<table>
+<tr><th>Feature</th><th>Servlet</th><th>JSP</th></tr>
+<tr><td>What it is</td><td>Java class with HTML inside Java code</td><td>HTML page with Java code inside</td></tr>
+<tr><td>Good for</td><td>Processing logic (controllers)</td><td>Displaying output (views)</td></tr>
+<tr><td>Modification</td><td>Requires recompilation</td><td>Auto-compiled by container</td></tr>
+<tr><td>MVC role</td><td>Controller</td><td>View</td></tr>
+<tr><td>Internally</td><td>Stays as a Servlet</td><td>Gets converted TO a Servlet by the container</td></tr>
+</table>
+
+<div class="box box-key">
+  <div class="label">Key Fact</div>
+  Every JSP page is internally compiled into a Servlet by the container. JSP is just a convenient way to write the "view" part without doing <code>out.println()</code> for every line of HTML.
+</div>
+
+<pre>
+<span class="cmt">// Servlet way — writing HTML inside Java (messy for large pages)</span>
+out.<span class="fn">println</span>(<span class="str">"&lt;html&gt;&lt;body&gt;"</span>);
+out.<span class="fn">println</span>(<span class="str">"&lt;h1&gt;Hello, "</span> + name + <span class="str">"&lt;/h1&gt;"</span>);
+out.<span class="fn">println</span>(<span class="str">"&lt;/body&gt;&lt;/html&gt;"</span>);
+
+<span class="cmt">// JSP way — writing Java inside HTML (much cleaner for pages)</span>
+<span class="cmt">// &lt;html&gt;&lt;body&gt;</span>
+<span class="cmt">// &lt;h1&gt;Hello, &lt;%= name %&gt;&lt;/h1&gt;</span>
+<span class="cmt">// &lt;/body&gt;&lt;/html&gt;</span>
+</pre>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h2 id="practice">13. Practice Questions</h2>
+
+<!-- Q1 -->
+<div class="practice">
+  <div class="q-label">Question 1</div>
+  <div class="question">What is the correct order of the Servlet lifecycle?</div>
+  <ol class="options">
+    <li>service() → init() → destroy()</li>
+    <li>init() → destroy() → service()</li>
+    <li>init() → service() → destroy()</li>
+    <li>destroy() → init() → service()</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) init() → service() → destroy(). init() is called once when the servlet loads, service() for every request, destroy() once when unloading.</div>
+</div>
+
+<!-- Q2 -->
+<div class="practice">
+  <div class="q-label">Question 2</div>
+  <div class="question">Which method is called for every HTTP request received by a servlet?</div>
+  <ol class="options">
+    <li>init()</li>
+    <li>destroy()</li>
+    <li>service()</li>
+    <li>doGet()</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) service(). The service() method is called for every request. It then internally dispatches to doGet() or doPost() based on the request type.</div>
+</div>
+
+<!-- Q3 -->
+<div class="practice">
+  <div class="q-label">Question 3</div>
+  <div class="question">What is the difference between forward() and sendRedirect()?</div>
+  <ol class="options">
+    <li>forward() changes the URL, sendRedirect() does not</li>
+    <li>forward() is client-side, sendRedirect() is server-side</li>
+    <li>forward() keeps the same request, sendRedirect() creates a new request</li>
+    <li>There is no difference</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) forward() keeps the same request object and URL doesn't change (server-side). sendRedirect() tells the browser to make a new request, URL changes (client-side).</div>
+</div>
+
+<!-- Q4 -->
+<div class="practice">
+  <div class="q-label">Question 4</div>
+  <div class="question">Which of the following is NOT a session tracking technique in Servlets?</div>
+  <ol class="options">
+    <li>HttpSession</li>
+    <li>Cookies</li>
+    <li>URL Rewriting</li>
+    <li>JDBC Connection</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="3">D) JDBC Connection. JDBC is for database access, not session tracking. The four session tracking techniques are: HttpSession, Cookies, URL Rewriting, and Hidden Form Fields.</div>
+</div>
+
+<!-- Q5 -->
+<div class="practice">
+  <div class="q-label">Question 5</div>
+  <div class="question">What does <code>request.getParameter("name")</code> return?</div>
+  <ol class="options">
+    <li>An int value</li>
+    <li>A String value</li>
+    <li>An Object</li>
+    <li>A boolean</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) A String value. getParameter() always returns a String, even if the form field is a number. You need to use Integer.parseInt() to convert it.</div>
+</div>
+
+<!-- Q6 -->
+<div class="practice">
+  <div class="q-label">Question 6</div>
+  <div class="question">In which HTTP method is data sent as part of the URL?</div>
+  <ol class="options">
+    <li>POST</li>
+    <li>GET</li>
+    <li>PUT</li>
+    <li>DELETE</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) GET. In GET requests, data is appended to the URL as a query string (e.g., /search?q=java). POST sends data in the request body, hidden from the URL.</div>
+</div>
+
+<!-- Q7 -->
+<div class="practice">
+  <div class="q-label">Question 7</div>
+  <div class="question">What happens if you do not call <code>chain.doFilter()</code> in a Filter?</div>
+  <ol class="options">
+    <li>The filter is skipped</li>
+    <li>The request reaches the servlet normally</li>
+    <li>The request never reaches the servlet</li>
+    <li>An exception is thrown</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) The request never reaches the servlet. chain.doFilter() is what passes the request along to the next filter or the servlet. Without it, the chain is broken.</div>
+</div>
+
+<!-- Q8 -->
+<div class="practice">
+  <div class="q-label">Question 8</div>
+  <div class="question">Which annotation is used to map a servlet to a URL pattern without web.xml?</div>
+  <ol class="options">
+    <li>@ServletMapping</li>
+    <li>@WebServlet</li>
+    <li>@HttpServlet</li>
+    <li>@URLPattern</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) @WebServlet. Example: <code>@WebServlet("/hello")</code> maps the servlet to the /hello URL pattern. This replaces the servlet and servlet-mapping tags in web.xml.</div>
+</div>
+
+<!-- Q9 -->
+<div class="practice">
+  <div class="q-label">Question 9</div>
+  <div class="question">How do you destroy/invalidate a user session in a Servlet?</div>
+  <ol class="options">
+    <li>session.close()</li>
+    <li>session.destroy()</li>
+    <li>session.invalidate()</li>
+    <li>session.end()</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) session.invalidate(). This method destroys the session and removes all attributes stored in it. Commonly used for logout functionality.</div>
+</div>
+
+<!-- Q10 -->
+<div class="practice">
+  <div class="q-label">Question 10</div>
+  <div class="question">Which method of HttpServletResponse is used to send the browser to a different URL?</div>
+  <ol class="options">
+    <li>response.forward("url")</li>
+    <li>response.sendRedirect("url")</li>
+    <li>response.redirect("url")</li>
+    <li>response.dispatch("url")</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) response.sendRedirect("url"). This sends a 302 redirect to the browser, which then makes a new GET request to the specified URL.</div>
+</div>
+
+<!-- Q11 -->
+<div class="practice">
+  <div class="q-label">Question 11</div>
+  <div class="question">What is the purpose of the <code>&lt;welcome-file-list&gt;</code> in web.xml?</div>
+  <ol class="options">
+    <li>Lists all servlets in the application</li>
+    <li>Specifies default pages to load when visiting the root URL</li>
+    <li>Lists all filter mappings</li>
+    <li>Specifies error pages</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) Specifies default pages. When a user visits http://localhost:8080/myapp/ (no specific page), the container looks for the files listed in welcome-file-list in order.</div>
+</div>
+
+<!-- Q12 -->
+<div class="practice">
+  <div class="q-label">Question 12</div>
+  <div class="question">What is the difference between <code>init-param</code> and <code>context-param</code> in web.xml?</div>
+  <ol class="options">
+    <li>init-param is for the entire app, context-param is for one servlet</li>
+    <li>init-param is for one servlet, context-param is for the entire app</li>
+    <li>They are the same thing</li>
+    <li>init-param is for filters only</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) init-param is specific to one servlet (defined inside the &lt;servlet&gt; tag). context-param is shared across the entire application (defined directly in &lt;web-app&gt;).</div>
+</div>
+
+<!-- Q13 -->
+<div class="practice">
+  <div class="q-label">Question 13</div>
+  <div class="question">Why are Servlets better than CGI?</div>
+  <ol class="options">
+    <li>Servlets use C++ which is faster</li>
+    <li>Servlets create a new process for each request</li>
+    <li>Servlets use threads instead of processes, so they are faster and use less memory</li>
+    <li>CGI and Servlets have the same performance</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) Servlets use threads (lightweight) instead of processes (heavy). A thread shares memory with other threads, so the server uses less memory and can handle more concurrent requests.</div>
+</div>
+
+<!-- Q14 -->
+<div class="practice">
+  <div class="q-label">Question 14</div>
+  <div class="question">Which interface must a class implement to act as a Servlet Filter?</div>
+  <ol class="options">
+    <li>javax.servlet.Servlet</li>
+    <li>javax.servlet.Filter</li>
+    <li>javax.servlet.FilterChain</li>
+    <li>javax.servlet.http.HttpFilter</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) javax.servlet.Filter. The Filter interface requires implementing three methods: init(), doFilter(), and destroy().</div>
+</div>
+
+<!-- Q15 -->
+<div class="practice">
+  <div class="q-label">Question 15</div>
+  <div class="question">What does a JSP page get converted to internally?</div>
+  <ol class="options">
+    <li>A static HTML file</li>
+    <li>A JavaScript file</li>
+    <li>A Servlet</li>
+    <li>A PHP script</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) A Servlet. The JSP container (like Tomcat) compiles every JSP page into a Servlet class behind the scenes. JSP is essentially syntactic sugar for Servlets.</div>
+</div>
+
+<!-- Q16 -->
+<div class="practice">
+  <div class="q-label">Question 16</div>
+  <div class="question">Which method of HttpServletRequest is used to get the HttpSession object?</div>
+  <ol class="options">
+    <li>request.createSession()</li>
+    <li>request.getSession()</li>
+    <li>request.session()</li>
+    <li>request.getHttpSession()</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) request.getSession(). If a session already exists, it returns the existing one. If not, it creates a new session. You can pass false — getSession(false) — to return null instead of creating a new one.</div>
+</div>
+
+<!-- Q17 -->
+<div class="practice">
+  <div class="q-label">Question 17</div>
+  <div class="question">Which listener is used to detect when a web application starts or shuts down?</div>
+  <ol class="options">
+    <li>HttpSessionListener</li>
+    <li>ServletRequestListener</li>
+    <li>ServletContextListener</li>
+    <li>HttpSessionAttributeListener</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="2">C) ServletContextListener. It has two methods: contextInitialized() runs when the app starts, and contextDestroyed() runs when the app shuts down.</div>
+</div>
+
+<!-- Q18 -->
+<div class="practice">
+  <div class="q-label">Question 18</div>
+  <div class="question">In forward(), does the URL in the browser change?</div>
+  <ol class="options">
+    <li>Yes, it changes to the forwarded URL</li>
+    <li>No, it stays the same as the original request URL</li>
+    <li>It depends on the server configuration</li>
+    <li>It shows a blank URL</li>
+  </ol>
+  <button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+  <div class="answer" data-correct="1">B) No, the URL stays the same. forward() is server-side — the browser never knows the request was forwarded internally. Only sendRedirect() changes the URL because it tells the browser to make a new request.</div>
+</div>
+
+</section>
+
+  <div class="footer">
+    <a href="jdbc.html">← JDBC</a> |
+    <a href="springboot.html">Spring Boot →</a>
+  </div>
+</div>
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

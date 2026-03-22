@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#sql-basics">SQL Basics &amp; Terminology</a>
+  <a href="#data-types">Data Types</a>
+  <a href="#ddl">DDL — CREATE, ALTER, DROP</a>
+  <a href="#dml">DML — INSERT, UPDATE, DELETE</a>
+  <a href="#select">SELECT &amp; Filtering</a>
+  <a href="#operators">Operators &amp; Conditions</a>
+  <a href="#functions">SQL Functions</a>
+  <a href="#group-by">GROUP BY &amp; HAVING</a>
+  <a href="#joins">JOINs</a>
+  <a href="#subqueries">Subqueries</a>
+  <a href="#set-ops">Set Operations</a>
+  <a href="#constraints">Constraints &amp; Keys</a>
+  <a href="#normalization">Normalization</a>
+  <a href="#views">Views</a>
+  <a href="#indexes">Indexes</a>
+  <a href="#transactions">Transactions &amp; TCL</a>
+  <a href="#dcl">DCL — GRANT &amp; REVOKE</a>
+  <a href="#misc">Miscellaneous Concepts</a>
+  <a href="#practice">Practice Questions</a>
+</nav>
+<div class="main">
+
+<section id="sql" class="sec-sql">
+<h2>SQL — Structured Query Language</h2>
+
+<div class="box box-exam">
+  <div class="label">Exam Relevance</div>
+  <strong>FA Round 1:</strong> 5 MCQs on SQL<br>
+  <strong>PRA:</strong> SQL queries and database concepts<br>
+  <strong>Sprints:</strong> Sprint 2 (database integration)<br>
+  SQL appears in almost every exam. Easy marks once you know the patterns.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="sql-basics">SQL Basics & Terminology</h3>
+
+<p>Imagine you have thousands of customer records. You <em>could</em> store them in a giant Excel file — but what happens when 50 people need to read and update that file at the same time? Chaos. Data gets overwritten, duplicated, corrupted.</p>
+
+<p>That is exactly why <strong>databases</strong> exist. A database is like a super-powered Excel that can handle millions of rows, lets hundreds of people access it simultaneously, and ensures data never gets corrupted. <strong>SQL</strong> (Structured Query Language) is the language you use to talk to this database — to ask questions, insert data, update records, or delete rows.</p>
+
+<div class="box box-tip">
+  <div class="label">Think of it this way</div>
+  A database is a warehouse full of organized filing cabinets. SQL is the language you use to tell the warehouse manager: "Get me all customer files from Mumbai" or "Add this new employee file." You never touch the cabinets yourself — you give SQL instructions and the database engine does the work.
+</div>
+
+<table>
+<tr><th>Term</th><th>Meaning</th><th>Real-World Analogy</th></tr>
+<tr><td><strong>Database</strong></td><td>Organized collection of structured data</td><td>The entire warehouse of filing cabinets</td></tr>
+<tr><td><strong>Table</strong></td><td>Collection of rows and columns (like a spreadsheet)</td><td>One spreadsheet/filing cabinet for "employees"</td></tr>
+<tr><td><strong>Row (Record/Tuple)</strong></td><td>A single entry in a table</td><td>One employee's complete file</td></tr>
+<tr><td><strong>Column (Field/Attribute)</strong></td><td>A property of the data</td><td>One piece of info — name, salary, department</td></tr>
+<tr><td><strong>Schema</strong></td><td>Structure/blueprint of the database</td><td>The blueprint that says "employees table has columns: id, name, salary"</td></tr>
+<tr><td><strong>Primary Key</strong></td><td>Uniquely identifies each row</td><td>Like an Aadhaar number — no two people share one</td></tr>
+<tr><td><strong>Foreign Key</strong></td><td>Links one table to another</td><td>Your department ID on your employee file — it points to the departments table</td></tr>
+<tr><td><strong>RDBMS</strong></td><td>Relational Database Management System (Oracle, MySQL, PostgreSQL)</td><td>The warehouse manager software that runs everything</td></tr>
+</table>
+
+<h4>SQL Command Categories</h4>
+<p>SQL commands are grouped by what they do. This is one of the most commonly tested concepts — expect at least one MCQ on this.</p>
+
+<table>
+<tr><th>Category</th><th>Commands</th><th>Purpose</th><th>Memory Trick</th></tr>
+<tr><td><strong>DDL</strong> (Data Definition)</td><td>CREATE, ALTER, DROP, TRUNCATE</td><td>Define/modify table structure</td><td>"Building the filing cabinet itself"</td></tr>
+<tr><td><strong>DML</strong> (Data Manipulation)</td><td>INSERT, UPDATE, DELETE, SELECT</td><td>Manipulate data in tables</td><td>"Working with the files inside the cabinet"</td></tr>
+<tr><td><strong>DCL</strong> (Data Control)</td><td>GRANT, REVOKE</td><td>Control access/permissions</td><td>"Giving/taking away keys to the cabinet"</td></tr>
+<tr><td><strong>TCL</strong> (Transaction Control)</td><td>COMMIT, ROLLBACK, SAVEPOINT</td><td>Manage transactions</td><td>"Save game / load last checkpoint"</td></tr>
+</table>
+
+<div class="box box-key">
+  <div class="label">FA Favorite</div>
+  "Which category does X command belong to?" — This is a guaranteed MCQ. Memorize the table above. Remember: TRUNCATE is DDL (not DML!), and SELECT is DML.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which SQL command category does TRUNCATE belong to?</p>
+  <ol class="options">
+    <li>DML</li>
+    <li>DDL</li>
+    <li>DCL</li>
+    <li>TCL</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">TRUNCATE is DDL (Data Definition Language), not DML. This is a common exam trap because TRUNCATE removes data like DELETE, but it operates on the table structure level. Key difference: DDL commands auto-commit and cannot be rolled back.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="data-types">Data Types</h3>
+
+<p>Before you store data, the database needs to know <em>what kind</em> of data each column will hold. You would not store someone's name in a number field, right? Data types are like labels on filing cabinet drawers — "this drawer only holds numbers," "this one holds text up to 50 characters."</p>
+
+<table>
+<tr><th>Data Type</th><th>Description</th><th>Example</th></tr>
+<tr><td><code>NUMBER(p,s)</code></td><td>Numeric — p = precision (total digits), s = scale (decimal digits)</td><td><code>NUMBER(8,2)</code> → 123456.78</td></tr>
+<tr><td><code>VARCHAR2(n)</code></td><td>Variable-length string (Oracle)</td><td><code>VARCHAR2(50)</code></td></tr>
+<tr><td><code>VARCHAR(n)</code></td><td>Variable-length string (MySQL)</td><td><code>VARCHAR(100)</code></td></tr>
+<tr><td><code>CHAR(n)</code></td><td>Fixed-length string, padded with spaces</td><td><code>CHAR(10)</code></td></tr>
+<tr><td><code>DATE</code></td><td>Date value</td><td><code>'2026-03-22'</code></td></tr>
+<tr><td><code>INT / INTEGER</code></td><td>Whole number</td><td><code>42</code></td></tr>
+<tr><td><code>FLOAT</code></td><td>Floating-point number</td><td><code>3.14</code></td></tr>
+<tr><td><code>CLOB</code></td><td>Large text (Character Large Object)</td><td>Long articles</td></tr>
+<tr><td><code>BLOB</code></td><td>Binary data (Binary Large Object)</td><td>Images, files</td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">VARCHAR vs CHAR — When to use which?</div>
+  Imagine you have a column for Indian state codes (always 2 characters: "MH", "KA", "TN"). Use <code>CHAR(2)</code> — it is always exactly 2 characters, so fixed-length is perfect and slightly faster.<br><br>
+  Now imagine a column for employee names — "Raj" is 3 characters, "Darshanakrishnamurthy" is 21 characters. Use <code>VARCHAR(50)</code> — it only stores what you give it. <code>CHAR(50)</code> would waste space by padding "Raj" with 47 spaces.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">If you define a column as <code>CHAR(10)</code> and store the value <code>'Hi'</code>, how many bytes does it occupy?</p>
+  <ol class="options">
+    <li>2 bytes</li>
+    <li>10 bytes</li>
+    <li>8 bytes</li>
+    <li>Depends on the database</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">CHAR(10) always stores exactly 10 bytes. The value 'Hi' gets padded with 8 spaces to fill the remaining space. This is why VARCHAR is preferred for variable-length data — it only uses the bytes it needs.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="ddl">DDL — CREATE, ALTER, DROP</h3>
+
+<p>DDL is about building and modifying the <em>structure</em> — the table itself, not the data inside it. Think of it as construction work: you are building the filing cabinet (CREATE), adding a new drawer to it (ALTER), or demolishing the entire cabinet (DROP).</p>
+
+<h4>CREATE TABLE</h4>
+<pre><span class="kw">CREATE TABLE</span> employees (
+    emp_id    <span class="type">NUMBER</span>(6)     <span class="kw">PRIMARY KEY</span>,
+    emp_name  <span class="type">VARCHAR2</span>(50) <span class="kw">NOT NULL</span>,
+    salary    <span class="type">NUMBER</span>(10,2) <span class="kw">DEFAULT</span> <span class="num">0</span>,
+    dept_id   <span class="type">NUMBER</span>(4),
+    hire_date <span class="type">DATE</span>,
+    <span class="kw">FOREIGN KEY</span> (dept_id) <span class="kw">REFERENCES</span> departments(dept_id)
+);</pre>
+
+<h4>ALTER TABLE</h4>
+<p>Your table is already live with data in it, but you realize you forgot to add an email column. You cannot DROP and recreate — you'd lose all data. ALTER lets you modify a live table.</p>
+
+<pre><span class="cmt">-- Add a column</span>
+<span class="kw">ALTER TABLE</span> employees <span class="kw">ADD</span> email <span class="type">VARCHAR2</span>(100);
+
+<span class="cmt">-- Modify a column</span>
+<span class="kw">ALTER TABLE</span> employees <span class="kw">MODIFY</span> emp_name <span class="type">VARCHAR2</span>(100);
+
+<span class="cmt">-- Drop a column</span>
+<span class="kw">ALTER TABLE</span> employees <span class="kw">DROP COLUMN</span> email;
+
+<span class="cmt">-- Rename a column (Oracle)</span>
+<span class="kw">ALTER TABLE</span> employees <span class="kw">RENAME COLUMN</span> emp_name <span class="kw">TO</span> full_name;
+
+<span class="cmt">-- Add a constraint</span>
+<span class="kw">ALTER TABLE</span> employees <span class="kw">ADD CONSTRAINT</span> chk_sal <span class="kw">CHECK</span> (salary > <span class="num">0</span>);</pre>
+
+<h4>DROP & TRUNCATE</h4>
+<pre><span class="cmt">-- Drop table entirely (structure + data gone)</span>
+<span class="kw">DROP TABLE</span> employees;
+
+<span class="cmt">-- Remove all rows but keep structure (cannot rollback)</span>
+<span class="kw">TRUNCATE TABLE</span> employees;</pre>
+
+<div class="box box-warn">
+  <div class="label">DROP vs TRUNCATE vs DELETE — Know the difference cold</div>
+  <strong>DROP</strong> = demolish the entire filing cabinet. Structure + data gone. Cannot be undone.<br>
+  <strong>TRUNCATE</strong> = empty every file from the cabinet, but the cabinet itself stays. Cannot be rolled back because it is DDL.<br>
+  <strong>DELETE</strong> = remove specific files (or all files) from the cabinet. Can be rolled back because it is DML. Can use WHERE to pick which rows to remove.<br><br>
+  <strong>Speed:</strong> TRUNCATE is much faster than DELETE for large tables because it does not log individual row deletions.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">You accidentally ran <code>TRUNCATE TABLE employees;</code> on production. Can you ROLLBACK to undo it?</p>
+  <ol class="options">
+    <li>Yes, ROLLBACK undoes any data changes</li>
+    <li>No, TRUNCATE is DDL and auto-commits — it cannot be rolled back</li>
+    <li>Yes, but only if you use SAVEPOINT first</li>
+    <li>No, but DELETE FROM employees can also not be rolled back</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">TRUNCATE is a DDL command. In Oracle, all DDL commands issue an automatic COMMIT. Once committed, there is no going back with ROLLBACK. This is why TRUNCATE is dangerous on production. DELETE (DML) can be rolled back because it does not auto-commit.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="dml">DML — INSERT, UPDATE, DELETE</h3>
+
+<p>If DDL builds the cabinet, DML is what you do with the files inside it every day — adding new files (INSERT), updating information on existing files (UPDATE), and removing files you no longer need (DELETE).</p>
+
+<h4>INSERT</h4>
+<pre><span class="cmt">-- Insert single row</span>
+<span class="kw">INSERT INTO</span> employees (emp_id, emp_name, salary, dept_id)
+<span class="kw">VALUES</span> (<span class="num">101</span>, <span class="str">'Darshan'</span>, <span class="num">50000</span>, <span class="num">10</span>);
+
+<span class="cmt">-- Insert multiple rows (MySQL)</span>
+<span class="kw">INSERT INTO</span> employees (emp_id, emp_name, salary)
+<span class="kw">VALUES</span> (<span class="num">102</span>, <span class="str">'Ankit'</span>, <span class="num">45000</span>),
+       (<span class="num">103</span>, <span class="str">'Priya'</span>, <span class="num">55000</span>);
+
+<span class="cmt">-- Insert from another table</span>
+<span class="kw">INSERT INTO</span> emp_backup
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees <span class="kw">WHERE</span> dept_id = <span class="num">10</span>;</pre>
+
+<h4>UPDATE</h4>
+<pre><span class="cmt">-- Update specific rows</span>
+<span class="kw">UPDATE</span> employees
+<span class="kw">SET</span> salary = salary * <span class="num">1.10</span>
+<span class="kw">WHERE</span> dept_id = <span class="num">10</span>;
+
+<span class="cmt">-- Update multiple columns</span>
+<span class="kw">UPDATE</span> employees
+<span class="kw">SET</span> salary = <span class="num">60000</span>, dept_id = <span class="num">20</span>
+<span class="kw">WHERE</span> emp_id = <span class="num">101</span>;</pre>
+
+<div class="box box-warn">
+  <div class="label">Dangerous: UPDATE without WHERE</div>
+  <code>UPDATE employees SET salary = 0;</code> — This updates EVERY row in the table. Always double-check your WHERE clause before running UPDATE or DELETE.
+</div>
+
+<h4>DELETE</h4>
+<pre><span class="cmt">-- Delete specific rows</span>
+<span class="kw">DELETE FROM</span> employees <span class="kw">WHERE</span> emp_id = <span class="num">103</span>;
+
+<span class="cmt">-- Delete all rows (can be rolled back)</span>
+<span class="kw">DELETE FROM</span> employees;</pre>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What happens if you run <code>UPDATE employees SET salary = salary * 2;</code> without a WHERE clause?</p>
+  <ol class="options">
+    <li>Error — WHERE is required for UPDATE</li>
+    <li>Only the first row gets updated</li>
+    <li>Every employee's salary gets doubled</li>
+    <li>Nothing happens without COMMIT</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">Without a WHERE clause, UPDATE affects ALL rows in the table. Every employee's salary gets doubled. This is why WHERE is critical — always specify which rows you want to change. The good news: since UPDATE is DML, you can ROLLBACK if you catch the mistake before COMMIT.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="select">SELECT & Filtering</h3>
+
+<p>SELECT is the most important SQL command — it is how you <strong>ask questions</strong> to your database. Think of it like Google Search for your data. Want to know which employees earn more than 50,000? SELECT. Want a list of all departments? SELECT. You will use this in literally every exam and every real project.</p>
+
+<div class="box box-tip">
+  <div class="label">The mental model</div>
+  Reading a SELECT statement in English: <code>SELECT emp_name, salary FROM employees WHERE dept_id = 10</code> reads as: "Get me the name and salary FROM the employees table WHERE the department is 10." SQL reads almost like English — that was the whole point when it was designed.
+</div>
+
+<h4>Basic SELECT</h4>
+<pre><span class="cmt">-- Select all columns (the * means "everything")</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees;
+
+<span class="cmt">-- Select specific columns (always better — don't fetch what you don't need)</span>
+<span class="kw">SELECT</span> emp_name, salary <span class="kw">FROM</span> employees;
+
+<span class="cmt">-- Alias — give a column a friendly display name</span>
+<span class="kw">SELECT</span> emp_name <span class="kw">AS</span> <span class="str">"Employee Name"</span>, salary * <span class="num">12</span> <span class="kw">AS</span> annual_salary
+<span class="kw">FROM</span> employees;
+
+<span class="cmt">-- DISTINCT — remove duplicates</span>
+<span class="kw">SELECT DISTINCT</span> dept_id <span class="kw">FROM</span> employees;</pre>
+
+<h4>WHERE Clause — Filtering Rows</h4>
+
+<p>Without WHERE, SELECT returns <em>every</em> row. WHERE is your filter — like telling Excel "show me only rows where salary > 50000." The database scans through all rows and only returns the ones that match your condition.</p>
+
+<pre><span class="kw">SELECT</span> * <span class="kw">FROM</span> employees <span class="kw">WHERE</span> salary > <span class="num">50000</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees <span class="kw">WHERE</span> dept_id = <span class="num">10</span> <span class="kw">AND</span> salary >= <span class="num">40000</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees <span class="kw">WHERE</span> dept_id = <span class="num">10</span> <span class="kw">OR</span> dept_id = <span class="num">20</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees <span class="kw">WHERE NOT</span> dept_id = <span class="num">30</span>;</pre>
+
+<h4>ORDER BY</h4>
+<p>By default, SQL does not guarantee any order of results. If you want sorted results — highest salary first, alphabetical names, etc. — you must explicitly ask with ORDER BY.</p>
+
+<pre><span class="cmt">-- Ascending (default) — lowest to highest</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees <span class="kw">ORDER BY</span> salary <span class="kw">ASC</span>;
+
+<span class="cmt">-- Descending — highest to lowest</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees <span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>;
+
+<span class="cmt">-- Multiple columns: first sort by dept, then within each dept sort by salary descending</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees <span class="kw">ORDER BY</span> dept_id <span class="kw">ASC</span>, salary <span class="kw">DESC</span>;</pre>
+
+<h4>LIMIT / ROWNUM / FETCH</h4>
+<pre><span class="cmt">-- MySQL: LIMIT</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees <span class="kw">ORDER BY</span> salary <span class="kw">DESC LIMIT</span> <span class="num">5</span>;
+
+<span class="cmt">-- Oracle: ROWNUM (old style)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees <span class="kw">WHERE</span> ROWNUM <= <span class="num">5</span>;
+
+<span class="cmt">-- Oracle 12c+: FETCH</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees <span class="kw">ORDER BY</span> salary <span class="kw">DESC
+FETCH FIRST</span> <span class="num">5</span> <span class="kw">ROWS ONLY</span>;</pre>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What does <code>SELECT DISTINCT dept_id FROM employees;</code> return?</p>
+  <ol class="options">
+    <li>All dept_id values including duplicates</li>
+    <li>Only unique dept_id values (no repeats)</li>
+    <li>The first dept_id value only</li>
+    <li>Error — DISTINCT cannot be used with SELECT</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">DISTINCT removes duplicate values from the result. If employees table has dept_ids: 10, 10, 20, 20, 30, the result will be just: 10, 20, 30. Useful when you want to know "which departments exist" without seeing repeats.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which query correctly finds employees whose name starts with 'D' and salary is above 40000?</p>
+  <ol class="options">
+    <li><code>SELECT * FROM employees WHERE name LIKE 'D%' OR salary > 40000;</code></li>
+    <li><code>SELECT * FROM employees WHERE name LIKE 'D%' AND salary > 40000;</code></li>
+    <li><code>SELECT * FROM employees WHERE name = 'D%' AND salary > 40000;</code></li>
+    <li><code>SELECT * FROM employees WHERE name LIKE '%D' AND salary > 40000;</code></li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B is correct. AND means BOTH conditions must be true. OR would return employees whose name starts with D OR salary > 40000 (too many results). Option C uses = instead of LIKE — the = operator does not support wildcards. Option D uses '%D' which means "ends with D", not "starts with D".</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="operators">Operators & Conditions</h3>
+
+<p>Operators are the building blocks of your WHERE clause. They let you express conditions like "between these dates," "in this list," or "matching this pattern." Master these and you can filter anything.</p>
+
+<table>
+<tr><th>Operator</th><th>Usage</th><th>Example</th></tr>
+<tr><td><code>=</code></td><td>Equal to</td><td><code>WHERE dept_id = 10</code></td></tr>
+<tr><td><code>!=</code> or <code>&lt;&gt;</code></td><td>Not equal</td><td><code>WHERE dept_id != 10</code></td></tr>
+<tr><td><code>&gt;, &lt;, &gt;=, &lt;=</code></td><td>Comparison</td><td><code>WHERE salary > 50000</code></td></tr>
+<tr><td><code>BETWEEN</code></td><td>Range (inclusive on BOTH ends)</td><td><code>WHERE salary BETWEEN 30000 AND 60000</code></td></tr>
+<tr><td><code>IN</code></td><td>Match any in list</td><td><code>WHERE dept_id IN (10, 20, 30)</code></td></tr>
+<tr><td><code>NOT IN</code></td><td>Not in list</td><td><code>WHERE dept_id NOT IN (40, 50)</code></td></tr>
+<tr><td><code>LIKE</code></td><td>Pattern matching</td><td><code>WHERE name LIKE 'D%'</code></td></tr>
+<tr><td><code>IS NULL</code></td><td>Check for NULL</td><td><code>WHERE email IS NULL</code></td></tr>
+<tr><td><code>IS NOT NULL</code></td><td>Check not NULL</td><td><code>WHERE email IS NOT NULL</code></td></tr>
+</table>
+
+<div class="box box-example">
+  <div class="label">BETWEEN is inclusive</div>
+  <code>WHERE salary BETWEEN 30000 AND 60000</code> is the same as <code>WHERE salary >= 30000 AND salary <= 60000</code>. Both endpoints are included. This is a common exam trap — they will ask if BETWEEN includes the boundary values. Answer: YES.
+</div>
+
+<h4>LIKE Wildcards</h4>
+<p>LIKE is SQL's version of "search with wildcards." Two special characters: <code>%</code> means "any number of characters" (including zero), and <code>_</code> means "exactly one character."</p>
+
+<table>
+<tr><th>Pattern</th><th>Meaning</th><th>Matches</th></tr>
+<tr><td><code>'D%'</code></td><td>Starts with D</td><td>Darshan, Deepak, Dhruv</td></tr>
+<tr><td><code>'%an'</code></td><td>Ends with "an"</td><td>Darshan, Rohan</td></tr>
+<tr><td><code>'%ar%'</code></td><td>Contains "ar"</td><td>Darshan, Karan</td></tr>
+<tr><td><code>'_a%'</code></td><td>Second letter is "a"</td><td>Darshan, Karan</td></tr>
+<tr><td><code>'___'</code></td><td>Exactly 3 characters</td><td>Raj, Ram</td></tr>
+</table>
+
+<div class="box box-key">
+  <div class="label">Exam Trap — NULL comparisons</div>
+  NULL is not a value — it means "unknown." You <strong>cannot</strong> compare it with <code>=</code> or <code>!=</code>. Think of it this way: is an unknown value equal to 10? We don't know! So the comparison returns neither true nor false — it returns UNKNOWN, and the row is excluded.<br><br>
+  <code>WHERE salary = NULL</code> → always returns nothing (WRONG).<br>
+  <code>WHERE salary IS NULL</code> → correct way to check for NULL.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question"><code>SELECT * FROM employees WHERE salary BETWEEN 30000 AND 50000;</code> — Does this include employees with salary exactly 30000 and exactly 50000?</p>
+  <ol class="options">
+    <li>No, BETWEEN excludes both boundaries</li>
+    <li>Yes, BETWEEN is inclusive on both ends</li>
+    <li>It includes 30000 but excludes 50000</li>
+    <li>It excludes 30000 but includes 50000</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">BETWEEN is inclusive on BOTH ends. <code>BETWEEN 30000 AND 50000</code> is equivalent to <code>>= 30000 AND <= 50000</code>. Employees earning exactly 30000 or exactly 50000 will be included.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="functions">SQL Functions</h3>
+
+<p>Functions in SQL are pre-built tools that transform data. Instead of doing calculations in your application code, SQL lets you do it right inside the query. There are two types:</p>
+
+<ul>
+  <li><strong>Single-row functions</strong> — work on each row individually (like applying a formula to each cell in Excel)</li>
+  <li><strong>Aggregate functions</strong> — work on a group of rows and return one result (like SUM or AVERAGE in Excel)</li>
+</ul>
+
+<h4>Single-Row Functions (work on each row)</h4>
+
+<p><strong>String Functions:</strong></p>
+<table>
+<tr><th>Function</th><th>Result</th></tr>
+<tr><td><code>UPPER('hello')</code></td><td><code>'HELLO'</code></td></tr>
+<tr><td><code>LOWER('HELLO')</code></td><td><code>'hello'</code></td></tr>
+<tr><td><code>INITCAP('hello world')</code></td><td><code>'Hello World'</code></td></tr>
+<tr><td><code>LENGTH('Darshan')</code></td><td><code>7</code></td></tr>
+<tr><td><code>SUBSTR('Darshan', 1, 3)</code></td><td><code>'Dar'</code></td></tr>
+<tr><td><code>CONCAT('Hello', ' World')</code></td><td><code>'Hello World'</code></td></tr>
+<tr><td><code>REPLACE('Hello', 'l', 'r')</code></td><td><code>'Herro'</code></td></tr>
+<tr><td><code>TRIM('  hi  ')</code></td><td><code>'hi'</code></td></tr>
+<tr><td><code>LPAD('42', 5, '0')</code></td><td><code>'00042'</code></td></tr>
+<tr><td><code>RPAD('Hi', 5, '*')</code></td><td><code>'Hi***'</code></td></tr>
+<tr><td><code>INSTR('Darshan', 'sh')</code></td><td><code>4</code></td></tr>
+</table>
+
+<p><strong>Number Functions:</strong></p>
+<table>
+<tr><th>Function</th><th>Result</th></tr>
+<tr><td><code>ROUND(15.678, 2)</code></td><td><code>15.68</code></td></tr>
+<tr><td><code>ROUND(15.678, 0)</code></td><td><code>16</code></td></tr>
+<tr><td><code>TRUNC(15.678, 2)</code></td><td><code>15.67</code></td></tr>
+<tr><td><code>CEIL(15.1)</code></td><td><code>16</code></td></tr>
+<tr><td><code>FLOOR(15.9)</code></td><td><code>15</code></td></tr>
+<tr><td><code>MOD(10, 3)</code></td><td><code>1</code></td></tr>
+<tr><td><code>ABS(-42)</code></td><td><code>42</code></td></tr>
+<tr><td><code>POWER(2, 3)</code></td><td><code>8</code></td></tr>
+<tr><td><code>SQRT(144)</code></td><td><code>12</code></td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">ROUND vs TRUNC — they look similar but behave differently</div>
+  <code>ROUND(15.678, 2)</code> = 15.68 (rounds UP the last digit)<br>
+  <code>TRUNC(15.678, 2)</code> = 15.67 (just CHOPS off — no rounding)<br>
+  Think of TRUNC as cutting with scissors — it does not care what comes after.
+</div>
+
+<p><strong>Date Functions (Oracle):</strong></p>
+<pre><span class="kw">SELECT</span> <span class="fn">SYSDATE</span> <span class="kw">FROM</span> dual;                     <span class="cmt">-- Current date</span>
+<span class="kw">SELECT</span> <span class="fn">MONTHS_BETWEEN</span>(<span class="str">'01-MAR-26'</span>, <span class="str">'01-JAN-26'</span>) <span class="kw">FROM</span> dual;  <span class="cmt">-- 2</span>
+<span class="kw">SELECT</span> <span class="fn">ADD_MONTHS</span>(<span class="fn">SYSDATE</span>, <span class="num">3</span>) <span class="kw">FROM</span> dual;       <span class="cmt">-- 3 months later</span>
+<span class="kw">SELECT</span> <span class="fn">NEXT_DAY</span>(<span class="fn">SYSDATE</span>, <span class="str">'FRIDAY'</span>) <span class="kw">FROM</span> dual;  <span class="cmt">-- Next Friday</span>
+<span class="kw">SELECT</span> <span class="fn">LAST_DAY</span>(<span class="fn">SYSDATE</span>) <span class="kw">FROM</span> dual;            <span class="cmt">-- Last day of month</span>
+<span class="kw">SELECT</span> <span class="fn">EXTRACT</span>(<span class="kw">YEAR FROM</span> <span class="fn">SYSDATE</span>) <span class="kw">FROM</span> dual;  <span class="cmt">-- 2026</span></pre>
+
+<p><strong>Conversion Functions:</strong></p>
+<pre><span class="fn">TO_CHAR</span>(<span class="fn">SYSDATE</span>, <span class="str">'DD-MON-YYYY'</span>)   <span class="cmt">-- '22-MAR-2026'</span>
+<span class="fn">TO_CHAR</span>(salary, <span class="str">'$99,999.00'</span>)     <span class="cmt">-- '$50,000.00'</span>
+<span class="fn">TO_DATE</span>(<span class="str">'22-03-2026'</span>, <span class="str">'DD-MM-YYYY'</span>) <span class="cmt">-- date value</span>
+<span class="fn">TO_NUMBER</span>(<span class="str">'12345'</span>)                 <span class="cmt">-- 12345</span></pre>
+
+<p><strong>NULL-handling Functions:</strong></p>
+<p>NULL is the trickiest part of SQL. Any operation with NULL returns NULL: <code>5 + NULL = NULL</code>, <code>'hello' || NULL = NULL</code>. These functions help you handle NULLs gracefully.</p>
+
+<pre><span class="fn">NVL</span>(commission, <span class="num">0</span>)          <span class="cmt">-- If NULL, return 0</span>
+<span class="fn">NVL2</span>(comm, <span class="str">'Has'</span>, <span class="str">'None'</span>)  <span class="cmt">-- If NOT NULL → 'Has', else 'None'</span>
+<span class="fn">NULLIF</span>(<span class="num">10</span>, <span class="num">10</span>)              <span class="cmt">-- Returns NULL (both equal)</span>
+<span class="fn">COALESCE</span>(a, b, c, <span class="num">0</span>)       <span class="cmt">-- First non-NULL value</span></pre>
+
+<div class="box box-key">
+  <div class="label">COALESCE vs NVL</div>
+  <code>NVL(a, b)</code> takes exactly 2 args. <code>COALESCE(a, b, c, ...)</code> takes any number — returns first non-NULL. COALESCE is ANSI standard (works everywhere), NVL is Oracle-only.
+</div>
+
+<h4>Aggregate Functions (work on groups of rows)</h4>
+
+<p>Aggregate functions crunch multiple rows into a single result. Think of them like Excel's SUM, AVERAGE, COUNT functions at the bottom of a column.</p>
+
+<table>
+<tr><th>Function</th><th>Description</th><th>Example</th></tr>
+<tr><td><code>COUNT(*)</code></td><td>Count all rows</td><td><code>SELECT COUNT(*) FROM employees</code></td></tr>
+<tr><td><code>COUNT(col)</code></td><td>Count non-NULL values</td><td><code>SELECT COUNT(email) FROM employees</code></td></tr>
+<tr><td><code>SUM(col)</code></td><td>Total</td><td><code>SELECT SUM(salary) FROM employees</code></td></tr>
+<tr><td><code>AVG(col)</code></td><td>Average</td><td><code>SELECT AVG(salary) FROM employees</code></td></tr>
+<tr><td><code>MIN(col)</code></td><td>Minimum value</td><td><code>SELECT MIN(salary) FROM employees</code></td></tr>
+<tr><td><code>MAX(col)</code></td><td>Maximum value</td><td><code>SELECT MAX(salary) FROM employees</code></td></tr>
+</table>
+
+<div class="box box-warn">
+  <div class="label">Exam Trap — COUNT(*) vs COUNT(col)</div>
+  <code>COUNT(*)</code> counts ALL rows including those with NULLs.<br>
+  <code>COUNT(column_name)</code> counts only NON-NULL values in that column.<br><br>
+  If you have 10 employees but 3 have NULL email, <code>COUNT(*)</code> = 10 but <code>COUNT(email)</code> = 7.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Table has 10 rows. Column "commission" has NULL in 4 rows. What does <code>SELECT COUNT(commission) FROM employees;</code> return?</p>
+  <ol class="options">
+    <li>10</li>
+    <li>4</li>
+    <li>6</li>
+    <li>NULL</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">COUNT(column_name) counts only NON-NULL values. Out of 10 rows, 4 have NULL commission, so 6 rows have non-NULL values. COUNT(commission) = 6. If you wanted all 10, use COUNT(*).</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="group-by">GROUP BY & HAVING</h3>
+
+<p><strong>Why does GROUP BY exist?</strong> Imagine your manager asks: "What is the average salary <em>in each department</em>?" You cannot just run <code>AVG(salary)</code> — that gives you ONE number for the entire company. You need to first <strong>group</strong> employees by department, and THEN calculate the average within each group.</p>
+
+<div class="box box-tip">
+  <div class="label">The Excel analogy</div>
+  GROUP BY is like creating a Pivot Table in Excel. You drag "Department" into the Row area and "Salary" into the Values area with "Average." Excel groups all rows by department and calculates the average for each group. That is exactly what GROUP BY does in SQL.
+</div>
+
+<pre><span class="cmt">-- Count employees per department</span>
+<span class="kw">SELECT</span> dept_id, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> emp_count
+<span class="kw">FROM</span> employees
+<span class="kw">GROUP BY</span> dept_id;
+
+<span class="cmt">-- Average salary per department</span>
+<span class="kw">SELECT</span> dept_id, <span class="fn">AVG</span>(salary) <span class="kw">AS</span> avg_sal
+<span class="kw">FROM</span> employees
+<span class="kw">GROUP BY</span> dept_id
+<span class="kw">ORDER BY</span> avg_sal <span class="kw">DESC</span>;</pre>
+
+<div class="box box-warn">
+  <div class="label">The Golden Rule of GROUP BY</div>
+  Every column in your SELECT must either be (a) in the GROUP BY clause, or (b) inside an aggregate function. You cannot SELECT emp_name if you are grouping by dept_id — which employee name would SQL show for a group of 50 people?<br><br>
+  <strong>Wrong:</strong> <code>SELECT dept_id, emp_name, AVG(salary) FROM employees GROUP BY dept_id;</code><br>
+  <strong>Right:</strong> <code>SELECT dept_id, AVG(salary) FROM employees GROUP BY dept_id;</code>
+</div>
+
+<h4>HAVING (filter groups)</h4>
+
+<p><strong>Why can't we just use WHERE?</strong> Because WHERE runs <em>before</em> grouping happens. If you want to say "show me only departments that have more than 5 employees," you need a filter that runs <em>after</em> the groups are formed. That is what HAVING does.</p>
+
+<pre><span class="cmt">-- Departments with more than 5 employees</span>
+<span class="kw">SELECT</span> dept_id, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> emp_count
+<span class="kw">FROM</span> employees
+<span class="kw">GROUP BY</span> dept_id
+<span class="kw">HAVING COUNT</span>(*) > <span class="num">5</span>;
+
+<span class="cmt">-- Departments where average salary exceeds 50000</span>
+<span class="kw">SELECT</span> dept_id, <span class="fn">AVG</span>(salary) <span class="kw">AS</span> avg_sal
+<span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> salary > <span class="num">10000</span>
+<span class="kw">GROUP BY</span> dept_id
+<span class="kw">HAVING AVG</span>(salary) > <span class="num">50000</span>;</pre>
+
+<div class="box box-key">
+  <div class="label">WHERE vs HAVING — The exam WILL test this</div>
+  <strong>WHERE</strong> filters <em>individual rows</em> BEFORE grouping. Like removing bad apples before putting them into baskets.<br>
+  <strong>HAVING</strong> filters <em>groups</em> AFTER grouping. Like removing baskets that have fewer than 5 apples.<br>
+  You <strong>cannot</strong> use aggregate functions in WHERE. <code>WHERE COUNT(*) > 5</code> is an error. Use HAVING instead.
+</div>
+
+<h4>SQL Execution Order</h4>
+<p>SQL does NOT execute in the order you write it. Understanding this order is the key to understanding why WHERE cannot use aliases and HAVING can use aggregates.</p>
+
+<table>
+<tr><th>Order</th><th>Clause</th><th>Purpose</th><th>Analogy</th></tr>
+<tr><td>1</td><td><code>FROM</code></td><td>Choose table</td><td>Open the filing cabinet</td></tr>
+<tr><td>2</td><td><code>WHERE</code></td><td>Filter rows</td><td>Remove files that don't match</td></tr>
+<tr><td>3</td><td><code>GROUP BY</code></td><td>Group rows</td><td>Sort remaining files into piles by department</td></tr>
+<tr><td>4</td><td><code>HAVING</code></td><td>Filter groups</td><td>Remove piles that are too small</td></tr>
+<tr><td>5</td><td><code>SELECT</code></td><td>Choose columns</td><td>Pick which info to read from each pile</td></tr>
+<tr><td>6</td><td><code>ORDER BY</code></td><td>Sort results</td><td>Arrange the final output</td></tr>
+</table>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which query correctly finds departments where the average salary exceeds 60000?</p>
+  <ol class="options">
+    <li><code>SELECT dept_id, AVG(salary) FROM employees WHERE AVG(salary) > 60000 GROUP BY dept_id;</code></li>
+    <li><code>SELECT dept_id, AVG(salary) FROM employees GROUP BY dept_id HAVING AVG(salary) > 60000;</code></li>
+    <li><code>SELECT dept_id, AVG(salary) FROM employees GROUP BY dept_id WHERE AVG(salary) > 60000;</code></li>
+    <li><code>SELECT dept_id FROM employees HAVING AVG(salary) > 60000;</code></li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B is correct. Aggregate conditions (like AVG(salary) > 60000) must go in HAVING, not WHERE. WHERE runs before grouping, so it has no idea what the average is yet. Option A puts the aggregate in WHERE (error). Option C has WHERE after GROUP BY (wrong syntax order). Option D is missing GROUP BY entirely.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">In the SQL execution order, which runs first — SELECT or WHERE?</p>
+  <ol class="options">
+    <li>SELECT, because it's written first</li>
+    <li>WHERE, because it runs at step 2 while SELECT runs at step 5</li>
+    <li>They run simultaneously</li>
+    <li>It depends on the database engine</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">WHERE runs at step 2, long before SELECT at step 5. This is why you cannot use column aliases (defined in SELECT) in your WHERE clause — WHERE has already finished running by the time SELECT defines the alias. The execution order is: FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="joins">JOINs</h3>
+
+<p><strong>Why do JOINs exist?</strong> In a well-designed database, data is split across multiple tables to avoid repetition. Employees are in one table, departments in another. But when your manager asks "show me each employee with their department name," that data lives in TWO tables. A JOIN combines them.</p>
+
+<div class="box box-tip">
+  <div class="label">The Excel analogy</div>
+  Imagine you have two Excel sheets. Sheet 1 has employee data with a "dept_id" column. Sheet 2 has department data with "dept_id" and "dept_name." A JOIN is like using VLOOKUP to pull the department name into the employee sheet by matching on dept_id. That is ALL a JOIN does — it matches rows from two tables using a common column.
+</div>
+
+<table>
+<tr><th>JOIN Type</th><th>Returns</th><th>When to use</th></tr>
+<tr><td><strong>INNER JOIN</strong></td><td>Only matching rows from both tables</td><td>You want only employees who HAVE a department</td></tr>
+<tr><td><strong>LEFT JOIN</strong> (LEFT OUTER)</td><td>All rows from left table + matching from right</td><td>You want ALL employees, even those without a department</td></tr>
+<tr><td><strong>RIGHT JOIN</strong> (RIGHT OUTER)</td><td>All rows from right table + matching from left</td><td>You want ALL departments, even empty ones</td></tr>
+<tr><td><strong>FULL OUTER JOIN</strong></td><td>All rows from both tables</td><td>You want everything — unmatched rows from both sides</td></tr>
+<tr><td><strong>CROSS JOIN</strong></td><td>Cartesian product (every row x every row)</td><td>Rarely used. 10 employees x 5 depts = 50 rows</td></tr>
+<tr><td><strong>SELF JOIN</strong></td><td>Table joined with itself</td><td>Finding relationships within the same table (e.g., employee → manager)</td></tr>
+</table>
+
+<h4>INNER JOIN</h4>
+<p>Only returns rows where there is a match in BOTH tables. If an employee has no department (dept_id is NULL), that employee is excluded from the results.</p>
+
+<pre><span class="kw">SELECT</span> e.emp_name, d.dept_name
+<span class="kw">FROM</span> employees e
+<span class="kw">INNER JOIN</span> departments d <span class="kw">ON</span> e.dept_id = d.dept_id;</pre>
+
+<div class="box box-example">
+  <div class="label">INNER JOIN step by step</div>
+  <strong>employees table:</strong> Darshan (dept 10), Priya (dept 20), Raj (dept NULL)<br>
+  <strong>departments table:</strong> 10=Finance, 20=IT, 30=HR<br><br>
+  <strong>INNER JOIN result:</strong> Darshan-Finance, Priya-IT<br>
+  Raj is excluded (no matching dept). HR is excluded (no employees). Only the overlap survives.
+</div>
+
+<h4>LEFT JOIN</h4>
+<p>Returns ALL rows from the left table (employees), even if there is no match in the right table (departments). Unmatched right-side columns show NULL.</p>
+
+<pre><span class="cmt">-- All employees, even those without a department</span>
+<span class="kw">SELECT</span> e.emp_name, d.dept_name
+<span class="kw">FROM</span> employees e
+<span class="kw">LEFT JOIN</span> departments d <span class="kw">ON</span> e.dept_id = d.dept_id;</pre>
+
+<div class="box box-example">
+  <div class="label">LEFT JOIN result (same data as above)</div>
+  Darshan-Finance, Priya-IT, <strong>Raj-NULL</strong><br>
+  Raj appears now! His dept_name is NULL because he has no department. The LEFT table (employees) keeps ALL its rows.
+</div>
+
+<h4>RIGHT JOIN</h4>
+<p>The mirror of LEFT JOIN. Returns ALL rows from the right table, even if there is no match in the left table.</p>
+
+<pre><span class="cmt">-- All departments, even those with no employees</span>
+<span class="kw">SELECT</span> e.emp_name, d.dept_name
+<span class="kw">FROM</span> employees e
+<span class="kw">RIGHT JOIN</span> departments d <span class="kw">ON</span> e.dept_id = d.dept_id;</pre>
+
+<div class="box box-example">
+  <div class="label">RIGHT JOIN result (same data)</div>
+  Darshan-Finance, Priya-IT, <strong>NULL-HR</strong><br>
+  HR appears now! No employee is in HR, so emp_name is NULL. The RIGHT table (departments) keeps ALL its rows.
+</div>
+
+<h4>FULL OUTER JOIN</h4>
+<p>Returns EVERYTHING from both tables. No row is left behind — unmatched rows from both sides appear with NULLs.</p>
+
+<pre><span class="kw">SELECT</span> e.emp_name, d.dept_name
+<span class="kw">FROM</span> employees e
+<span class="kw">FULL OUTER JOIN</span> departments d <span class="kw">ON</span> e.dept_id = d.dept_id;</pre>
+
+<div class="box box-example">
+  <div class="label">FULL OUTER JOIN result (same data)</div>
+  Darshan-Finance, Priya-IT, <strong>Raj-NULL</strong>, <strong>NULL-HR</strong><br>
+  Everyone shows up — even Raj (no dept) and HR (no employees).
+</div>
+
+<h4>CROSS JOIN</h4>
+<pre><span class="cmt">-- Every employee × every department (rarely useful)</span>
+<span class="kw">SELECT</span> e.emp_name, d.dept_name
+<span class="kw">FROM</span> employees e
+<span class="kw">CROSS JOIN</span> departments d;</pre>
+
+<div class="box box-warn">
+  <div class="label">CROSS JOIN = explosion of rows</div>
+  If employees has 100 rows and departments has 10 rows, CROSS JOIN produces 100 x 10 = 1,000 rows. Every possible combination. This is called a <strong>Cartesian Product</strong>. Almost never what you want — usually the result of accidentally forgetting the ON clause.
+</div>
+
+<h4>SELF JOIN</h4>
+<p>A table joined with itself. The classic use case: an employees table where each employee has a manager_id that points to another employee in the SAME table.</p>
+
+<pre><span class="cmt">-- Find each employee's manager</span>
+<span class="kw">SELECT</span> e.emp_name <span class="kw">AS</span> employee, m.emp_name <span class="kw">AS</span> manager
+<span class="kw">FROM</span> employees e
+<span class="kw">LEFT JOIN</span> employees m <span class="kw">ON</span> e.manager_id = m.emp_id;</pre>
+
+<div class="box box-tip">
+  <div class="label">JOIN diagram trick</div>
+  Think of it as Venn diagrams:<br>
+  <strong>INNER</strong> = only the overlap<br>
+  <strong>LEFT</strong> = entire left circle + overlap<br>
+  <strong>RIGHT</strong> = entire right circle + overlap<br>
+  <strong>FULL OUTER</strong> = both entire circles
+</div>
+
+<div class="box box-exam">
+  <div class="label">FA MCQ Pattern</div>
+  "Which JOIN returns all rows from the left table?" → LEFT JOIN<br>
+  "What is a Cartesian product?" → CROSS JOIN (no ON condition)
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Employees table has 10 rows, Departments table has 5 rows. How many rows does <code>SELECT * FROM employees CROSS JOIN departments;</code> produce?</p>
+  <ol class="options">
+    <li>15</li>
+    <li>10</li>
+    <li>50</li>
+    <li>5</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">CROSS JOIN produces the Cartesian product — every row from the first table combined with every row from the second table. 10 x 5 = 50 rows. This is why CROSS JOIN is rarely used intentionally and why you should always specify an ON condition with other JOINs.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">You want ALL employees listed, including those not assigned to any department. Their department name should show NULL. Which JOIN do you use?</p>
+  <ol class="options">
+    <li>INNER JOIN</li>
+    <li>LEFT JOIN (employees LEFT JOIN departments)</li>
+    <li>RIGHT JOIN (employees RIGHT JOIN departments)</li>
+    <li>CROSS JOIN</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">LEFT JOIN keeps ALL rows from the left table (employees) and fills in NULL for unmatched rows from the right table (departments). INNER JOIN would exclude employees without a department. RIGHT JOIN would keep all departments, not all employees.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="subqueries">Subqueries</h3>
+
+<p><strong>Why do subqueries exist?</strong> Sometimes the answer to your question depends on another question. Example: "Show me employees who earn more than the average salary." You cannot write <code>WHERE salary > AVG(salary)</code> — that is illegal in SQL (aggregate functions are not allowed in WHERE). So you need a subquery to first calculate the average, and then the outer query uses that result.</p>
+
+<div class="box box-tip">
+  <div class="label">Think of it like this</div>
+  A subquery is a question inside a question. Like asking: "Who scored higher than the class average?" You first need to calculate the average (inner query), and then check who is above it (outer query). The database runs the inner query first, gets a result, and plugs that result into the outer query.
+</div>
+
+<h4>Single-Row Subquery</h4>
+<p>The inner query returns exactly ONE value. You can use =, >, <, >=, <= with it.</p>
+
+<pre><span class="cmt">-- Employees earning more than the average salary</span>
+<span class="kw">SELECT</span> emp_name, salary
+<span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> salary > (<span class="kw">SELECT AVG</span>(salary) <span class="kw">FROM</span> employees);</pre>
+
+<div class="box box-example">
+  <div class="label">How this runs step by step</div>
+  1. Inner query runs: <code>SELECT AVG(salary) FROM employees</code> → returns 52000<br>
+  2. Outer query becomes: <code>SELECT emp_name, salary FROM employees WHERE salary > 52000</code><br>
+  3. Result: all employees earning more than 52000
+</div>
+
+<h4>Multi-Row Subquery (use IN, ANY, ALL)</h4>
+<p>When the inner query returns MULTIPLE values, you cannot use =. You need IN (matches any value in the list), ANY, or ALL.</p>
+
+<pre><span class="cmt">-- Employees in departments located in Mumbai</span>
+<span class="kw">SELECT</span> emp_name
+<span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> dept_id <span class="kw">IN</span> (<span class="kw">SELECT</span> dept_id <span class="kw">FROM</span> departments <span class="kw">WHERE</span> location = <span class="str">'Mumbai'</span>);
+
+<span class="cmt">-- Salary greater than ALL in dept 20 (greater than the maximum)</span>
+<span class="kw">SELECT</span> emp_name, salary
+<span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> salary > <span class="kw">ALL</span> (<span class="kw">SELECT</span> salary <span class="kw">FROM</span> employees <span class="kw">WHERE</span> dept_id = <span class="num">20</span>);
+
+<span class="cmt">-- Salary greater than ANY in dept 20 (greater than the minimum)</span>
+<span class="kw">SELECT</span> emp_name, salary
+<span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> salary > <span class="kw">ANY</span> (<span class="kw">SELECT</span> salary <span class="kw">FROM</span> employees <span class="kw">WHERE</span> dept_id = <span class="num">20</span>);</pre>
+
+<h4>Correlated Subquery</h4>
+<p>In a normal subquery, the inner query runs once and its result is reused. In a <strong>correlated subquery</strong>, the inner query runs once for EACH row of the outer query — because it references a value from the outer query. This is slower but more powerful.</p>
+
+<pre><span class="cmt">-- Employees earning more than the average of THEIR OWN department</span>
+<span class="kw">SELECT</span> emp_name, salary, dept_id
+<span class="kw">FROM</span> employees e
+<span class="kw">WHERE</span> salary > (<span class="kw">SELECT AVG</span>(salary) <span class="kw">FROM</span> employees <span class="kw">WHERE</span> dept_id = e.dept_id);</pre>
+
+<div class="box box-example">
+  <div class="label">How a correlated subquery differs</div>
+  For Darshan (dept 10): inner query calculates AVG salary of dept 10 → checks if Darshan's salary exceeds it.<br>
+  For Priya (dept 20): inner query calculates AVG salary of dept 20 → checks if Priya's salary exceeds it.<br>
+  The inner query re-runs for every row with a different dept_id reference. That is what "correlated" means — the inner query is linked to the outer query.
+</div>
+
+<h4>EXISTS</h4>
+<p>EXISTS checks if the subquery returns ANY rows at all. It does not care about the actual values — just whether rows exist. It is often faster than IN for large datasets.</p>
+
+<pre><span class="cmt">-- Departments that have at least one employee</span>
+<span class="kw">SELECT</span> dept_name
+<span class="kw">FROM</span> departments d
+<span class="kw">WHERE EXISTS</span> (<span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> employees <span class="kw">WHERE</span> dept_id = d.dept_id);</pre>
+
+<div class="box box-key">
+  <div class="label">ANY vs ALL — Memorize this</div>
+  <code>> ALL (subquery)</code> = greater than the <strong>maximum</strong> value returned. You must beat EVERYONE.<br>
+  <code>> ANY (subquery)</code> = greater than the <strong>minimum</strong> value returned. You just need to beat ONE person.<br>
+  <code>< ALL</code> = less than the minimum. <code>< ANY</code> = less than the maximum.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Dept 20 has salaries: 40000, 50000, 60000. Which employees are returned by <code>WHERE salary > ALL (SELECT salary FROM employees WHERE dept_id = 20)</code>?</p>
+  <ol class="options">
+    <li>Employees earning more than 40000</li>
+    <li>Employees earning more than 50000</li>
+    <li>Employees earning more than 60000</li>
+    <li>All employees in dept 20</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">> ALL means "greater than the MAXIMUM value in the list." The maximum salary in dept 20 is 60000, so only employees earning more than 60000 are returned. Think of ALL as "you must beat ALL of them" — which means beating the highest one.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What is the key difference between a regular subquery and a correlated subquery?</p>
+  <ol class="options">
+    <li>A correlated subquery can return multiple rows; a regular subquery cannot</li>
+    <li>A regular subquery runs once; a correlated subquery re-runs for each outer row</li>
+    <li>A correlated subquery uses JOIN; a regular subquery uses WHERE</li>
+    <li>There is no difference — they are the same thing</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">A regular subquery is independent — it runs once, produces a result, and the outer query uses that result. A correlated subquery references a column from the outer query (like <code>e.dept_id</code>), so it must re-execute for each row of the outer query. This makes correlated subqueries slower but capable of row-specific comparisons.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="set-ops">Set Operations</h3>
+
+<p>Set operations let you combine the results of two separate SELECT queries. Think of them like math operations on sets: union (combine), intersection (overlap), and difference (subtract).</p>
+
+<table>
+<tr><th>Operation</th><th>Description</th><th>Analogy</th></tr>
+<tr><td><code>UNION</code></td><td>Combine results, remove duplicates</td><td>Merge two guest lists, removing duplicate names</td></tr>
+<tr><td><code>UNION ALL</code></td><td>Combine results, keep duplicates</td><td>Just staple the two lists together</td></tr>
+<tr><td><code>INTERSECT</code></td><td>Only rows in BOTH queries</td><td>People who appear on BOTH guest lists</td></tr>
+<tr><td><code>MINUS</code> (Oracle) / <code>EXCEPT</code> (MySQL)</td><td>Rows in first query but NOT in second</td><td>People on list A who are NOT on list B</td></tr>
+</table>
+
+<pre><span class="cmt">-- All cities where we have employees or departments</span>
+<span class="kw">SELECT</span> city <span class="kw">FROM</span> employees
+<span class="kw">UNION</span>
+<span class="kw">SELECT</span> city <span class="kw">FROM</span> departments;
+
+<span class="cmt">-- Employees who are also managers</span>
+<span class="kw">SELECT</span> emp_id <span class="kw">FROM</span> employees
+<span class="kw">INTERSECT</span>
+<span class="kw">SELECT</span> manager_id <span class="kw">FROM</span> employees;</pre>
+
+<div class="box box-warn">
+  <div class="label">Set Operation Rules</div>
+  Both queries must have the <strong>same number of columns</strong> and <strong>compatible data types</strong>. You cannot UNION a query with 3 columns and another with 5 columns — SQL won't know how to combine them.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What is the difference between UNION and UNION ALL?</p>
+  <ol class="options">
+    <li>UNION sorts results; UNION ALL does not</li>
+    <li>UNION removes duplicates; UNION ALL keeps all rows including duplicates</li>
+    <li>UNION ALL is faster because it removes duplicates</li>
+    <li>There is no difference</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">UNION removes duplicate rows from the combined result (which requires extra work to check for duplicates). UNION ALL keeps everything as-is, including duplicates. UNION ALL is actually faster because it skips the deduplication step. Use UNION ALL when you know there won't be duplicates or when you want to keep them.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="constraints">Constraints & Keys</h3>
+
+<p><strong>Why do constraints exist?</strong> Without constraints, anyone could insert garbage data: an employee with a negative salary, two employees with the same ID, an employee assigned to a department that does not exist. Constraints are the database's bouncers — they enforce rules so your data stays clean and consistent.</p>
+
+<div class="box box-tip">
+  <div class="label">Real-world analogy</div>
+  Think of constraints like rules on a form. PRIMARY KEY = "this field is mandatory and must be unique" (like Aadhaar number). NOT NULL = "you must fill this in." CHECK = "age must be 18 or above." FOREIGN KEY = "the department you list here must actually exist in the departments table." If you violate any rule, the form (INSERT/UPDATE) gets rejected.
+</div>
+
+<table>
+<tr><th>Constraint</th><th>Description</th><th>What it prevents</th></tr>
+<tr><td><code>PRIMARY KEY</code></td><td>Unique + NOT NULL. Only one per table.</td><td>Duplicate or empty IDs</td></tr>
+<tr><td><code>FOREIGN KEY</code></td><td>References PRIMARY KEY of another table</td><td>Orphan records (referencing non-existent data)</td></tr>
+<tr><td><code>UNIQUE</code></td><td>All values must be different (allows one NULL)</td><td>Duplicate emails, duplicate phone numbers</td></tr>
+<tr><td><code>NOT NULL</code></td><td>Column cannot have NULL value</td><td>Missing required fields</td></tr>
+<tr><td><code>CHECK</code></td><td>Values must satisfy a condition</td><td>Invalid data (negative salary, age below 0)</td></tr>
+<tr><td><code>DEFAULT</code></td><td>Default value if none provided</td><td>Nothing — just fills in a value automatically</td></tr>
+</table>
+
+<pre><span class="kw">CREATE TABLE</span> students (
+    student_id <span class="type">NUMBER</span> <span class="kw">PRIMARY KEY</span>,
+    name       <span class="type">VARCHAR2</span>(50) <span class="kw">NOT NULL</span>,
+    email      <span class="type">VARCHAR2</span>(100) <span class="kw">UNIQUE</span>,
+    age        <span class="type">NUMBER</span> <span class="kw">CHECK</span> (age >= <span class="num">18</span>),
+    status     <span class="type">VARCHAR2</span>(10) <span class="kw">DEFAULT</span> <span class="str">'active'</span>,
+    dept_id    <span class="type">NUMBER</span> <span class="kw">REFERENCES</span> departments(dept_id)
+);</pre>
+
+<h4>Composite Primary Key</h4>
+<p>Sometimes a single column cannot uniquely identify a row. In an "enrollments" table, neither student_id alone nor course_id alone is unique (a student can enroll in many courses, a course can have many students). But the COMBINATION of both is unique — a student can enroll in a specific course only once.</p>
+
+<pre><span class="kw">CREATE TABLE</span> enrollments (
+    student_id <span class="type">NUMBER</span>,
+    course_id  <span class="type">NUMBER</span>,
+    grade      <span class="type">CHAR</span>(2),
+    <span class="kw">PRIMARY KEY</span> (student_id, course_id)
+);</pre>
+
+<div class="box box-key">
+  <div class="label">PRIMARY KEY vs UNIQUE — Know the difference</div>
+  <strong>PRIMARY KEY</strong> = UNIQUE + NOT NULL. Only ONE per table. It is the main identifier for each row.<br>
+  <strong>UNIQUE</strong> = values must be different, but allows ONE NULL. Multiple UNIQUE constraints per table allowed.<br><br>
+  Example: A student has one student_id (PRIMARY KEY) but also a unique email and unique phone number (both UNIQUE constraints on the same table).
+</div>
+
+<h4>ON DELETE actions (Foreign Key)</h4>
+<p>What happens when you delete a department that still has employees assigned to it? The ON DELETE action decides.</p>
+
+<table>
+<tr><th>Action</th><th>What happens when parent row is deleted</th><th>Example</th></tr>
+<tr><td><code>ON DELETE CASCADE</code></td><td>Delete child rows too</td><td>Delete department 10 → all employees in dept 10 are also deleted</td></tr>
+<tr><td><code>ON DELETE SET NULL</code></td><td>Set foreign key to NULL in child rows</td><td>Delete department 10 → employees in dept 10 get dept_id = NULL</td></tr>
+<tr><td><code>ON DELETE RESTRICT</code></td><td>Prevent deletion if child rows exist (default)</td><td>Cannot delete department 10 while it has employees — error is thrown</td></tr>
+</table>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">A table has a PRIMARY KEY and three UNIQUE constraints. How many total unique identifier columns does it have?</p>
+  <ol class="options">
+    <li>1 — only PRIMARY KEY provides uniqueness</li>
+    <li>3 — only UNIQUE constraints count</li>
+    <li>4 — PRIMARY KEY is also a unique identifier</li>
+    <li>Error — a table cannot have both PRIMARY KEY and UNIQUE</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">The table has 4 unique identifier columns: 1 PRIMARY KEY + 3 UNIQUE constraints. PRIMARY KEY itself enforces uniqueness (it is UNIQUE + NOT NULL). A table can absolutely have both — one PRIMARY KEY and multiple UNIQUE constraints. Example: student_id (PK), email (UNIQUE), phone (UNIQUE), aadhaar (UNIQUE).</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">If a FOREIGN KEY is defined with <code>ON DELETE CASCADE</code>, what happens when the parent row is deleted?</p>
+  <ol class="options">
+    <li>Nothing — the child rows remain unchanged</li>
+    <li>The child rows' foreign key column is set to NULL</li>
+    <li>All child rows referencing that parent are also deleted</li>
+    <li>The deletion is blocked with an error</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">CASCADE means the delete "cascades" down to child rows. If you delete department 10, all employees with dept_id = 10 are automatically deleted too. This is powerful but dangerous — use with caution. SET NULL would just set their dept_id to NULL. RESTRICT (default) would block the deletion entirely.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="normalization">Normalization</h3>
+
+<p><strong>Why does normalization matter?</strong> Imagine a table where every employee row stores the department name, department location, and department manager. Now the HR department moves to a new office. You have to update the location in 200 employee rows. Miss even one? Your data is now inconsistent — some rows say "Mumbai," others say "Pune" for the same department.</p>
+
+<p>Normalization is the process of organizing your tables so that each piece of information is stored in exactly ONE place. Update it once, and it is correct everywhere. It eliminates redundancy and prevents the kind of update anomalies described above.</p>
+
+<div class="box box-tip">
+  <div class="label">The analogy</div>
+  Unnormalized data is like writing your home address on every form at school — attendance register, library card, exam form, fee receipt. If you move, you have to update ALL of them. Normalized data stores your address in ONE place (student record), and every other form just references your student ID.
+</div>
+
+<table>
+<tr><th>Normal Form</th><th>Rule</th><th>In Simple Terms</th><th>Example Violation</th></tr>
+<tr><td><strong>1NF</strong></td><td>Atomic values, no repeating groups</td><td>Each cell has ONE value. No comma-separated lists.</td><td>courses = "Math, Physics, Chemistry" in one cell</td></tr>
+<tr><td><strong>2NF</strong></td><td>1NF + no partial dependency</td><td>Every non-key column depends on the WHOLE primary key (not just part of it).</td><td>In (student_id, course_id) → student_name depends only on student_id, not on the full key</td></tr>
+<tr><td><strong>3NF</strong></td><td>2NF + no transitive dependency</td><td>Non-key columns depend ONLY on the primary key, not on other non-key columns.</td><td>emp table has dept_id AND dept_name — dept_name depends on dept_id, not on emp_id</td></tr>
+<tr><td><strong>BCNF</strong></td><td>3NF + every determinant is a candidate key</td><td>Stricter version of 3NF.</td><td>Rare edge cases where 3NF still has redundancy</td></tr>
+</table>
+
+<div class="box box-example">
+  <div class="label">Step-by-step normalization</div>
+  <strong>Unnormalized:</strong> Student(id, name, courses: "Math, Physics, Chem") — courses is a comma-separated mess<br><br>
+  <strong>1NF:</strong> Split into separate rows — one row per student-course combination. Now each cell has ONE atomic value.<br><br>
+  <strong>2NF:</strong> If the primary key is (student_id, course_id), then student_name depends only on student_id (partial dependency). Fix: move student info to a separate Students table.<br><br>
+  <strong>3NF:</strong> If the Students table has dept_id AND dept_name, the dept_name depends on dept_id (not on student_id). This is a transitive dependency. Fix: move dept_name to a separate Departments table.
+</div>
+
+<div class="box box-exam">
+  <div class="label">FA MCQ Pattern</div>
+  "A table with no repeating groups is in which normal form?" → 1NF<br>
+  "Removing transitive dependency achieves?" → 3NF<br>
+  "Removing partial dependency achieves?" → 2NF
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">A table has columns: (student_id PK, student_name, dept_id, dept_name). Which normal form is violated and why?</p>
+  <ol class="options">
+    <li>1NF — because values are not atomic</li>
+    <li>2NF — because of partial dependency</li>
+    <li>3NF — because dept_name depends on dept_id, not on the primary key</li>
+    <li>No violation — the table is fully normalized</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">This violates 3NF. The dept_name column depends on dept_id (a non-key column), not directly on student_id (the primary key). This is called a transitive dependency: student_id → dept_id → dept_name. Fix: move dept_name to a separate departments table with dept_id as the primary key.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">A cell in a table contains "Java, Python, SQL" as a single value. Which normal form rule is violated?</p>
+  <ol class="options">
+    <li>1NF — values must be atomic (one value per cell)</li>
+    <li>2NF — partial dependency</li>
+    <li>3NF — transitive dependency</li>
+    <li>BCNF — determinant is not a candidate key</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="0">1NF requires atomic values — each cell must contain exactly ONE value. A comma-separated list like "Java, Python, SQL" violates 1NF. The fix: create a separate skills table with one row per skill (student_id, skill).</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="views">Views</h3>
+
+<p><strong>Why do views exist?</strong> Imagine you have a complex query with 5 JOINs that you run 10 times a day. Instead of writing that monster query every time, you save it as a <strong>view</strong> — a virtual table that runs the query behind the scenes whenever you access it. Views also let you control what data different users can see.</p>
+
+<div class="box box-tip">
+  <div class="label">Think of it this way</div>
+  A view is like a saved filter in a spreadsheet. The underlying data does not change — the view just shows you a specific slice of it. Every time you open the view, it re-runs the query and shows you the latest data.
+</div>
+
+<pre><span class="cmt">-- Create a view</span>
+<span class="kw">CREATE VIEW</span> high_earners <span class="kw">AS</span>
+<span class="kw">SELECT</span> emp_name, salary, dept_id
+<span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> salary > <span class="num">50000</span>;
+
+<span class="cmt">-- Use the view like a table</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> high_earners;
+
+<span class="cmt">-- Replace a view</span>
+<span class="kw">CREATE OR REPLACE VIEW</span> high_earners <span class="kw">AS</span>
+<span class="kw">SELECT</span> emp_name, salary <span class="kw">FROM</span> employees <span class="kw">WHERE</span> salary > <span class="num">60000</span>;
+
+<span class="cmt">-- Drop a view</span>
+<span class="kw">DROP VIEW</span> high_earners;</pre>
+
+<div class="box box-tip">
+  <div class="label">Why use Views?</div>
+  <ul>
+    <li><strong>Security:</strong> Give interns access to a view that only shows name and department — not salary. They never see the base table.</li>
+    <li><strong>Simplicity:</strong> A 50-line JOIN query becomes <code>SELECT * FROM quarterly_report</code>.</li>
+    <li><strong>Consistency:</strong> Everyone uses the same view definition — no one writes a slightly different version of the query.</li>
+  </ul>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Does a view store data physically in the database?</p>
+  <ol class="options">
+    <li>Yes — it creates a copy of the data</li>
+    <li>No — it stores only the query definition and runs it each time</li>
+    <li>Yes — but only for the first access, then it caches</li>
+    <li>It depends on the database engine</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">A regular view does NOT store data — it stores only the SELECT query definition. Every time you query the view, it re-executes the underlying query against the base tables. This means the view always shows the latest data. (Note: Materialized Views DO store data physically, but they are a separate concept.)</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="indexes">Indexes</h3>
+
+<p><strong>Why do indexes exist?</strong> Without an index, searching for an employee named "Darshan" in a table of 1 million rows means the database scans every single row — like reading a 500-page book from page 1 to find one topic. An index is like the book's index at the back — you look up "Darshan," find it points to row 47892, and jump straight there.</p>
+
+<div class="box box-tip">
+  <div class="label">The book index analogy</div>
+  A book without an index: to find "polymorphism," you flip through every page (full table scan).<br>
+  A book with an index: you check the back, see "polymorphism — page 234," and jump directly there.<br><br>
+  A database index works the same way. It creates a sorted lookup structure (usually a B-tree) that lets the database find your data in milliseconds instead of scanning millions of rows.
+</div>
+
+<pre><span class="cmt">-- Create an index</span>
+<span class="kw">CREATE INDEX</span> idx_emp_name <span class="kw">ON</span> employees(emp_name);
+
+<span class="cmt">-- Create a unique index</span>
+<span class="kw">CREATE UNIQUE INDEX</span> idx_emp_email <span class="kw">ON</span> employees(email);
+
+<span class="cmt">-- Composite index (useful when you often search by both columns together)</span>
+<span class="kw">CREATE INDEX</span> idx_dept_sal <span class="kw">ON</span> employees(dept_id, salary);
+
+<span class="cmt">-- Drop an index</span>
+<span class="kw">DROP INDEX</span> idx_emp_name;</pre>
+
+<div class="box box-warn">
+  <div class="label">Index Trade-off — This is an exam favorite</div>
+  Indexes <strong>speed up SELECT</strong> (reads) but <strong>slow down INSERT/UPDATE/DELETE</strong> (writes). Why? Every time you add, change, or remove a row, the database must also update all relevant indexes. It is like maintaining a book index — every time you add a new chapter, you have to update the index at the back.<br><br>
+  <strong>Rule of thumb:</strong> Index columns that appear frequently in WHERE, JOIN, and ORDER BY. Do NOT index every column — the maintenance overhead is not worth it for rarely-searched columns.
+</div>
+
+<div class="box box-key">
+  <div class="label">Automatic Indexes</div>
+  The database automatically creates an index on PRIMARY KEY and UNIQUE columns. You never need to manually index these.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which statement about indexes is FALSE?</p>
+  <ol class="options">
+    <li>Indexes speed up SELECT queries</li>
+    <li>Indexes slow down INSERT, UPDATE, DELETE operations</li>
+    <li>You should create indexes on every column for maximum performance</li>
+    <li>PRIMARY KEY columns are automatically indexed</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">Indexing every column is a terrible idea. Each index must be maintained on every INSERT/UPDATE/DELETE, which adds overhead. Only index columns that are frequently used in WHERE, JOIN, or ORDER BY clauses. Over-indexing can actually make your database SLOWER overall because writes become expensive.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">You have a table with 10 million rows. Queries filtering by <code>WHERE city = 'Mumbai'</code> are slow. What is the best solution?</p>
+  <ol class="options">
+    <li>Add more RAM to the server</li>
+    <li>Create an index on the city column</li>
+    <li>Use TRUNCATE to remove unnecessary rows</li>
+    <li>Change the column data type to CHAR</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">Creating an index on the city column lets the database quickly locate all rows with city = 'Mumbai' without scanning all 10 million rows. This is the textbook use case for indexes — a column frequently used in WHERE conditions on a large table.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="transactions">Transactions & TCL</h3>
+
+<p><strong>Why do transactions exist?</strong> Imagine transferring Rs. 1000 from your account to a friend's account. This involves TWO operations: (1) subtract 1000 from your balance, (2) add 1000 to friend's balance. What if the system crashes after step 1 but before step 2? Your money vanishes into thin air. Transactions prevent this by treating both operations as ONE atomic unit — either BOTH succeed, or BOTH are undone.</p>
+
+<div class="box box-tip">
+  <div class="label">The video game analogy</div>
+  A transaction is like a checkpoint in a video game. You make a bunch of moves, and if things go wrong, you can "load last checkpoint" (ROLLBACK). If everything goes well, you "save game" (COMMIT). SAVEPOINT is like creating a manual save in the middle of a level.
+</div>
+
+<h4>ACID Properties</h4>
+<p>Every transaction follows four rules, remembered as ACID. This is a guaranteed exam question.</p>
+
+<table>
+<tr><th>Property</th><th>Meaning</th><th>Real-World Example</th></tr>
+<tr><td><strong>Atomicity</strong></td><td>All or nothing — entire transaction succeeds or fails</td><td>Bank transfer: both debit AND credit happen, or neither does</td></tr>
+<tr><td><strong>Consistency</strong></td><td>Database moves from one valid state to another</td><td>Total money in the system remains the same after transfer</td></tr>
+<tr><td><strong>Isolation</strong></td><td>Concurrent transactions don't interfere</td><td>Two people transferring money simultaneously don't see each other's half-done work</td></tr>
+<tr><td><strong>Durability</strong></td><td>Once committed, changes survive crashes</td><td>After bank confirms transfer, even if the server crashes, your money is safe</td></tr>
+</table>
+
+<pre><span class="cmt">-- Bank transfer: a classic transaction example</span>
+<span class="kw">UPDATE</span> accounts <span class="kw">SET</span> balance = balance - <span class="num">1000</span> <span class="kw">WHERE</span> acc_id = <span class="num">1</span>;
+<span class="kw">UPDATE</span> accounts <span class="kw">SET</span> balance = balance + <span class="num">1000</span> <span class="kw">WHERE</span> acc_id = <span class="num">2</span>;
+<span class="kw">COMMIT</span>;  <span class="cmt">-- Save changes permanently — cannot be undone after this</span>
+
+<span class="cmt">-- Something went wrong? Undo everything since last COMMIT</span>
+<span class="kw">ROLLBACK</span>;
+
+<span class="cmt">-- Savepoints — partial rollback</span>
+<span class="kw">SAVEPOINT</span> sp1;
+<span class="kw">UPDATE</span> employees <span class="kw">SET</span> salary = <span class="num">70000</span> <span class="kw">WHERE</span> emp_id = <span class="num">101</span>;
+<span class="kw">SAVEPOINT</span> sp2;
+<span class="kw">DELETE FROM</span> employees <span class="kw">WHERE</span> emp_id = <span class="num">103</span>;
+<span class="kw">ROLLBACK TO</span> sp2;  <span class="cmt">-- Undo DELETE but keep the UPDATE</span></pre>
+
+<div class="box box-key">
+  <div class="label">DDL auto-commits</div>
+  In Oracle, DDL statements (CREATE, ALTER, DROP, TRUNCATE) automatically issue a COMMIT. You <strong>cannot rollback</strong> a TRUNCATE or DROP. This also means if you had uncommitted DML changes, running a DDL statement will commit those too!
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which ACID property ensures that a bank transfer either fully completes or fully rolls back?</p>
+  <ol class="options">
+    <li>Consistency</li>
+    <li>Isolation</li>
+    <li>Durability</li>
+    <li>Atomicity</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="3">Atomicity means "all or nothing." Either the entire transaction (debit + credit) completes successfully, or the entire thing is rolled back. No half-done states. The word "atomic" comes from Greek "atomos" meaning "indivisible."</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">You run an UPDATE, then a CREATE TABLE, then a ROLLBACK. What happens?</p>
+  <ol class="options">
+    <li>Both the UPDATE and CREATE TABLE are rolled back</li>
+    <li>Only the CREATE TABLE is rolled back</li>
+    <li>Nothing is rolled back — CREATE TABLE auto-committed everything</li>
+    <li>Error — ROLLBACK cannot follow CREATE TABLE</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">In Oracle, CREATE TABLE is DDL, which triggers an automatic COMMIT. This commits both the CREATE TABLE AND any uncommitted changes before it (including your UPDATE). When you then run ROLLBACK, there is nothing to roll back — everything was already committed by the DDL statement.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="dcl">DCL — GRANT & REVOKE</h3>
+
+<p><strong>Why does DCL exist?</strong> In a company, not everyone should have the same access. An intern should not be able to DELETE employee records. The CEO's assistant might need to read salary data but never modify it. DCL controls who can do what.</p>
+
+<pre><span class="cmt">-- Grant permissions</span>
+<span class="kw">GRANT SELECT</span>, <span class="kw">INSERT ON</span> employees <span class="kw">TO</span> user1;
+<span class="kw">GRANT ALL ON</span> employees <span class="kw">TO</span> admin_user;
+
+<span class="cmt">-- Revoke permissions</span>
+<span class="kw">REVOKE INSERT ON</span> employees <span class="kw">FROM</span> user1;
+
+<span class="cmt">-- Grant with pass-along ability</span>
+<span class="kw">GRANT SELECT ON</span> employees <span class="kw">TO</span> user1 <span class="kw">WITH GRANT OPTION</span>;</pre>
+
+<div class="box box-key">
+  <div class="label">WITH GRANT OPTION</div>
+  This gives user1 the ability to grant the same permission to OTHER users. Like giving someone a master key AND the ability to make copies. Use carefully — it can lead to uncontrolled permission spreading.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What does <code>GRANT SELECT ON employees TO user1 WITH GRANT OPTION</code> do?</p>
+  <ol class="options">
+    <li>Gives user1 SELECT access only</li>
+    <li>Gives user1 SELECT access and the ability to grant SELECT to others</li>
+    <li>Gives user1 all permissions on employees</li>
+    <li>Creates a view for user1</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">WITH GRANT OPTION allows user1 to further grant the same privilege (SELECT on employees) to other users. Without this option, user1 can use SELECT but cannot pass the permission along.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="misc">Miscellaneous Concepts</h3>
+
+<h4>CASE Expression</h4>
+<p>CASE is SQL's version of if-else. It lets you create calculated columns based on conditions — like adding a "level" label based on salary ranges.</p>
+
+<pre><span class="kw">SELECT</span> emp_name, salary,
+  <span class="kw">CASE</span>
+    <span class="kw">WHEN</span> salary > <span class="num">80000</span> <span class="kw">THEN</span> <span class="str">'Senior'</span>
+    <span class="kw">WHEN</span> salary > <span class="num">50000</span> <span class="kw">THEN</span> <span class="str">'Mid'</span>
+    <span class="kw">ELSE</span> <span class="str">'Junior'</span>
+  <span class="kw">END AS</span> level
+<span class="kw">FROM</span> employees;</pre>
+
+<h4>CREATE TABLE AS SELECT (CTAS)</h4>
+<pre><span class="cmt">-- Create a backup table from existing data</span>
+<span class="kw">CREATE TABLE</span> emp_backup <span class="kw">AS</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> employees <span class="kw">WHERE</span> dept_id = <span class="num">10</span>;</pre>
+
+<h4>RENAME & COMMENT</h4>
+<pre><span class="cmt">-- Rename a table</span>
+<span class="kw">RENAME</span> employees <span class="kw">TO</span> staff;
+
+<span class="cmt">-- Add a comment on table</span>
+<span class="kw">COMMENT ON TABLE</span> employees <span class="kw">IS</span> <span class="str">'Main employee table'</span>;</pre>
+
+<h4>Pseudo-columns (Oracle)</h4>
+<table>
+<tr><th>Pseudo-column</th><th>Description</th></tr>
+<tr><td><code>ROWNUM</code></td><td>Row number in result set</td></tr>
+<tr><td><code>ROWID</code></td><td>Physical address of the row</td></tr>
+<tr><td><code>SYSDATE</code></td><td>Current date and time</td></tr>
+<tr><td><code>USER</code></td><td>Current logged-in user</td></tr>
+</table>
+
+<h4>DECODE (Oracle-specific IF-THEN)</h4>
+<pre><span class="kw">SELECT</span> emp_name,
+  <span class="fn">DECODE</span>(dept_id,
+    <span class="num">10</span>, <span class="str">'Finance'</span>,
+    <span class="num">20</span>, <span class="str">'IT'</span>,
+    <span class="num">30</span>, <span class="str">'HR'</span>,
+    <span class="str">'Other'</span>) <span class="kw">AS</span> dept_name
+<span class="kw">FROM</span> employees;</pre>
+
+<div class="box box-tip">
+  <div class="label">DECODE vs CASE</div>
+  <code>DECODE</code> is Oracle-only, works for simple equality checks only.<br>
+  <code>CASE</code> is ANSI standard, works everywhere, supports complex conditions (ranges, LIKE, IS NULL). Prefer CASE.
+</div>
+
+<h4>Sequences (Oracle — auto-increment)</h4>
+<pre><span class="cmt">-- Create a sequence</span>
+<span class="kw">CREATE SEQUENCE</span> emp_seq <span class="kw">START WITH</span> <span class="num">1</span> <span class="kw">INCREMENT BY</span> <span class="num">1</span>;
+
+<span class="cmt">-- Use in INSERT</span>
+<span class="kw">INSERT INTO</span> employees (emp_id, emp_name)
+<span class="kw">VALUES</span> (emp_seq.<span class="fn">NEXTVAL</span>, <span class="str">'Darshan'</span>);
+
+<span class="cmt">-- Get current value</span>
+<span class="kw">SELECT</span> emp_seq.<span class="fn">CURRVAL</span> <span class="kw">FROM</span> dual;</pre>
+
+<h4>Synonyms (Oracle)</h4>
+<pre><span class="cmt">-- Create a synonym (alias for a table)</span>
+<span class="kw">CREATE SYNONYM</span> emp <span class="kw">FOR</span> hr.employees;
+
+<span class="cmt">-- Now use the short name</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> emp;</pre>
+
+<!-- ═══════════════════════════════════════════════ -->
+<h3 id="practice">Practice Questions</h3>
+
+<div class="practice">
+  <div class="q-label">Question 1</div>
+  <p class="question">Which SQL command is used to remove all rows from a table without logging individual row deletions?</p>
+  <ol class="options">
+    <li>DELETE</li>
+    <li>DROP</li>
+    <li>TRUNCATE</li>
+    <li>REMOVE</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) TRUNCATE — removes all rows, keeps table structure, cannot be rolled back (DDL). DELETE logs each row and can be rolled back (DML).</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 2</div>
+  <p class="question">What is the output of: <code>SELECT COUNT(*) FROM employees WHERE commission IS NULL;</code> if 3 out of 10 employees have NULL commission?</p>
+  <ol class="options">
+    <li>7</li>
+    <li>3</li>
+    <li>10</li>
+    <li>0</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) 3 — COUNT(*) counts all rows that match the WHERE condition. 3 employees have NULL commission.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 3</div>
+  <p class="question">Which JOIN returns all rows from both tables, including unmatched rows?</p>
+  <ol class="options">
+    <li>INNER JOIN</li>
+    <li>LEFT JOIN</li>
+    <li>FULL OUTER JOIN</li>
+    <li>CROSS JOIN</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) FULL OUTER JOIN — returns all rows from both tables. Unmatched rows get NULL for the other table's columns.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 4</div>
+  <p class="question">Which clause is used to filter groups after GROUP BY?</p>
+  <ol class="options">
+    <li>WHERE</li>
+    <li>HAVING</li>
+    <li>FILTER</li>
+    <li>GROUP FILTER</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) HAVING — filters groups after GROUP BY. WHERE filters individual rows before grouping.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 5</div>
+  <p class="question">A table with no repeating groups and only atomic values in each cell satisfies which normal form?</p>
+  <ol class="options">
+    <li>2NF</li>
+    <li>BCNF</li>
+    <li>1NF</li>
+    <li>3NF</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) 1NF (First Normal Form) — requires atomic values (no repeating groups, no comma-separated lists).</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 6</div>
+  <p class="question">What does <code>GRANT SELECT ON employees TO user1 WITH GRANT OPTION</code> do?</p>
+  <ol class="options">
+    <li>Gives user1 SELECT access only</li>
+    <li>Gives user1 SELECT access and the ability to grant SELECT to others</li>
+    <li>Gives user1 all permissions on employees</li>
+    <li>Creates a view for user1</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) WITH GRANT OPTION allows user1 to further grant the same privilege to other users.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 7</div>
+  <p class="question">Which function returns the first non-NULL value from a list?</p>
+  <ol class="options">
+    <li>NVL</li>
+    <li>IFNULL</li>
+    <li>COALESCE</li>
+    <li>NULLIF</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) COALESCE — returns the first non-NULL value from any number of arguments. NVL only takes 2 arguments (Oracle-specific).</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 8</div>
+  <p class="question">What does <code>SELECT emp_name FROM employees WHERE salary > ALL (SELECT salary FROM employees WHERE dept_id = 20);</code> return?</p>
+  <ol class="options">
+    <li>Employees earning more than any employee in dept 20</li>
+    <li>Employees earning more than every employee in dept 20</li>
+    <li>Employees earning less than all in dept 20</li>
+    <li>Error — ALL cannot be used with subqueries</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) > ALL means greater than the MAXIMUM value returned by the subquery. So it returns employees earning more than every employee in dept 20.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 9</div>
+  <p class="question">The ACID property that ensures a transaction is "all or nothing" is:</p>
+  <ol class="options">
+    <li>Consistency</li>
+    <li>Isolation</li>
+    <li>Durability</li>
+    <li>Atomicity</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="3">D) Atomicity — the transaction either completes entirely or not at all. If any part fails, the entire transaction is rolled back.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question 10</div>
+  <p class="question">What is the difference between <code>DELETE FROM employees;</code> and <code>TRUNCATE TABLE employees;</code>?</p>
+  <ol class="options">
+    <li>No difference — both do the same thing</li>
+    <li>DELETE is DDL, TRUNCATE is DML</li>
+    <li>DELETE can be rolled back, TRUNCATE cannot</li>
+    <li>TRUNCATE can use WHERE clause, DELETE cannot</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) DELETE is DML (can be rolled back, logs each row deletion, can use WHERE). TRUNCATE is DDL (cannot be rolled back, removes all rows instantly, no WHERE clause).</div>
+</div>
+
+</section>
+
+  <div class="footer">
+    <a href="unix.html">← Unix</a> |
+    <a href="plsql.html">PL/SQL →</a>
+  </div>
+</div>
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

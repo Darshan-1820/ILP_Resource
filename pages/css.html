@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#css-selectors">CSS Selectors</a>
+  <a href="#box-model">Box Model</a>
+  <a href="#specificity">Specificity & Cascade</a>
+  <a href="#display-position">Display & Position</a>
+  <a href="#flexbox">Flexbox</a>
+  <a href="#grid">CSS Grid</a>
+  <a href="#units">Units — px, em, rem, %</a>
+  <a href="#colors">Colors & Backgrounds</a>
+  <a href="#text-fonts">Text & Fonts</a>
+  <a href="#pseudo">Pseudo-classes & Pseudo-elements</a>
+  <a href="#transitions">Transitions & Animations</a>
+  <a href="#responsive">Responsive Design</a>
+  <a href="#shortcuts">Shorthand Properties</a>
+  <a href="#css-practice">More Practice Questions</a>
+</nav>
+<div class="main">
+
+<section class="sec-css">
+<h2>CSS — Cascading Style Sheets</h2>
+
+<div class="box box-key">
+  <div class="label">Exam relevance</div>
+  CSS is part of the <strong>10 UI MCQs</strong> in FA Round 1 (combined with HTML and JS — exact split varies by batch). Topics: selectors, box model, specificity, positioning, and display properties.
+</div>
+
+<p>Think of HTML as the skeleton of a house — walls, rooms, doors. CSS is the interior design — paint colors, furniture arrangement, spacing between objects. Without CSS, every webpage would look like a plain text document from 1995.</p>
+
+<p>CSS controls how HTML elements look — colors, spacing, layout, fonts, animations. There are three ways to add CSS to your page:</p>
+
+<table>
+<tr><th>Method</th><th>Syntax</th><th>Priority</th></tr>
+<tr><td><strong>Inline</strong></td><td><code>&lt;p style="color:red"&gt;</code></td><td>Highest (1000)</td></tr>
+<tr><td><strong>Internal</strong></td><td><code>&lt;style&gt;</code> in <code>&lt;head&gt;</code></td><td>Normal</td></tr>
+<tr><td><strong>External</strong></td><td><code>&lt;link rel="stylesheet" href="style.css"&gt;</code></td><td>Normal</td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">Why external is best</div>
+  Inline styles are like writing instructions on every single brick of a house — tedious and impossible to maintain. External CSS is like having a single blueprint that controls the entire building. Change one line in the blueprint, and every room updates. That is why real projects always use external stylesheets.
+</div>
+
+<!-- ─── SELECTORS ─── -->
+<h3 id="css-selectors">CSS Selectors</h3>
+
+<p><strong>Why do selectors exist?</strong> Imagine you are a teacher in a classroom of 30 students. You need a way to say "Hey, YOU specifically" or "everyone in the back row" or "all students wearing blue shirts." CSS selectors are exactly that — they are how you <em>point at</em> specific HTML elements and say "I want to style YOU."</p>
+
+<p>Without selectors, you would have to put inline styles on every single element. Selectors let you write one rule that applies to many elements at once, or target one very specific element.</p>
+
+<table>
+<tr><th>Selector</th><th>Syntax</th><th>Selects</th></tr>
+<tr><td>Universal</td><td><code>*</code></td><td>All elements (like yelling "EVERYONE!")</td></tr>
+<tr><td>Element</td><td><code>p</code></td><td>All <code>&lt;p&gt;</code> tags (like saying "all paragraphs")</td></tr>
+<tr><td>Class</td><td><code>.intro</code></td><td>Elements with <code>class="intro"</code> (like a team jersey — many can wear it)</td></tr>
+<tr><td>ID</td><td><code>#main</code></td><td>Element with <code>id="main"</code> (like a roll number — unique to one person)</td></tr>
+<tr><td>Descendant</td><td><code>div p</code></td><td>All <code>&lt;p&gt;</code> inside <code>&lt;div&gt;</code> (children, grandchildren, great-grandchildren...)</td></tr>
+<tr><td>Child</td><td><code>div > p</code></td><td>Direct <code>&lt;p&gt;</code> children of <code>&lt;div&gt;</code> (only immediate children, not grandkids)</td></tr>
+<tr><td>Adjacent sibling</td><td><code>h2 + p</code></td><td>First <code>&lt;p&gt;</code> right after <code>&lt;h2&gt;</code> (the next-door neighbor)</td></tr>
+<tr><td>General sibling</td><td><code>h2 ~ p</code></td><td>All <code>&lt;p&gt;</code> siblings after <code>&lt;h2&gt;</code> (all neighbors on the same street)</td></tr>
+<tr><td>Attribute</td><td><code>input[type="text"]</code></td><td>Inputs with type text (selecting by a specific trait)</td></tr>
+<tr><td>Group</td><td><code>h1, h2, h3</code></td><td>All h1, h2, and h3 elements (applying one rule to multiple selectors)</td></tr>
+</table>
+
+<div class="box box-example">
+  <div class="label">Descendant vs Child — the most confusing part</div>
+  Think of a family tree. <code>div p</code> (descendant) selects ALL <code>&lt;p&gt;</code> elements anywhere inside <code>&lt;div&gt;</code> — children, grandchildren, great-grandchildren. <code>div > p</code> (child) only selects <strong>direct children</strong> — just the first generation, not nested ones.<br><br>
+  If a <code>&lt;p&gt;</code> is inside a <code>&lt;span&gt;</code> inside a <code>&lt;div&gt;</code>, then <code>div p</code> will select it, but <code>div > p</code> will NOT — because that <code>&lt;p&gt;</code> is a grandchild, not a direct child.
+</div>
+
+<pre><span class="cmt">/* Element selector — targets ALL paragraphs */</span>
+p { <span class="kw">color</span>: blue; }
+
+<span class="cmt">/* Class selector — targets anything with class="highlight" */</span>
+.highlight { <span class="kw">background</span>: yellow; }
+
+<span class="cmt">/* ID selector — targets the ONE element with id="header" */</span>
+#header { <span class="kw">font-size</span>: <span class="num">24px</span>; }
+
+<span class="cmt">/* Descendant vs Child — EXAM FAVORITE */</span>
+div p   { <span class="kw">color</span>: red; }   <span class="cmt">/* ALL p inside div (any depth) */</span>
+div > p { <span class="kw">color</span>: blue; }  <span class="cmt">/* only DIRECT p children of div */</span>
+
+<span class="cmt">/* Attribute selector */</span>
+a[target=<span class="str">"_blank"</span>] { <span class="kw">color</span>: red; }</pre>
+
+<div class="box box-tip">
+  <div class="label">Exam favorite</div>
+  "What does <code>div > p</code> select?" — It selects only <strong>direct child</strong> <code>&lt;p&gt;</code> elements, not nested ones. Compare with <code>div p</code> which selects ALL descendants. Also watch for <code>p.intro</code> vs <code>.intro p</code> — totally different things! <code>p.intro</code> = a paragraph WITH class intro. <code>.intro p</code> = a paragraph INSIDE something with class intro.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Given this HTML: <code>&lt;div&gt;&lt;span&gt;&lt;p&gt;Hello&lt;/p&gt;&lt;/span&gt;&lt;/div&gt;</code>, which selector will style the <code>&lt;p&gt;</code>?</p>
+  <ol class="options">
+    <li><code>div > p</code></li>
+    <li><code>div p</code></li>
+    <li><code>span > div</code></li>
+    <li><code>div + p</code></li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) <code>div p</code> — the descendant selector matches <code>&lt;p&gt;</code> at any depth inside <code>&lt;div&gt;</code>. Option A fails because <code>&lt;p&gt;</code> is a grandchild (not direct child) of <code>&lt;div&gt;</code>. The child selector <code>></code> only matches immediate children.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What is the difference between <code>p.intro</code> and <code>.intro p</code>?</p>
+  <ol class="options">
+    <li>They are the same thing</li>
+    <li><code>p.intro</code> selects paragraphs with class "intro"; <code>.intro p</code> selects paragraphs inside elements with class "intro"</li>
+    <li><code>p.intro</code> selects elements with id "intro"; <code>.intro p</code> selects class "intro"</li>
+    <li><code>p.intro</code> is invalid CSS syntax</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) <code>p.intro</code> means "a <code>&lt;p&gt;</code> element that HAS class intro" (no space = same element). <code>.intro p</code> means "any <code>&lt;p&gt;</code> that is INSIDE an element with class intro" (space = descendant relationship). Completely different selections.</div>
+</div>
+
+<!-- ─── BOX MODEL ─── -->
+<h3 id="box-model">Box Model</h3>
+
+<p><strong>Why does the box model matter?</strong> Here is the single most important thing to understand about CSS layout: <em>every single HTML element is a rectangular box</em>. Not some elements. Not just divs. EVERY element — paragraphs, headings, images, links — they are all invisible boxes sitting on the page.</p>
+
+<p>The box model describes the four layers that make up every one of these boxes. Think of it like a <strong>picture in a frame</strong>:</p>
+
+<ul>
+  <li><strong>Content</strong> — the picture itself (your text, image, or whatever the element displays)</li>
+  <li><strong>Padding</strong> — the matting around the picture (space between the picture and the frame). Same background color as the content.</li>
+  <li><strong>Border</strong> — the actual frame around the matting</li>
+  <li><strong>Margin</strong> — the wall space between this frame and the next frame hanging on the wall. Always transparent — you can never color a margin.</li>
+</ul>
+
+<pre><span class="cmt">/*
+┌──────────────── margin ────────────────┐
+│ ┌──────────── border ────────────────┐ │
+│ │ ┌────────── padding ────────────┐  │ │
+│ │ │ ┌──────── content ─────────┐  │  │ │
+│ │ │ │                          │  │  │ │
+│ │ │ └──────────────────────────┘  │  │ │
+│ │ └───────────────────────────────┘  │ │
+│ └────────────────────────────────────┘ │
+└────────────────────────────────────────┘
+*/</span></pre>
+
+<table>
+<tr><th>Layer</th><th>What it does</th><th>Affected by background?</th></tr>
+<tr><td><strong>Content</strong></td><td>The actual text/image</td><td>Yes</td></tr>
+<tr><td><strong>Padding</strong></td><td>Space between content and border</td><td>Yes</td></tr>
+<tr><td><strong>Border</strong></td><td>Edge around padding</td><td>Has own color</td></tr>
+<tr><td><strong>Margin</strong></td><td>Space outside the border</td><td>No — always transparent</td></tr>
+</table>
+
+<div class="box box-warn">
+  <div class="label">Critical — total width calculation (GUARANTEED on exam)</div>
+  This trips up everyone. When you say <code>width: 200px</code>, you might think the element takes 200px on screen. WRONG. By default, <code>width</code> only sets the <strong>content</strong> area. Padding and border are ADDED on top.<br><br>
+  <strong>Default (content-box):</strong> Total width = width + padding-left + padding-right + border-left + border-right<br>
+  If <code>width: 200px; padding: 20px; border: 5px</code> → total = 200 + 40 + 10 = <strong>250px</strong><br><br>
+  <strong>With box-sizing: border-box:</strong> Total width = width (padding and border included inside)<br>
+  Same values → total = <strong>200px</strong> (content area shrinks to 150px to make room for padding and border)<br><br>
+  This is why every modern CSS reset starts with <code>* { box-sizing: border-box; }</code> — it makes <code>width</code> mean "total width" which is what your brain expects.
+</div>
+
+<pre>.box {
+  <span class="kw">width</span>: <span class="num">200px</span>;
+  <span class="kw">padding</span>: <span class="num">20px</span>;
+  <span class="kw">border</span>: <span class="num">5px</span> solid black;
+  <span class="kw">margin</span>: <span class="num">10px</span>;
+}
+<span class="cmt">/* Total width on screen: 200 + 20*2 + 5*2 = 250px */</span>
+<span class="cmt">/* Total space occupied: 250 + 10*2 = 270px */</span>
+
+<span class="cmt">/* Fix: use border-box so width means total width */</span>
+* { <span class="kw">box-sizing</span>: border-box; }</pre>
+
+<div class="box box-key">
+  <div class="label">Margin collapse — the weird CSS behavior</div>
+  Imagine two magnets placed end to end — they don't stack their forces, the stronger one wins. Vertical margins work the same way. When element A has <code>margin-bottom: 30px</code> and element B has <code>margin-top: 20px</code>, the gap between them is <strong>30px</strong> (not 50px) — the larger margin absorbs the smaller one. This ONLY happens vertically. Horizontal margins never collapse.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What is the total width of an element with: <code>width: 300px; padding: 20px; border: 5px solid; margin: 10px;</code>?</p>
+  <ol class="options">
+    <li>300px</li>
+    <li>350px</li>
+    <li>370px</li>
+    <li>350px content + 20px margin on each side</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) 350px — width(300) + padding(20x2) + border(5x2) = 350px. Margin is not part of the element's width but adds to total space occupied (370px total space). Remember: by default, <code>width</code> only sets the content area.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Two adjacent elements: first has <code>margin-bottom: 40px</code>, second has <code>margin-top: 25px</code>. What is the gap between them?</p>
+  <ol class="options">
+    <li>65px</li>
+    <li>40px</li>
+    <li>25px</li>
+    <li>32.5px</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) 40px — vertical margins collapse. The larger margin wins, so the gap is 40px, not 65px. This only happens with vertical margins (top/bottom), never horizontal (left/right).</div>
+</div>
+
+<!-- ─── SPECIFICITY ─── -->
+<h3 id="specificity">Specificity & Cascade</h3>
+
+<p><strong>Why does specificity exist?</strong> Imagine you have 3 bosses. Boss A says "paint the wall blue." Boss B says "paint the wall red." Boss C says "paint the wall green." Whose instruction do you follow? You need a pecking order — a way to decide who wins.</p>
+
+<p>That is exactly what specificity is. When multiple CSS rules target the same element with conflicting styles, the browser needs a tiebreaker. Specificity is a <strong>scoring system</strong> — each selector gets a score, and the highest score wins.</p>
+
+<p>Think of it as a 4-digit address system: <strong>Inline, IDs, Classes, Elements</strong> — each column is 10x more powerful than the one to its right. One ID beats a hundred classes. One inline style beats everything.</p>
+
+<table>
+<tr><th>Selector type</th><th>Specificity value</th><th>Example</th><th>Think of it as...</th></tr>
+<tr><td>Inline style</td><td><strong>1,0,0,0</strong></td><td><code>style="color:red"</code></td><td>The CEO's direct order</td></tr>
+<tr><td>ID</td><td><strong>0,1,0,0</strong></td><td><code>#nav</code></td><td>A department head</td></tr>
+<tr><td>Class / attribute / pseudo-class</td><td><strong>0,0,1,0</strong></td><td><code>.menu</code>, <code>[type]</code>, <code>:hover</code></td><td>A team lead</td></tr>
+<tr><td>Element / pseudo-element</td><td><strong>0,0,0,1</strong></td><td><code>div</code>, <code>::before</code></td><td>An intern</td></tr>
+<tr><td>Universal <code>*</code></td><td><strong>0,0,0,0</strong></td><td><code>*</code></td><td>Background noise — no weight at all</td></tr>
+</table>
+
+<div class="box box-example">
+  <div class="label">How to count specificity</div>
+  For any selector, count: (# of IDs), (# of classes/attributes/pseudo-classes), (# of elements/pseudo-elements).<br><br>
+  <code>p</code> → 0,0,0,1 (one element)<br>
+  <code>.intro</code> → 0,0,1,0 (one class)<br>
+  <code>p.intro</code> → 0,0,1,1 (one class + one element)<br>
+  <code>#main</code> → 0,1,0,0 (one ID)<br>
+  <code>#main p.intro</code> → 0,1,1,1 (one ID + one class + one element p... wait, two elements? No — <code>#main</code> is an ID, not an element. Count carefully!)<br><br>
+  <strong>The higher number ALWAYS wins.</strong> 0,1,0,0 beats 0,0,99,99 — one ID outranks any number of classes.
+</div>
+
+<pre><span class="cmt">/* Specificity examples — count IDs, classes, elements */</span>
+p              { }  <span class="cmt">/* 0,0,0,1 */</span>
+.intro         { }  <span class="cmt">/* 0,0,1,0 */</span>
+p.intro        { }  <span class="cmt">/* 0,0,1,1 */</span>
+#main          { }  <span class="cmt">/* 0,1,0,0 */</span>
+#main p.intro  { }  <span class="cmt">/* 0,1,1,1 */</span>
+
+<span class="cmt">/* #main p.intro WINS over .intro because 0,1,1,1 > 0,0,1,0 */</span></pre>
+
+<div class="box box-tip">
+  <div class="label">Cascade order (when specificity is equal)</div>
+  If two rules have the same specificity, the one that appears <strong>later</strong> in the CSS wins — like the last person to speak in an argument gets the final word. Also: <code>!important</code> overrides everything (but avoid using it — it is the nuclear option and the exam loves to test edge cases with it).
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which selector has the highest specificity?</p>
+  <ol class="options">
+    <li><code>#nav .menu li</code></li>
+    <li><code>div#nav ul.menu li</code></li>
+    <li><code>body div ul li</code></li>
+    <li><code>.nav .menu .item</code></li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) <code>div#nav ul.menu li</code> — specificity is 0,1,1,3 (1 ID + 1 class + 3 elements). A is 0,1,1,1. C is 0,0,0,4. D is 0,0,3,0. Remember: one ID (0,1,0,0) beats any number of classes or elements.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Two rules target the same element: <code>.header { color: blue; }</code> appears on line 10, and <code>.header { color: red; }</code> appears on line 50. What color is the text?</p>
+  <ol class="options">
+    <li>Blue — first rule wins</li>
+    <li>Red — last rule wins when specificity is equal</li>
+    <li>Browser default color</li>
+    <li>Depends on the HTML structure</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) Red. When two selectors have the same specificity (both are <code>.header</code> = 0,0,1,0), the cascade rule kicks in: the one that appears LATER in the stylesheet wins. This is the "C" in CSS — Cascading.</div>
+</div>
+
+<!-- ─── DISPLAY & POSITION ─── -->
+<h3 id="display-position">Display & Position</h3>
+
+<h4>Display property</h4>
+
+<p><strong>Why does <code>display</code> exist?</strong> Every HTML element has a default way it behaves in the page flow. Some elements are like bricks in a wall — they stack vertically and take up the full width (block elements). Others are like words in a sentence — they sit next to each other and only take the space they need (inline elements). The <code>display</code> property lets you change this fundamental behavior.</p>
+
+<div class="box box-example">
+  <div class="label">The brick vs word analogy</div>
+  <strong>Block elements</strong> = bricks. A <code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, or <code>&lt;h1&gt;</code> is like a brick — it takes the entire row and the next element starts below it.<br><br>
+  <strong>Inline elements</strong> = words in a sentence. A <code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>, or <code>&lt;strong&gt;</code> sits right next to its neighbors. But here is the catch — you CANNOT set width or height on inline elements, just like you cannot make a word in a sentence taller without changing the whole line.<br><br>
+  <strong>Inline-block</strong> = the best of both worlds. Sits next to its neighbors like an inline element, BUT you CAN set width and height. Think of it as a picture in a sentence — it flows with the text but has its own dimensions.
+</div>
+
+<table>
+<tr><th>Value</th><th>Behavior</th><th>Examples</th></tr>
+<tr><td><code>block</code></td><td>Takes full width, starts on new line</td><td><code>div</code>, <code>p</code>, <code>h1</code>–<code>h6</code>, <code>section</code></td></tr>
+<tr><td><code>inline</code></td><td>Only takes needed width, no line break. <strong>Cannot set width/height</strong></td><td><code>span</code>, <code>a</code>, <code>strong</code>, <code>em</code></td></tr>
+<tr><td><code>inline-block</code></td><td>Inline flow but <strong>can set width/height</strong></td><td><code>img</code>, <code>button</code>, <code>input</code></td></tr>
+<tr><td><code>none</code></td><td>Element is removed from flow entirely</td><td>Hidden elements</td></tr>
+<tr><td><code>flex</code></td><td>Flex container — children become flex items</td><td>Layouts</td></tr>
+<tr><td><code>grid</code></td><td>Grid container — 2D layouts</td><td>Complex layouts</td></tr>
+</table>
+
+<div class="box box-warn">
+  <div class="label">Exam trap — display:none vs visibility:hidden</div>
+  This is like the difference between someone <strong>leaving the room</strong> vs someone putting on an <strong>invisibility cloak</strong>.<br><br>
+  <code>display: none</code> — the element LEAVES the room. It is completely gone from the layout. Other elements move up to fill its space.<br>
+  <code>visibility: hidden</code> — the element puts on an invisibility cloak. You cannot see it, but it is still standing there taking up space. Other elements do NOT move.
+</div>
+
+<h4>Position property</h4>
+
+<p><strong>Why does <code>position</code> exist?</strong> Normal HTML flows like a Word document — elements stack top to bottom, left to right. But what if you want a chat button floating in the bottom-right corner? Or a navbar that stays at the top when you scroll? Or a tooltip that appears right next to the element you hover? Normal flow cannot do that. The <code>position</code> property lets you break out of normal flow and place elements exactly where you want.</p>
+
+<div class="box box-example">
+  <div class="label">Position types — think of a classroom</div>
+  <strong>static</strong> = students sitting in their assigned seats. Normal order. You cannot tell them "move 20px left" — they just sit where they sit.<br><br>
+  <strong>relative</strong> = a student who leans 20px to the left from their assigned seat. Their seat (original space) is still reserved — nobody else can sit there. They just appear shifted.<br><br>
+  <strong>absolute</strong> = a student who stands up and goes to stand at a specific spot in the room. Their seat is now empty (other students can fill in). Where they stand depends on the room boundaries (or the nearest "positioned" parent).<br><br>
+  <strong>fixed</strong> = a security camera mounted on the wall. No matter how everyone moves around (scrolls), the camera stays in the exact same spot on screen.<br><br>
+  <strong>sticky</strong> = a student who sits normally until the teacher scrolls past them, then they stick to the top of the whiteboard. Section headers on long pages use this.
+</div>
+
+<table>
+<tr><th>Value</th><th>Behavior</th><th>Relative to</th></tr>
+<tr><td><code>static</code></td><td>Default. Normal document flow</td><td>N/A (ignores top/left/right/bottom)</td></tr>
+<tr><td><code>relative</code></td><td>Offset from its normal position. <strong>Still takes original space</strong></td><td>Itself</td></tr>
+<tr><td><code>absolute</code></td><td>Removed from flow. Positioned relative to nearest positioned ancestor</td><td>Nearest ancestor with position != static</td></tr>
+<tr><td><code>fixed</code></td><td>Removed from flow. Stays in place when scrolling</td><td>Viewport</td></tr>
+<tr><td><code>sticky</code></td><td>Acts relative until scroll threshold, then acts fixed</td><td>Scroll container</td></tr>
+</table>
+
+<pre><span class="cmt">/* Relative — nudge from normal position, original space preserved */</span>
+.box1 {
+  <span class="kw">position</span>: relative;
+  <span class="kw">top</span>: <span class="num">20px</span>;    <span class="cmt">/* moves 20px DOWN from where it would normally be */</span>
+  <span class="kw">left</span>: <span class="num">10px</span>;   <span class="cmt">/* moves 10px RIGHT */</span>
+}
+
+<span class="cmt">/* Absolute — ripped out of flow, positioned inside nearest positioned parent */</span>
+.parent { <span class="kw">position</span>: relative; }  <span class="cmt">/* parent MUST be positioned! */</span>
+.child  {
+  <span class="kw">position</span>: absolute;
+  <span class="kw">top</span>: <span class="num">0</span>;
+  <span class="kw">right</span>: <span class="num">0</span>;   <span class="cmt">/* top-right corner of .parent */</span>
+}
+
+<span class="cmt">/* Fixed — stays on screen even when scrolling */</span>
+.navbar {
+  <span class="kw">position</span>: fixed;
+  <span class="kw">top</span>: <span class="num">0</span>;
+  <span class="kw">width</span>: <span class="num">100%</span>;
+}</pre>
+
+<div class="box box-key">
+  <div class="label">Key rule for absolute positioning</div>
+  An <code>absolute</code> element looks UP the DOM tree for the nearest ancestor that has <code>position: relative</code>, <code>absolute</code>, or <code>fixed</code>. If none found, it positions relative to <code>&lt;html&gt;</code> (the viewport). This is why you almost always see <code>position: relative</code> on a parent when using <code>position: absolute</code> on a child — the parent becomes the reference point.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What is the difference between <code>display: none</code> and <code>visibility: hidden</code>?</p>
+  <ol class="options">
+    <li>No difference — both hide the element</li>
+    <li><code>display: none</code> removes the element from flow; <code>visibility: hidden</code> hides it but it still takes space</li>
+    <li><code>visibility: hidden</code> removes the element from flow; <code>display: none</code> keeps the space</li>
+    <li>Both remove the element from document flow</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) <code>display: none</code> removes the element completely — it takes no space, as if it was never there. <code>visibility: hidden</code> makes it invisible but it still occupies its space in the layout. Think: leaving the room vs wearing an invisibility cloak.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What does <code>position: absolute</code> do?</p>
+  <ol class="options">
+    <li>Positions the element relative to its normal position</li>
+    <li>Positions the element relative to the viewport</li>
+    <li>Positions the element relative to the nearest positioned ancestor</li>
+    <li>Keeps the element in normal document flow</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) It removes the element from normal flow and positions it relative to the nearest ancestor that has a position value other than <code>static</code>. If no positioned ancestor exists, it uses the document body. Remember: <code>relative</code> = nudge from where you were; <code>absolute</code> = teleport to exact coordinates inside your parent.</div>
+</div>
+
+<!-- ─── FLEXBOX ─── -->
+<h3 id="flexbox">Flexbox</h3>
+
+<p><strong>Why does Flexbox exist?</strong> Before Flexbox, centering a div vertically was a legendary CSS struggle. Developers used hacks with tables, floats, and negative margins just to put something in the middle of the page. Flexbox was invented to solve this: it gives you a simple, powerful way to arrange elements in a row or column, with total control over spacing and alignment.</p>
+
+<p><strong>The analogy:</strong> Think of a flex container as a <strong>shelf</strong>. The items on the shelf are flex items. You can decide:</p>
+<ul>
+  <li>Should items go left-to-right (row) or top-to-bottom (column)?</li>
+  <li>Should items bunch up at the start, spread out evenly, or center themselves?</li>
+  <li>Should items stretch to fill the shelf height, or stay their natural size?</li>
+  <li>If there are too many items, should they wrap to a new row?</li>
+</ul>
+
+<p>All you do is put <code>display: flex</code> on the parent — the children automatically become flex items.</p>
+
+<h4>Container properties (parent)</h4>
+<table>
+<tr><th>Property</th><th>Values</th><th>Default</th></tr>
+<tr><td><code>flex-direction</code></td><td><code>row</code> | <code>row-reverse</code> | <code>column</code> | <code>column-reverse</code></td><td><code>row</code></td></tr>
+<tr><td><code>justify-content</code></td><td><code>flex-start</code> | <code>flex-end</code> | <code>center</code> | <code>space-between</code> | <code>space-around</code> | <code>space-evenly</code></td><td><code>flex-start</code></td></tr>
+<tr><td><code>align-items</code></td><td><code>flex-start</code> | <code>flex-end</code> | <code>center</code> | <code>stretch</code> | <code>baseline</code></td><td><code>stretch</code></td></tr>
+<tr><td><code>flex-wrap</code></td><td><code>nowrap</code> | <code>wrap</code> | <code>wrap-reverse</code></td><td><code>nowrap</code></td></tr>
+<tr><td><code>gap</code></td><td>Any length value</td><td><code>0</code></td></tr>
+</table>
+
+<div class="box box-key">
+  <div class="label">The two axes — this is the KEY to Flexbox</div>
+  Flexbox has two axes. <strong>Main axis</strong> = the direction items flow (horizontal in <code>row</code>, vertical in <code>column</code>). <strong>Cross axis</strong> = the perpendicular direction.<br><br>
+  <code>justify-content</code> controls the <strong>main axis</strong> (think: "justify" like justifying text — left, center, right).<br>
+  <code>align-items</code> controls the <strong>cross axis</strong> (think: "align" items vertically).<br><br>
+  If you flip <code>flex-direction</code> to <code>column</code>, these axes SWAP — <code>justify-content</code> now controls vertical, <code>align-items</code> controls horizontal. This confuses many people on the exam.
+</div>
+
+<div class="box box-example">
+  <div class="label">justify-content values visualized (in row direction)</div>
+  <code>flex-start</code>: <strong>[A B C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</strong> — items packed to the start<br>
+  <code>flex-end</code>: <strong>[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A B C]</strong> — items packed to the end<br>
+  <code>center</code>: <strong>[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A B C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]</strong> — items centered<br>
+  <code>space-between</code>: <strong>[A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C]</strong> — first and last touch edges, equal space between<br>
+  <code>space-around</code>: <strong>[&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;B&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&nbsp;]</strong> — equal space around each item (edges get half)<br>
+  <code>space-evenly</code>: <strong>[&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;B&nbsp;&nbsp;&nbsp;C&nbsp;&nbsp;&nbsp;]</strong> — perfectly equal gaps everywhere
+</div>
+
+<h4>Item properties (children)</h4>
+<table>
+<tr><th>Property</th><th>What it does</th></tr>
+<tr><td><code>flex-grow</code></td><td>How much the item should grow to fill extra space (default: 0 = don't grow)</td></tr>
+<tr><td><code>flex-shrink</code></td><td>How much the item should shrink when space is tight (default: 1 = shrink equally)</td></tr>
+<tr><td><code>flex-basis</code></td><td>Starting size before growing/shrinking (default: auto = use the element's natural size)</td></tr>
+<tr><td><code>align-self</code></td><td>Override <code>align-items</code> for this one item only</td></tr>
+<tr><td><code>order</code></td><td>Visual order (default: 0, lower = first)</td></tr>
+</table>
+
+<pre><span class="cmt">/* Center something perfectly — the #1 reason Flexbox was invented */</span>
+.container {
+  <span class="kw">display</span>: flex;
+  <span class="kw">justify-content</span>: center;  <span class="cmt">/* horizontal center (main axis) */</span>
+  <span class="kw">align-items</span>: center;      <span class="cmt">/* vertical center (cross axis) */</span>
+  <span class="kw">height</span>: <span class="num">100vh</span>;            <span class="cmt">/* need a height, or nothing to center against */</span>
+}
+
+<span class="cmt">/* Navigation bar — logo on left, links on right */</span>
+.nav {
+  <span class="kw">display</span>: flex;
+  <span class="kw">justify-content</span>: space-between;  <span class="cmt">/* pushes first and last item to edges */</span>
+  <span class="kw">align-items</span>: center;
+}
+
+<span class="cmt">/* Flex shorthand: flex-grow flex-shrink flex-basis */</span>
+.item { <span class="kw">flex</span>: <span class="num">1</span>; }            <span class="cmt">/* same as flex: 1 1 0% — all items grow equally */</span>
+.item { <span class="kw">flex</span>: <span class="num">0 0 200px</span>; }   <span class="cmt">/* fixed 200px, don't grow, don't shrink */</span></pre>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which CSS property is used to align items along the main axis in a flex container?</p>
+  <ol class="options">
+    <li><code>align-items</code></li>
+    <li><code>justify-content</code></li>
+    <li><code>flex-direction</code></li>
+    <li><code>align-content</code></li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) <code>justify-content</code> — it aligns items along the main axis. <code>align-items</code> aligns along the cross axis. Remember: "justify" = main axis, "align" = cross axis.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">You have a flex container with <code>flex-direction: column</code>. Which property controls horizontal alignment of the items?</p>
+  <ol class="options">
+    <li><code>justify-content</code></li>
+    <li><code>align-items</code></li>
+    <li><code>flex-wrap</code></li>
+    <li><code>flex-basis</code></li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) <code>align-items</code>. When <code>flex-direction</code> is <code>column</code>, the main axis becomes vertical and the cross axis becomes horizontal. Since <code>align-items</code> controls the cross axis, it now controls horizontal alignment. This axis-swap is a common exam trap.</div>
+</div>
+
+<!-- ─── GRID ─── -->
+<h3 id="grid">CSS Grid</h3>
+
+<p><strong>Why does Grid exist if we have Flexbox?</strong> Flexbox is one-dimensional — it handles a row OR a column. Grid is two-dimensional — it handles rows AND columns at the same time. Think of Flexbox as arranging items on a clothesline (one direction). Grid is like arranging items on a chessboard (rows and columns simultaneously).</p>
+
+<p>Grid is less likely on the FA exam but good to know the basics. Use Grid when you need a page-level layout with defined rows and columns.</p>
+
+<pre>.container {
+  <span class="kw">display</span>: grid;
+  <span class="kw">grid-template-columns</span>: <span class="num">1fr 2fr 1fr</span>;  <span class="cmt">/* 3 columns: 25% 50% 25% */</span>
+  <span class="kw">grid-template-rows</span>: <span class="num">auto</span>;
+  <span class="kw">gap</span>: <span class="num">16px</span>;                            <span class="cmt">/* space between grid cells */</span>
+}
+
+<span class="cmt">/* Span multiple columns/rows */</span>
+.wide {
+  <span class="kw">grid-column</span>: <span class="num">1 / 3</span>;  <span class="cmt">/* spans column line 1 to line 3 (= 2 columns) */</span>
+}
+
+<span class="cmt">/* Repeat shorthand */</span>
+.container {
+  <span class="kw">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="num">3</span>, <span class="num">1fr</span>);  <span class="cmt">/* 3 equal columns */</span>
+}</pre>
+
+<div class="box box-tip">
+  <div class="label">Grid vs Flexbox — when to use which</div>
+  <strong>Flexbox:</strong> when you have a single row or column of items (navbars, card rows, centering).<br>
+  <strong>Grid:</strong> when you need a full page layout with defined rows AND columns (dashboards, galleries, complex layouts).<br>
+  In practice, you often use Grid for the overall page structure and Flexbox for individual components within it.
+</div>
+
+<!-- ─── UNITS ─── -->
+<h3 id="units">Units — px, em, rem, %</h3>
+
+<p><strong>Why are there so many unit types?</strong> Imagine building with only centimeters — it works for a bookshelf but not for a building that needs to scale. CSS has different units because different situations need different kinds of measurement:</p>
+<ul>
+  <li><strong>Fixed sizes</strong> (borders, shadows) → <code>px</code></li>
+  <li><strong>Scalable text</strong> that respects user preferences → <code>rem</code></li>
+  <li><strong>Relative sizing</strong> based on parent → <code>em</code>, <code>%</code></li>
+  <li><strong>Viewport-based</strong> layouts → <code>vw</code>, <code>vh</code></li>
+</ul>
+
+<table>
+<tr><th>Unit</th><th>Type</th><th>Relative to</th><th>Best for</th></tr>
+<tr><td><code>px</code></td><td>Absolute</td><td>Screen pixels (fixed)</td><td>Borders, shadows, small fixed sizes</td></tr>
+<tr><td><code>em</code></td><td>Relative</td><td>Parent element's font-size</td><td>Component-level scaling (padding relative to text size)</td></tr>
+<tr><td><code>rem</code></td><td>Relative</td><td>Root (<code>&lt;html&gt;</code>) font-size (default 16px)</td><td>Global consistent sizing (most common for font sizes)</td></tr>
+<tr><td><code>%</code></td><td>Relative</td><td>Parent element's size</td><td>Fluid widths (containers, images)</td></tr>
+<tr><td><code>vw</code></td><td>Relative</td><td>1% of viewport width</td><td>Full-screen layouts, hero sections</td></tr>
+<tr><td><code>vh</code></td><td>Relative</td><td>1% of viewport height</td><td>Full-screen layouts, hero sections</td></tr>
+</table>
+
+<pre><span class="cmt">/* If html font-size is 16px (browser default): */</span>
+<span class="kw">1rem</span> = <span class="num">16px</span>
+<span class="kw">2rem</span> = <span class="num">32px</span>
+<span class="kw">0.5rem</span> = <span class="num">8px</span>
+
+<span class="cmt">/* em depends on parent — this is where it gets tricky: */</span>
+.parent { <span class="kw">font-size</span>: <span class="num">20px</span>; }
+.child  { <span class="kw">font-size</span>: <span class="num">1.5em</span>; }  <span class="cmt">/* = 30px (20 × 1.5) */</span></pre>
+
+<div class="box box-warn">
+  <div class="label">The em compounding trap</div>
+  <code>em</code> is relative to the <strong>parent's</strong> font-size. So if you nest elements with <code>em</code> sizes, they compound like interest. A parent at <code>2em</code> with a child at <code>2em</code> = the child is 4x the root size. And the grandchild at <code>2em</code> = 8x. This is why <code>rem</code> (root em) was invented — it ALWAYS references the root element, no matter how deeply nested. Use <code>rem</code> for font sizes to stay sane.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">If root font-size is 16px, what is <code>2.5rem</code> in pixels?</p>
+  <ol class="options">
+    <li>25px</li>
+    <li>32px</li>
+    <li>40px</li>
+    <li>48px</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="2">C) 40px — <code>rem</code> is always relative to root font-size. 2.5 x 16px = 40px. It does not matter how many elements this is nested inside — <code>rem</code> always looks at the root.</div>
+</div>
+
+<!-- ─── COLORS ─── -->
+<h3 id="colors">Colors & Backgrounds</h3>
+
+<p><strong>Why so many color formats?</strong> Different formats exist for different use cases: named colors are readable, hex is compact, RGB gives precise control, and RGBA adds transparency. For the exam, know all formats and especially understand <code>opacity</code> vs <code>rgba</code>.</p>
+
+<table>
+<tr><th>Format</th><th>Example</th><th>Notes</th></tr>
+<tr><td>Named</td><td><code>color: red;</code></td><td>~147 named colors</td></tr>
+<tr><td>Hex</td><td><code>color: #ff5733;</code></td><td>6-digit or 3-digit shorthand (<code>#f00</code> = <code>#ff0000</code>)</td></tr>
+<tr><td>RGB</td><td><code>color: rgb(255, 87, 51);</code></td><td>0–255 per channel</td></tr>
+<tr><td>RGBA</td><td><code>color: rgba(255, 87, 51, 0.5);</code></td><td>Alpha 0 (transparent) to 1 (opaque)</td></tr>
+<tr><td>HSL</td><td><code>color: hsl(14, 100%, 60%);</code></td><td>Hue, Saturation, Lightness</td></tr>
+</table>
+
+<pre><span class="cmt">/* Background shorthand */</span>
+.hero {
+  <span class="kw">background</span>: <span class="str">#1a1a2e</span> <span class="fn">url</span>(<span class="str">"bg.jpg"</span>) no-repeat center/cover;
+}
+
+<span class="cmt">/* Gradient */</span>
+.banner {
+  <span class="kw">background</span>: <span class="fn">linear-gradient</span>(to right, <span class="str">#e94560</span>, <span class="str">#0f3460</span>);
+}
+
+<span class="cmt">/* opacity — affects the ENTIRE element including ALL children */</span>
+.faded { <span class="kw">opacity</span>: <span class="num">0.5</span>; }
+
+<span class="cmt">/* Use rgba for transparent backgrounds WITHOUT affecting children */</span>
+.overlay { <span class="kw">background</span>: <span class="fn">rgba</span>(<span class="num">0, 0, 0, 0.5</span>); }</pre>
+
+<div class="box box-tip">
+  <div class="label">opacity vs rgba — exam loves this</div>
+  <code>opacity: 0.5</code> makes the ENTIRE element (and all its children — text, images, everything) 50% transparent. There is no way to undo this on children.<br>
+  <code>background: rgba(0,0,0,0.5)</code> only makes the <strong>background</strong> transparent — children remain fully visible. Use rgba when you want a semi-transparent background with readable text on top.
+</div>
+
+<!-- ─── TEXT & FONTS ─── -->
+<h3 id="text-fonts">Text & Fonts</h3>
+
+<p>Text styling controls how your content reads. The key insight: <code>font-*</code> properties control the typeface itself (family, size, weight), while <code>text-*</code> properties control how the text is displayed (alignment, decoration, transformation).</p>
+
+<table>
+<tr><th>Property</th><th>Values</th></tr>
+<tr><td><code>font-family</code></td><td><code>'Arial', sans-serif</code> — fallback chain (browser tries each until one works)</td></tr>
+<tr><td><code>font-size</code></td><td><code>16px</code>, <code>1rem</code>, <code>1.2em</code></td></tr>
+<tr><td><code>font-weight</code></td><td><code>normal</code> (400), <code>bold</code> (700), 100–900</td></tr>
+<tr><td><code>font-style</code></td><td><code>normal</code>, <code>italic</code>, <code>oblique</code></td></tr>
+<tr><td><code>text-align</code></td><td><code>left</code>, <code>center</code>, <code>right</code>, <code>justify</code></td></tr>
+<tr><td><code>text-decoration</code></td><td><code>none</code>, <code>underline</code>, <code>line-through</code>, <code>overline</code></td></tr>
+<tr><td><code>text-transform</code></td><td><code>uppercase</code>, <code>lowercase</code>, <code>capitalize</code></td></tr>
+<tr><td><code>line-height</code></td><td><code>1.5</code> (unitless multiplier preferred — it scales with font-size)</td></tr>
+<tr><td><code>letter-spacing</code></td><td><code>2px</code>, <code>0.1em</code></td></tr>
+<tr><td><code>word-spacing</code></td><td><code>4px</code></td></tr>
+</table>
+
+<pre><span class="cmt">/* Font shorthand: style weight size/line-height family */</span>
+p {
+  <span class="kw">font</span>: italic <span class="num">700</span> <span class="num">16px</span>/<span class="num">1.5</span> <span class="str">'Arial'</span>, sans-serif;
+}
+
+<span class="cmt">/* Remove underline from links */</span>
+a { <span class="kw">text-decoration</span>: none; }
+
+<span class="cmt">/* Ellipsis for overflow text — all 3 properties are required */</span>
+.truncate {
+  <span class="kw">white-space</span>: nowrap;       <span class="cmt">/* prevent text wrapping */</span>
+  <span class="kw">overflow</span>: hidden;          <span class="cmt">/* hide the overflow */</span>
+  <span class="kw">text-overflow</span>: ellipsis;   <span class="cmt">/* show "..." at the cut point */</span>
+}</pre>
+
+<!-- ─── PSEUDO ─── -->
+<h3 id="pseudo">Pseudo-classes & Pseudo-elements</h3>
+
+<p><strong>Why do these exist?</strong> Sometimes you want to style an element based on its <em>state</em> (is the mouse hovering over it? is it the first item in a list?) or a <em>part</em> of an element (just the first letter, or insert an icon before it). You cannot create a CSS class for "the paragraph the mouse is currently hovering over" because that changes every second. Pseudo-classes and pseudo-elements solve this.</p>
+
+<div class="box box-example">
+  <div class="label">Pseudo-class vs Pseudo-element — the naming trick</div>
+  <strong>Pseudo-class</strong> (single colon <code>:</code>) = styles based on STATE or POSITION. "Is this link being hovered? Is this the 3rd child?" These select <em>whole elements</em> in a particular condition.<br><br>
+  <strong>Pseudo-element</strong> (double colon <code>::</code>) = styles a PART of an element or creates a virtual element. "Style just the first letter. Insert content before this element." These target <em>pieces</em> of an element.<br><br>
+  Memory trick: one colon = one whole element in a state. Two colons = part of an element.
+</div>
+
+<h4>Pseudo-classes (single colon — state/position)</h4>
+<table>
+<tr><th>Pseudo-class</th><th>Selects</th></tr>
+<tr><td><code>:hover</code></td><td>When mouse is over the element</td></tr>
+<tr><td><code>:active</code></td><td>When element is being clicked (mouse button held down)</td></tr>
+<tr><td><code>:focus</code></td><td>When element has keyboard focus (tabbed to or clicked on an input)</td></tr>
+<tr><td><code>:visited</code></td><td>Links that have been visited</td></tr>
+<tr><td><code>:first-child</code></td><td>First child of its parent</td></tr>
+<tr><td><code>:last-child</code></td><td>Last child of its parent</td></tr>
+<tr><td><code>:nth-child(n)</code></td><td>nth child — <code>:nth-child(odd)</code>, <code>:nth-child(2n)</code>, <code>:nth-child(3)</code></td></tr>
+<tr><td><code>:not(selector)</code></td><td>Elements that don't match — <code>:not(.active)</code></td></tr>
+</table>
+
+<h4>Pseudo-elements (double colon — parts of element)</h4>
+<table>
+<tr><th>Pseudo-element</th><th>What it does</th></tr>
+<tr><td><code>::before</code></td><td>Inserts virtual content before element's content</td></tr>
+<tr><td><code>::after</code></td><td>Inserts virtual content after element's content</td></tr>
+<tr><td><code>::first-line</code></td><td>Styles the first line of text</td></tr>
+<tr><td><code>::first-letter</code></td><td>Styles the first letter (drop caps)</td></tr>
+<tr><td><code>::placeholder</code></td><td>Styles input placeholder text</td></tr>
+</table>
+
+<pre><span class="cmt">/* Link states — order matters! (LoVe HAte) */</span>
+a:link    { <span class="kw">color</span>: blue; }
+a:visited { <span class="kw">color</span>: purple; }
+a:hover   { <span class="kw">color</span>: red; }
+a:active  { <span class="kw">color</span>: orange; }
+
+<span class="cmt">/* Zebra-striped table rows */</span>
+tr:nth-child(even) { <span class="kw">background</span>: <span class="str">#f4f4f4</span>; }
+
+<span class="cmt">/* ::before and ::after REQUIRE the content property — without it, nothing appears */</span>
+.required::after {
+  <span class="kw">content</span>: <span class="str">" *"</span>;
+  <span class="kw">color</span>: red;
+}</pre>
+
+<div class="box box-warn">
+  <div class="label">Exam trap — link pseudo-class order</div>
+  The order must be <strong>:link → :visited → :hover → :active</strong> (remember: <strong>L</strong>o<strong>V</strong>e <strong>HA</strong>te). If the order is wrong, some states get overridden by later rules due to equal specificity. For example, if <code>:hover</code> comes before <code>:visited</code>, visited links will not show the hover color.
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">Which pseudo-element requires the <code>content</code> property to work?</p>
+  <ol class="options">
+    <li><code>::first-line</code></li>
+    <li><code>::before</code></li>
+    <li><code>::first-letter</code></li>
+    <li><code>:hover</code></li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) <code>::before</code> (and <code>::after</code>) require the <code>content</code> property — without it, they will not render at all. Even if you want nothing visible, you need <code>content: ""</code>. Note: <code>:hover</code> is a pseudo-CLASS (single colon), not a pseudo-element.</div>
+</div>
+
+<!-- ─── TRANSITIONS & ANIMATIONS ─── -->
+<h3 id="transitions">Transitions & Animations</h3>
+
+<p><strong>Why do transitions exist?</strong> Without transitions, CSS changes happen instantly — a button goes from blue to red in 0 milliseconds. That feels jarring and cheap. Transitions add smooth, gradual changes that make your UI feel polished and professional. Think of it like a dimmer switch vs a light switch — both control brightness, but the dimmer does it smoothly.</p>
+
+<p><strong>Transition vs Animation:</strong> A <em>transition</em> is a simple A-to-B change triggered by a state change (like hover). An <em>animation</em> can have multiple steps (A → B → C → D), can loop, and can run automatically without any trigger.</p>
+
+<pre><span class="cmt">/* Transition — smooth change when state changes (e.g., hover) */</span>
+.btn {
+  <span class="kw">background</span>: <span class="str">#e94560</span>;
+  <span class="kw">transition</span>: background <span class="num">0.3s</span> ease, transform <span class="num">0.2s</span>;
+}
+.btn:hover {
+  <span class="kw">background</span>: <span class="str">#d63850</span>;
+  <span class="kw">transform</span>: <span class="fn">scale</span>(<span class="num">1.05</span>);
+}
+
+<span class="cmt">/* Transition shorthand: property duration timing-function delay */</span>
+.box { <span class="kw">transition</span>: all <span class="num">0.3s</span> ease-in-out; }
+
+<span class="cmt">/* Animation with @keyframes — multiple steps, can loop */</span>
+<span class="kw">@keyframes</span> fadeIn {
+  <span class="kw">from</span> { <span class="kw">opacity</span>: <span class="num">0</span>; }
+  <span class="kw">to</span>   { <span class="kw">opacity</span>: <span class="num">1</span>; }
+}
+.element {
+  <span class="kw">animation</span>: fadeIn <span class="num">1s</span> ease-in forwards;
+  <span class="cmt">/* forwards = stay at the final state after animation ends */</span>
+}</pre>
+
+<table>
+<tr><th>Timing function</th><th>Behavior</th></tr>
+<tr><td><code>ease</code></td><td>Slow start, fast middle, slow end (default — most natural)</td></tr>
+<tr><td><code>linear</code></td><td>Constant speed (robotic, use for loading bars)</td></tr>
+<tr><td><code>ease-in</code></td><td>Slow start, fast end (like dropping a ball)</td></tr>
+<tr><td><code>ease-out</code></td><td>Fast start, slow end (like a car braking)</td></tr>
+<tr><td><code>ease-in-out</code></td><td>Slow start and slow end (most elegant)</td></tr>
+</table>
+
+<div class="box box-tip">
+  <div class="label">Key detail</div>
+  Put the <code>transition</code> property on the <strong>base state</strong> (not the hover state). This way, the transition plays both when hovering IN and OUT. If you put it only on <code>:hover</code>, the transition will play when hovering in but snap back instantly when hovering out.
+</div>
+
+<!-- ─── RESPONSIVE ─── -->
+<h3 id="responsive">Responsive Design</h3>
+
+<p><strong>Why does responsive design matter?</strong> People browse on phones, tablets, laptops, and 4K monitors. A design that looks perfect on a laptop will be unreadable on a phone if it is not responsive. Media queries let you write different CSS rules for different screen sizes — like having different outfits for different weather.</p>
+
+<p>There are two approaches:</p>
+<ul>
+  <li><strong>Mobile-first</strong> (recommended): Write base CSS for mobile, then use <code>min-width</code> to add styles for larger screens. You are "building up."</li>
+  <li><strong>Desktop-first</strong>: Write base CSS for desktop, then use <code>max-width</code> to override for smaller screens. You are "scaling down."</li>
+</ul>
+
+<pre><span class="cmt">/* Mobile-first approach — start small, scale up */</span>
+.container { <span class="kw">width</span>: <span class="num">100%</span>; }  <span class="cmt">/* base: full width on mobile */</span>
+
+<span class="kw">@media</span> (min-width: <span class="num">768px</span>) {    <span class="cmt">/* tablets and up */</span>
+  .container { <span class="kw">width</span>: <span class="num">750px</span>; }
+}
+
+<span class="kw">@media</span> (min-width: <span class="num">1024px</span>) {   <span class="cmt">/* desktops and up */</span>
+  .container { <span class="kw">width</span>: <span class="num">960px</span>; }
+}
+
+<span class="cmt">/* Desktop-first (max-width) — hide sidebar on mobile */</span>
+<span class="kw">@media</span> (max-width: <span class="num">600px</span>) {
+  .sidebar { <span class="kw">display</span>: none; }
+  .main    { <span class="kw">margin-left</span>: <span class="num">0</span>; }
+}</pre>
+
+<div class="box box-key">
+  <div class="label">Viewport meta tag — required for responsive</div>
+  Without this tag in HTML <code>&lt;head&gt;</code>, media queries will NOT work on mobile devices. The browser will render the page at desktop width and zoom out, making everything tiny:<br>
+  <code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">In a mobile-first approach, which media query do you use to add styles for larger screens?</p>
+  <ol class="options">
+    <li><code>@media (max-width: 768px)</code></li>
+    <li><code>@media (min-width: 768px)</code></li>
+    <li><code>@media (screen)</code></li>
+    <li><code>@media (device-width: 768px)</code></li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) <code>min-width</code> means "apply these styles when the screen is AT LEAST this wide." In mobile-first, you write base styles for small screens, then use <code>min-width</code> breakpoints to progressively add styles for larger screens. <code>max-width</code> is for desktop-first (scaling down).</div>
+</div>
+
+<!-- ─── SHORTHAND ─── -->
+<h3 id="shortcuts">Shorthand Properties</h3>
+
+<p>Shorthand properties let you set multiple related properties in one line. Less typing, cleaner code. But you need to remember the order of values.</p>
+
+<pre><span class="cmt">/* Margin / Padding shorthand */</span>
+<span class="kw">margin</span>: <span class="num">10px</span>;                  <span class="cmt">/* all 4 sides = 10px */</span>
+<span class="kw">margin</span>: <span class="num">10px 20px</span>;             <span class="cmt">/* top/bottom = 10px, left/right = 20px */</span>
+<span class="kw">margin</span>: <span class="num">10px 20px 30px</span>;        <span class="cmt">/* top = 10, left/right = 20, bottom = 30 */</span>
+<span class="kw">margin</span>: <span class="num">10px 20px 30px 40px</span>;   <span class="cmt">/* top right bottom left (clockwise) */</span>
+
+<span class="cmt">/* Border shorthand */</span>
+<span class="kw">border</span>: <span class="num">2px</span> solid <span class="str">#333</span>;       <span class="cmt">/* width  style  color */</span>
+
+<span class="cmt">/* Background shorthand */</span>
+<span class="kw">background</span>: <span class="str">#fff</span> <span class="fn">url</span>(<span class="str">"img.png"</span>) no-repeat center/cover;
+
+<span class="cmt">/* Font shorthand */</span>
+<span class="kw">font</span>: italic bold <span class="num">16px</span>/<span class="num">1.5</span> Arial, sans-serif;</pre>
+
+<div class="box box-tip">
+  <div class="label">4-value order</div>
+  Margin, padding, and border-radius with 4 values always go <strong>clockwise</strong>: Top → Right → Bottom → Left. Remember: <strong>TR</strong>ou<strong>BL</strong>e (TRBL). For 3 values: top, left/right (shared), bottom. For 2 values: top/bottom (shared), left/right (shared).
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What does <code>margin: 10px 20px 30px;</code> mean?</p>
+  <ol class="options">
+    <li>top: 10px, right: 20px, bottom: 30px, left: 20px</li>
+    <li>top: 10px, right: 20px, bottom: 30px, left: 0</li>
+    <li>top: 10px, right: 30px, bottom: 20px, left: 10px</li>
+    <li>top: 10px, right: 20px, bottom: 30px, left: 30px</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="0">A) 3-value shorthand: top = 10px, right = 20px, bottom = 30px, left = same as right = 20px. When the left value is missing, it mirrors the right value.</div>
+</div>
+
+<!-- ─── PRACTICE QUESTIONS ─── -->
+<h3 id="css-practice">More Practice Questions</h3>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">An element has <code>width: 200px; box-sizing: border-box; padding: 20px; border: 5px solid;</code>. What is the total width on screen?</p>
+  <ol class="options">
+    <li>250px</li>
+    <li>200px</li>
+    <li>150px</li>
+    <li>210px</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) 200px. With <code>box-sizing: border-box</code>, the width includes padding and border. The content area shrinks to 150px (200 - 20*2 - 5*2) to accommodate, but the total on-screen width remains 200px.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">What is the specificity of the selector <code>div.container > ul li a:hover</code>?</p>
+  <ol class="options">
+    <li>0,0,2,4</li>
+    <li>0,0,1,4</li>
+    <li>0,1,1,3</li>
+    <li>0,0,2,3</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="0">A) 0,0,2,4. Count: IDs = 0. Classes/pseudo-classes = <code>.container</code> + <code>:hover</code> = 2. Elements = <code>div</code> + <code>ul</code> + <code>li</code> + <code>a</code> = 4. The <code>></code> combinator has no specificity value.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">You want a transparent background on a div WITHOUT making its child text transparent. Which approach works?</p>
+  <ol class="options">
+    <li><code>opacity: 0.5</code></li>
+    <li><code>background: rgba(0, 0, 0, 0.5)</code></li>
+    <li><code>visibility: hidden</code></li>
+    <li><code>display: none</code></li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) <code>rgba</code> makes only the background transparent. <code>opacity</code> would make the entire element AND all children transparent — you cannot override it on children. This is one of the most practical CSS distinctions to understand.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">A flex container has <code>flex-direction: row</code> and <code>justify-content: space-between</code>. Where do the items appear?</p>
+  <ol class="options">
+    <li>All items centered horizontally</li>
+    <li>First item at the start, last item at the end, equal space between them</li>
+    <li>Equal space around each item</li>
+    <li>Items stacked vertically</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) <code>space-between</code> places the first item flush to the start edge and the last item flush to the end edge, distributing remaining space equally between items. No space before the first or after the last.</div>
+</div>
+
+<div class="practice">
+  <div class="q-label">Question</div>
+  <p class="question">An element has <code>position: relative; top: 20px;</code>. What happens?</p>
+  <ol class="options">
+    <li>The element moves 20px from the top of the viewport</li>
+    <li>The element moves 20px down from its normal position, but its original space is still reserved</li>
+    <li>The element moves 20px down and other elements fill its original space</li>
+    <li>Nothing — <code>top</code> does not work with relative positioning</li>
+  </ol>
+  <button class="answer-btn">Show Answer</button>
+  <div class="answer" data-correct="1">B) With <code>position: relative</code>, the element shifts 20px down from where it WOULD have been, but its original space in the document flow is preserved. Other elements do not move to fill the gap — they act as if the element is still in its original position.</div>
+</div>
+
+</section>
+
+  <div class="footer">
+    <a href="html.html">← HTML</a> |
+    <a href="javascript.html">JavaScript →</a>
+  </div>
+</div>
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>

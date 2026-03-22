@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript — TCS ILP Study Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<button class="menu-toggle">☰</button>
+<nav class="sidebar">
+  <h2>TCS ILP Guide</h2>
+  <div class="search-box"><input type="text" placeholder="Search topics..."></div>
+  <a href="../index.html">← Back to Home</a>
+  <div class="divider"></div>
+  <a href="#what-is-ts">What is TypeScript?</a>
+  <a href="#setup">Installation & Setup</a>
+  <a href="#basic-types">Basic Types</a>
+  <a href="#arrays-tuples">Arrays & Tuples</a>
+  <a href="#enums">Enums</a>
+  <a href="#functions">Functions with Types</a>
+  <a href="#interfaces">Interfaces</a>
+  <a href="#type-aliases">Type Aliases</a>
+  <a href="#classes">Classes</a>
+  <a href="#generics">Generics</a>
+  <a href="#type-guards">Type Guards & Narrowing</a>
+  <a href="#utility-types">Utility Types</a>
+  <a href="#ts-vs-js">TypeScript vs JavaScript</a>
+  <a href="#practice">Practice Questions</a>
+</nav>
+<div class="main">
+<section class="sec-typescript">
+
+<h2 id="what-is-ts">1. What is TypeScript?</h2>
+
+<p>You already know JavaScript. TypeScript is <strong>JavaScript with types added on top</strong>. Every valid JavaScript file is already valid TypeScript — TypeScript just gives you extra tools to catch mistakes before your code runs.</p>
+
+<div class="box box-key">
+<div class="label">Key Concept</div>
+TypeScript is a <strong>superset</strong> of JavaScript. That means JS is a subset of TS — all JS code works in TS, but TS adds features JS doesn't have.
+</div>
+
+<h3>Who made it and why?</h3>
+<p><strong>Microsoft</strong> created TypeScript in 2012. As JavaScript projects got bigger, developers kept running into bugs that only showed up when the code ran. TypeScript catches those bugs <strong>at compile time</strong> — before you even run the code.</p>
+
+<h3>How does it work?</h3>
+<p>Browsers don't understand TypeScript. So TypeScript <strong>compiles (transpiles)</strong> down to plain JavaScript using the <code>tsc</code> compiler.</p>
+
+<pre>
+<span class="cmt">// Your TypeScript file: app.ts</span>
+<span class="kw">let</span> name: <span class="type">string</span> = <span class="str">"Darshan"</span>;
+
+<span class="cmt">// After compilation → app.js (plain JavaScript)</span>
+<span class="kw">var</span> name = <span class="str">"Darshan"</span>;
+</pre>
+
+<p>The flow: <strong>.ts file → tsc compiler → .js file → browser runs the .js</strong></p>
+
+<h3>Why use TypeScript?</h3>
+
+<table>
+<tr><th>Benefit</th><th>What it means</th></tr>
+<tr><td>Catches bugs early</td><td>Errors show up while you code, not when users hit them</td></tr>
+<tr><td>Better IDE support</td><td>Autocomplete, hover info, refactoring — all powered by types</td></tr>
+<tr><td>Self-documenting</td><td>Types tell other developers what a function expects and returns</td></tr>
+<tr><td>Scales better</td><td>Large projects with many developers stay manageable</td></tr>
+</table>
+
+<div class="box box-example">
+<div class="label">JavaScript vs TypeScript</div>
+<strong>JavaScript — bug hides until runtime:</strong>
+<pre>
+<span class="kw">function</span> <span class="fn">add</span>(a, b) {
+  <span class="kw">return</span> a + b;
+}
+<span class="fn">add</span>(<span class="num">5</span>, <span class="str">"10"</span>); <span class="cmt">// Returns "510" — no error, silent bug!</span>
+</pre>
+<strong>TypeScript — bug caught at compile time:</strong>
+<pre>
+<span class="kw">function</span> <span class="fn">add</span>(a: <span class="type">number</span>, b: <span class="type">number</span>): <span class="type">number</span> {
+  <span class="kw">return</span> a + b;
+}
+<span class="fn">add</span>(<span class="num">5</span>, <span class="str">"10"</span>); <span class="cmt">// ERROR: Argument of type 'string' is not assignable to parameter of type 'number'</span>
+</pre>
+</div>
+
+<div class="box box-exam">
+<div class="label">Exam Tip</div>
+Questions often ask: "TypeScript is a ___ of JavaScript." Answer: <strong>superset</strong>. Also remember: TypeScript compiles to JavaScript, it does NOT replace JavaScript.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+
+<h2 id="setup">2. Installation & Setup</h2>
+
+<p>You need Node.js installed first (which gives you <code>npm</code>). Then install TypeScript globally:</p>
+
+<pre>
+<span class="cmt"># Install TypeScript globally</span>
+npm install -g typescript
+
+<span class="cmt"># Check version</span>
+tsc --version
+
+<span class="cmt"># Compile a TypeScript file</span>
+tsc app.ts        <span class="cmt">// Creates app.js in the same folder</span>
+
+<span class="cmt"># Compile and watch for changes</span>
+tsc app.ts --watch
+</pre>
+
+<h3>tsconfig.json — Project Configuration</h3>
+
+<p>For real projects, you create a <code>tsconfig.json</code> file that tells TypeScript how to compile your code. Generate one with <code>tsc --init</code>.</p>
+
+<pre>
+{
+  <span class="str">"compilerOptions"</span>: {
+    <span class="str">"target"</span>: <span class="str">"ES6"</span>,          <span class="cmt">// Which JS version to compile to</span>
+    <span class="str">"module"</span>: <span class="str">"commonjs"</span>,     <span class="cmt">// Module system (commonjs, ES6, etc.)</span>
+    <span class="str">"strict"</span>: <span class="kw">true</span>,           <span class="cmt">// Enable all strict type checks</span>
+    <span class="str">"outDir"</span>: <span class="str">"./dist"</span>,       <span class="cmt">// Where compiled JS files go</span>
+    <span class="str">"rootDir"</span>: <span class="str">"./src"</span>        <span class="cmt">// Where your TS source files are</span>
+  }
+}
+</pre>
+
+<div class="box box-tip">
+<div class="label">Tip</div>
+<strong>strict: true</strong> enables all strict checks. In exams, remember that <code>strict</code> mode forces you to declare types — no implicit <code>any</code> allowed.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+
+<h2 id="basic-types">3. Basic Types (Core Topic)</h2>
+
+<p>In JavaScript, variables can hold any type and change type anytime. TypeScript lets you <strong>lock a variable to a specific type</strong> using <strong>type annotations</strong>.</p>
+
+<h3>Syntax: Type Annotations</h3>
+
+<pre>
+<span class="cmt">// JavaScript way — no types</span>
+<span class="kw">let</span> name = <span class="str">"Darshan"</span>;
+
+<span class="cmt">// TypeScript way — type annotation after the colon</span>
+<span class="kw">let</span> name: <span class="type">string</span> = <span class="str">"Darshan"</span>;
+<span class="cmt">//       ^^^^^^^^ this is the type annotation</span>
+</pre>
+
+<h3>All Basic Types</h3>
+
+<table>
+<tr><th>Type</th><th>What it holds</th><th>Example</th></tr>
+<tr><td><code>string</code></td><td>Text</td><td><code>let city: string = "Mumbai";</code></td></tr>
+<tr><td><code>number</code></td><td>Integers and decimals</td><td><code>let age: number = 22;</code></td></tr>
+<tr><td><code>boolean</code></td><td>true or false</td><td><code>let isActive: boolean = true;</code></td></tr>
+<tr><td><code>any</code></td><td>Anything (disables type checking)</td><td><code>let data: any = "hello";</code></td></tr>
+<tr><td><code>void</code></td><td>No return value (for functions)</td><td><code>function log(): void { }</code></td></tr>
+<tr><td><code>null</code></td><td>Intentional absence of value</td><td><code>let x: null = null;</code></td></tr>
+<tr><td><code>undefined</code></td><td>Variable declared but not assigned</td><td><code>let y: undefined = undefined;</code></td></tr>
+<tr><td><code>never</code></td><td>Function that never returns</td><td>Throws error or infinite loop</td></tr>
+</table>
+
+<h3>Examples for Each Type</h3>
+
+<pre>
+<span class="cmt">// string</span>
+<span class="kw">let</span> company: <span class="type">string</span> = <span class="str">"TCS"</span>;
+
+<span class="cmt">// number (integers AND decimals — no separate int/float)</span>
+<span class="kw">let</span> score: <span class="type">number</span> = <span class="num">95</span>;
+<span class="kw">let</span> price: <span class="type">number</span> = <span class="num">19.99</span>;
+
+<span class="cmt">// boolean</span>
+<span class="kw">let</span> isPassed: <span class="type">boolean</span> = <span class="kw">true</span>;
+
+<span class="cmt">// any — opt out of type checking (avoid in real code)</span>
+<span class="kw">let</span> random: <span class="type">any</span> = <span class="num">42</span>;
+random = <span class="str">"now a string"</span>;  <span class="cmt">// No error — any allows anything</span>
+random = <span class="kw">true</span>;             <span class="cmt">// Still no error</span>
+
+<span class="cmt">// void — function that doesn't return anything</span>
+<span class="kw">function</span> <span class="fn">sayHello</span>(): <span class="type">void</span> {
+  console.<span class="fn">log</span>(<span class="str">"Hello!"</span>);
+  <span class="cmt">// no return statement</span>
+}
+
+<span class="cmt">// never — function that NEVER completes normally</span>
+<span class="kw">function</span> <span class="fn">throwError</span>(msg: <span class="type">string</span>): <span class="type">never</span> {
+  <span class="kw">throw new</span> <span class="fn">Error</span>(msg);  <span class="cmt">// always throws, never returns</span>
+}
+</pre>
+
+<h3>Type Inference — TypeScript Guesses the Type</h3>
+
+<p>You don't always need to write the type. If you assign a value immediately, TypeScript <strong>infers</strong> the type automatically:</p>
+
+<pre>
+<span class="kw">let</span> city = <span class="str">"Mumbai"</span>;     <span class="cmt">// TypeScript infers: string</span>
+<span class="kw">let</span> age = <span class="num">22</span>;            <span class="cmt">// TypeScript infers: number</span>
+<span class="kw">let</span> done = <span class="kw">true</span>;         <span class="cmt">// TypeScript infers: boolean</span>
+
+city = <span class="num">100</span>;              <span class="cmt">// ERROR — city is already inferred as string</span>
+</pre>
+
+<div class="box box-warn">
+<div class="label">Common Mistake</div>
+<code>any</code> defeats the purpose of TypeScript. If everything is <code>any</code>, you're just writing JavaScript with extra steps. Use it only when you genuinely don't know the type (like data from a third-party library).
+</div>
+
+<div class="box box-exam">
+<div class="label">Exam Tip</div>
+<strong>void vs never:</strong> <code>void</code> means the function returns nothing (it finishes, just no value). <code>never</code> means the function literally never finishes — it throws an error or loops forever. This distinction is a common exam question.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+
+<h2 id="arrays-tuples">4. Arrays and Tuples</h2>
+
+<h3>Typed Arrays</h3>
+
+<p>In JavaScript, an array can hold anything. In TypeScript, you can restrict what goes in:</p>
+
+<pre>
+<span class="cmt">// Two ways to declare typed arrays — both are identical</span>
+<span class="kw">let</span> scores: <span class="type">number</span>[] = [<span class="num">90</span>, <span class="num">85</span>, <span class="num">78</span>];
+<span class="kw">let</span> scores: <span class="type">Array</span>&lt;<span class="type">number</span>&gt; = [<span class="num">90</span>, <span class="num">85</span>, <span class="num">78</span>];
+
+<span class="cmt">// String array</span>
+<span class="kw">let</span> names: <span class="type">string</span>[] = [<span class="str">"Alice"</span>, <span class="str">"Bob"</span>];
+
+<span class="cmt">// Mixed? Use union type</span>
+<span class="kw">let</span> mixed: (<span class="type">string</span> | <span class="type">number</span>)[] = [<span class="str">"hello"</span>, <span class="num">42</span>];
+
+scores.<span class="fn">push</span>(<span class="str">"A"</span>);  <span class="cmt">// ERROR — "A" is a string, not a number</span>
+</pre>
+
+<h3>Tuples — Fixed-Length, Fixed-Type Arrays</h3>
+
+<p>A tuple is an array where each position has a specific type. The length and order are fixed.</p>
+
+<pre>
+<span class="cmt">// Tuple: first element is string, second is number</span>
+<span class="kw">let</span> person: [<span class="type">string</span>, <span class="type">number</span>] = [<span class="str">"Darshan"</span>, <span class="num">22</span>];
+
+<span class="cmt">// Access like normal array</span>
+console.<span class="fn">log</span>(person[<span class="num">0</span>]);  <span class="cmt">// "Darshan" (string)</span>
+console.<span class="fn">log</span>(person[<span class="num">1</span>]);  <span class="cmt">// 22 (number)</span>
+
+<span class="cmt">// ERROR — wrong order</span>
+<span class="kw">let</span> wrong: [<span class="type">string</span>, <span class="type">number</span>] = [<span class="num">22</span>, <span class="str">"Darshan"</span>];  <span class="cmt">// Type mismatch!</span>
+
+<span class="cmt">// ERROR — wrong length</span>
+<span class="kw">let</span> bad: [<span class="type">string</span>, <span class="type">number</span>] = [<span class="str">"only one"</span>];  <span class="cmt">// Missing second element</span>
+</pre>
+
+<div class="box box-exam">
+<div class="label">Exam Tip</div>
+Tuples enforce <strong>both order and length</strong>. <code>[string, number]</code> is NOT the same as <code>[number, string]</code>. Exams love swapping the order to test you.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+
+<h2 id="enums">5. Enums</h2>
+
+<p>Enums let you define a <strong>set of named constants</strong>. Use them when you have a fixed group of related values (directions, colors, statuses).</p>
+
+<h3>Numeric Enums (default)</h3>
+
+<pre>
+<span class="kw">enum</span> <span class="type">Direction</span> {
+  Up,      <span class="cmt">// 0</span>
+  Down,    <span class="cmt">// 1</span>
+  Left,    <span class="cmt">// 2</span>
+  Right    <span class="cmt">// 3</span>
+}
+
+<span class="kw">let</span> move: <span class="type">Direction</span> = Direction.Up;
+console.<span class="fn">log</span>(move);           <span class="cmt">// 0</span>
+console.<span class="fn">log</span>(Direction.Right); <span class="cmt">// 3</span>
+</pre>
+
+<p>By default, the first value is <code>0</code> and each subsequent value increments by 1. You can start from a different number:</p>
+
+<pre>
+<span class="kw">enum</span> <span class="type">Status</span> {
+  Active = <span class="num">1</span>,    <span class="cmt">// 1</span>
+  Inactive,       <span class="cmt">// 2 (auto-increments)</span>
+  Pending         <span class="cmt">// 3</span>
+}
+</pre>
+
+<h3>String Enums</h3>
+
+<pre>
+<span class="kw">enum</span> <span class="type">Color</span> {
+  Red = <span class="str">"RED"</span>,
+  Green = <span class="str">"GREEN"</span>,
+  Blue = <span class="str">"BLUE"</span>
+}
+
+console.<span class="fn">log</span>(Color.Red);  <span class="cmt">// "RED"</span>
+</pre>
+
+<div class="box box-tip">
+<div class="label">Tip</div>
+String enums are more readable in logs and debugging. Numeric enums are default and more common in exam questions. Know both.
+</div>
+
+<div class="box box-exam">
+<div class="label">Exam Tip</div>
+If the exam asks "What is the value of <code>Direction.Left</code>?" — count from 0. Up=0, Down=1, <strong>Left=2</strong>, Right=3. Unless a starting number is specified.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+
+<h2 id="functions">6. Functions with Types</h2>
+
+<p>In JavaScript, functions accept anything and return anything. TypeScript lets you specify <strong>parameter types</strong> and <strong>return types</strong>.</p>
+
+<h3>Basic Typed Function</h3>
+
+<pre>
+<span class="cmt">// JavaScript</span>
+<span class="kw">function</span> <span class="fn">add</span>(a, b) {
+  <span class="kw">return</span> a + b;
+}
+
+<span class="cmt">// TypeScript — types for parameters AND return value</span>
+<span class="kw">function</span> <span class="fn">add</span>(a: <span class="type">number</span>, b: <span class="type">number</span>): <span class="type">number</span> {
+  <span class="kw">return</span> a + b;
+}
+</pre>
+
+<h3>Optional Parameters</h3>
+
+<p>Add <code>?</code> after the parameter name to make it optional. Optional parameters must come <strong>after</strong> required ones.</p>
+
+<pre>
+<span class="kw">function</span> <span class="fn">greet</span>(name: <span class="type">string</span>, greeting?: <span class="type">string</span>): <span class="type">string</span> {
+  <span class="kw">return</span> (greeting || <span class="str">"Hello"</span>) + <span class="str">", "</span> + name;
+}
+
+<span class="fn">greet</span>(<span class="str">"Darshan"</span>);             <span class="cmt">// "Hello, Darshan"</span>
+<span class="fn">greet</span>(<span class="str">"Darshan"</span>, <span class="str">"Hey"</span>);     <span class="cmt">// "Hey, Darshan"</span>
+</pre>
+
+<h3>Default Parameters</h3>
+
+<pre>
+<span class="kw">function</span> <span class="fn">greet</span>(name: <span class="type">string</span> = <span class="str">"World"</span>): <span class="type">string</span> {
+  <span class="kw">return</span> <span class="str">"Hello, "</span> + name;
+}
+
+<span class="fn">greet</span>();           <span class="cmt">// "Hello, World"</span>
+<span class="fn">greet</span>(<span class="str">"Darshan"</span>); <span class="cmt">// "Hello, Darshan"</span>
+</pre>
+
+<h3>Arrow Functions with Types</h3>
+
+<pre>
+<span class="kw">const</span> <span class="fn">multiply</span> = (a: <span class="type">number</span>, b: <span class="type">number</span>): <span class="type">number</span> => a * b;
+
+<span class="kw">const</span> <span class="fn">logMessage</span> = (msg: <span class="type">string</span>): <span class="type">void</span> => {
+  console.<span class="fn">log</span>(msg);
+};
+</pre>
+
+<div class="box box-exam">
+<div class="label">Exam Tip</div>
+Optional parameter <code>name?:string</code> means you can call the function without that argument. Default parameter <code>name:string = "X"</code> provides a fallback value. Both make the argument non-mandatory, but they work differently.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+
+<h2 id="interfaces">7. Interfaces (Very Important)</h2>
+
+<p>An interface defines the <strong>shape</strong> of an object — what properties it must have and their types. Think of it as a contract: any object claiming to be this type <em>must</em> have these properties.</p>
+
+<h3>Basic Interface</h3>
+
+<pre>
+<span class="kw">interface</span> <span class="type">User</span> {
+  name: <span class="type">string</span>;
+  age: <span class="type">number</span>;
+  email: <span class="type">string</span>;
+}
+
+<span class="cmt">// Object must match the shape exactly</span>
+<span class="kw">let</span> user: <span class="type">User</span> = {
+  name: <span class="str">"Darshan"</span>,
+  age: <span class="num">22</span>,
+  email: <span class="str">"darshan@example.com"</span>
+};
+
+<span class="cmt">// ERROR — missing 'email' property</span>
+<span class="kw">let</span> badUser: <span class="type">User</span> = {
+  name: <span class="str">"Test"</span>,
+  age: <span class="num">20</span>
+};
+</pre>
+
+<h3>Optional Properties</h3>
+
+<pre>
+<span class="kw">interface</span> <span class="type">User</span> {
+  name: <span class="type">string</span>;
+  age: <span class="type">number</span>;
+  email?: <span class="type">string</span>;   <span class="cmt">// optional — may or may not exist</span>
+}
+
+<span class="kw">let</span> user: <span class="type">User</span> = { name: <span class="str">"Darshan"</span>, age: <span class="num">22</span> };  <span class="cmt">// OK — email is optional</span>
+</pre>
+
+<h3>Readonly Properties</h3>
+
+<pre>
+<span class="kw">interface</span> <span class="type">User</span> {
+  <span class="kw">readonly</span> id: <span class="type">number</span>;   <span class="cmt">// cannot be changed after creation</span>
+  name: <span class="type">string</span>;
+}
+
+<span class="kw">let</span> user: <span class="type">User</span> = { id: <span class="num">1</span>, name: <span class="str">"Darshan"</span> };
+user.name = <span class="str">"New Name"</span>;  <span class="cmt">// OK</span>
+user.id = <span class="num">2</span>;              <span class="cmt">// ERROR — readonly!</span>
+</pre>
+
+<h3>Extending Interfaces</h3>
+
+<p>One interface can inherit from another using <code>extends</code>:</p>
+
+<pre>
+<span class="kw">interface</span> <span class="type">User</span> {
+  name: <span class="type">string</span>;
+  age: <span class="type">number</span>;
+}
+
+<span class="kw">interface</span> <span class="type">Admin</span> <span class="kw">extends</span> <span class="type">User</span> {
+  role: <span class="type">string</span>;
+}
+
+<span class="cmt">// Admin must have ALL User properties + role</span>
+<span class="kw">let</span> admin: <span class="type">Admin</span> = {
+  name: <span class="str">"Darshan"</span>,
+  age: <span class="num">22</span>,
+  role: <span class="str">"superadmin"</span>
+};
+</pre>
+
+<h3>Interface for Function Types</h3>
+
+<pre>
+<span class="kw">interface</span> <span class="type">MathFunc</span> {
+  (a: <span class="type">number</span>, b: <span class="type">number</span>): <span class="type">number</span>;
+}
+
+<span class="kw">const</span> <span class="fn">add</span>: <span class="type">MathFunc</span> = (a, b) => a + b;
+<span class="kw">const</span> <span class="fn">sub</span>: <span class="type">MathFunc</span> = (a, b) => a - b;
+</pre>
+
+<h3>Interface vs Type Alias</h3>
+
+<table>
+<tr><th>Feature</th><th>interface</th><th>type</th></tr>
+<tr><td>Extend/inherit</td><td><code>extends</code></td><td><code>&</code> (intersection)</td></tr>
+<tr><td>Declaration merging</td><td>Yes (same name = merged)</td><td>No (error if duplicate)</td></tr>
+<tr><td>Union types</td><td>Cannot do</td><td><code>type X = A | B</code></td></tr>
+<tr><td>Primitives</td><td>Cannot represent</td><td><code>type ID = string</code></td></tr>
+<tr><td>Best for</td><td>Object shapes, class contracts</td><td>Unions, aliases, complex types</td></tr>
+</table>
+
+<div class="box box-key">
+<div class="label">Key Rule</div>
+Use <strong>interface</strong> for object shapes and class contracts. Use <strong>type</strong> for unions, intersections, and primitives. In Angular (which you'll learn next), interfaces are used everywhere.
+</div>
+
+<div class="box box-exam">
+<div class="label">Exam Tip</div>
+<strong>Declaration merging</strong> is a unique interface feature. If you declare the same interface name twice, TypeScript merges them into one. Types throw an error for duplicates. This is asked in exams.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+
+<h2 id="type-aliases">8. Type Aliases</h2>
+
+<p>The <code>type</code> keyword creates a custom name for any type — simple or complex.</p>
+
+<h3>Basic Type Alias</h3>
+
+<pre>
+<span class="kw">type</span> <span class="type">StringOrNumber</span> = <span class="type">string</span> | <span class="type">number</span>;
+
+<span class="kw">let</span> id: <span class="type">StringOrNumber</span> = <span class="num">101</span>;     <span class="cmt">// OK</span>
+id = <span class="str">"ABC-101"</span>;                     <span class="cmt">// Also OK</span>
+id = <span class="kw">true</span>;                           <span class="cmt">// ERROR — boolean not allowed</span>
+</pre>
+
+<h3>Union Types — "this OR that"</h3>
+
+<pre>
+<span class="kw">type</span> <span class="type">Status</span> = <span class="str">"active"</span> | <span class="str">"inactive"</span> | <span class="str">"pending"</span>;
+
+<span class="kw">let</span> userStatus: <span class="type">Status</span> = <span class="str">"active"</span>;    <span class="cmt">// OK</span>
+userStatus = <span class="str">"banned"</span>;                  <span class="cmt">// ERROR — not in the union</span>
+</pre>
+
+<h3>Intersection Types — "this AND that"</h3>
+
+<pre>
+<span class="kw">type</span> <span class="type">HasName</span> = { name: <span class="type">string</span> };
+<span class="kw">type</span> <span class="type">HasAge</span> = { age: <span class="type">number</span> };
+<span class="kw">type</span> <span class="type">Person</span> = <span class="type">HasName</span> & <span class="type">HasAge</span>;  <span class="cmt">// Must have BOTH name AND age</span>
+
+<span class="kw">let</span> p: <span class="type">Person</span> = { name: <span class="str">"Darshan"</span>, age: <span class="num">22</span> };  <span class="cmt">// OK</span>
+</pre>
+
+<h3>Literal Types — Exact Values Only</h3>
+
+<pre>
+<span class="kw">type</span> <span class="type">Direction</span> = <span class="str">"up"</span> | <span class="str">"down"</span> | <span class="str">"left"</span> | <span class="str">"right"</span>;
+
+<span class="kw">let</span> dir: <span class="type">Direction</span> = <span class="str">"up"</span>;       <span class="cmt">// OK</span>
+dir = <span class="str">"diagonal"</span>;                    <span class="cmt">// ERROR — not a valid direction</span>
+</pre>
+
+<div class="box box-tip">
+<div class="label">Tip</div>
+<strong>Union = OR</strong> (one of these types). <strong>Intersection = AND</strong> (all of these types combined). The symbols: <code>|</code> for union, <code>&</code> for intersection.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+
+<h2 id="classes">9. Classes in TypeScript</h2>
+
+<p>TypeScript classes are JavaScript classes with <strong>access modifiers, type annotations, and shortcuts</strong>.</p>
+
+<h3>Access Modifiers</h3>
+
+<table>
+<tr><th>Modifier</th><th>Accessible from</th><th>Default?</th></tr>
+<tr><td><code>public</code></td><td>Everywhere</td><td>Yes (if you don't write anything)</td></tr>
+<tr><td><code>private</code></td><td>Only inside the same class</td><td>No</td></tr>
+<tr><td><code>protected</code></td><td>Inside the class + child classes</td><td>No</td></tr>
+</table>
+
+<pre>
+<span class="kw">class</span> <span class="type">Employee</span> {
+  <span class="kw">public</span> name: <span class="type">string</span>;
+  <span class="kw">private</span> salary: <span class="type">number</span>;
+  <span class="kw">protected</span> department: <span class="type">string</span>;
+
+  <span class="kw">constructor</span>(name: <span class="type">string</span>, salary: <span class="type">number</span>, dept: <span class="type">string</span>) {
+    <span class="kw">this</span>.name = name;
+    <span class="kw">this</span>.salary = salary;
+    <span class="kw">this</span>.department = dept;
+  }
+
+  <span class="fn">getSalary</span>(): <span class="type">number</span> {
+    <span class="kw">return</span> <span class="kw">this</span>.salary;  <span class="cmt">// OK — accessing private inside the class</span>
+  }
+}
+
+<span class="kw">let</span> emp = <span class="kw">new</span> <span class="type">Employee</span>(<span class="str">"Darshan"</span>, <span class="num">50000</span>, <span class="str">"IT"</span>);
+console.<span class="fn">log</span>(emp.name);       <span class="cmt">// OK — public</span>
+console.<span class="fn">log</span>(emp.salary);     <span class="cmt">// ERROR — private, cannot access outside class</span>
+console.<span class="fn">log</span>(emp.department);  <span class="cmt">// ERROR — protected, only in class or subclass</span>
+</pre>
+
+<h3>Readonly Properties</h3>
+
+<pre>
+<span class="kw">class</span> <span class="type">User</span> {
+  <span class="kw">readonly</span> id: <span class="type">number</span>;
+  name: <span class="type">string</span>;
+
+  <span class="kw">constructor</span>(id: <span class="type">number</span>, name: <span class="type">string</span>) {
+    <span class="kw">this</span>.id = id;      <span class="cmt">// OK — can set in constructor</span>
+    <span class="kw">this</span>.name = name;
+  }
+}
+
+<span class="kw">let</span> u = <span class="kw">new</span> <span class="type">User</span>(<span class="num">1</span>, <span class="str">"Darshan"</span>);
+u.id = <span class="num">2</span>;  <span class="cmt">// ERROR — readonly, can only be set in constructor</span>
+</pre>
+
+<h3>Constructor Shorthand</h3>
+
+<p>TypeScript lets you declare and initialize properties directly in the constructor parameters:</p>
+
+<pre>
+<span class="cmt">// Long way</span>
+<span class="kw">class</span> <span class="type">User</span> {
+  <span class="kw">public</span> name: <span class="type">string</span>;
+  <span class="kw">private</span> age: <span class="type">number</span>;
+  <span class="kw">constructor</span>(name: <span class="type">string</span>, age: <span class="type">number</span>) {
+    <span class="kw">this</span>.name = name;
+    <span class="kw">this</span>.age = age;
+  }
+}
+
+<span class="cmt">// Shorthand — does EXACTLY the same thing</span>
+<span class="kw">class</span> <span class="type">User</span> {
+  <span class="kw">constructor</span>(<span class="kw">public</span> name: <span class="type">string</span>, <span class="kw">private</span> age: <span class="type">number</span>) {}
+}
+</pre>
+
+<div class="box box-key">
+<div class="label">Key Concept</div>
+The constructor shorthand only works when you add an access modifier (<code>public</code>, <code>private</code>, <code>protected</code>) or <code>readonly</code> before the parameter. Without a modifier, it's just a regular parameter — not a class property.
+</div>
+
+<h3>Implementing Interfaces</h3>
+
+<pre>
+<span class="kw">interface</span> <span class="type">IUser</span> {
+  name: <span class="type">string</span>;
+  <span class="fn">greet</span>(): <span class="type">string</span>;
+}
+
+<span class="kw">class</span> <span class="type">User</span> <span class="kw">implements</span> <span class="type">IUser</span> {
+  <span class="kw">constructor</span>(<span class="kw">public</span> name: <span class="type">string</span>) {}
+
+  <span class="fn">greet</span>(): <span class="type">string</span> {
+    <span class="kw">return</span> <span class="str">"Hi, I'm "</span> + <span class="kw">this</span>.name;
+  }
+}
+<span class="cmt">// Class MUST have everything the interface requires</span>
+</pre>
+
+<h3>Abstract Classes</h3>
+
+<p>Abstract classes are <strong>base classes that cannot be instantiated directly</strong>. They can have abstract methods (no body — child must implement) and regular methods.</p>
+
+<pre>
+<span class="kw">abstract class</span> <span class="type">Shape</span> {
+  <span class="kw">abstract</span> <span class="fn">area</span>(): <span class="type">number</span>;  <span class="cmt">// no body — child MUST implement</span>
+
+  <span class="fn">describe</span>(): <span class="type">string</span> {
+    <span class="kw">return</span> <span class="str">"I am a shape with area: "</span> + <span class="kw">this</span>.<span class="fn">area</span>();
+  }
+}
+
+<span class="kw">class</span> <span class="type">Circle</span> <span class="kw">extends</span> <span class="type">Shape</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> radius: <span class="type">number</span>) { <span class="kw">super</span>(); }
+
+  <span class="fn">area</span>(): <span class="type">number</span> {
+    <span class="kw">return</span> Math.PI * <span class="kw">this</span>.radius ** <span class="num">2</span>;
+  }
+}
+
+<span class="cmt">// let s = new Shape();    // ERROR — cannot instantiate abstract class</span>
+<span class="kw">let</span> c = <span class="kw">new</span> <span class="type">Circle</span>(<span class="num">5</span>);    <span class="cmt">// OK</span>
+</pre>
+
+<div class="box box-exam">
+<div class="label">Exam Tip</div>
+<strong>Access modifier visibility:</strong> <code>public</code> = everywhere. <code>protected</code> = class + subclasses. <code>private</code> = class only. If nothing is written, it's <code>public</code> by default. This is asked repeatedly.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+
+<h2 id="generics">10. Generics (Basics)</h2>
+
+<p>Generics let you write functions, classes, and interfaces that work with <strong>any type</strong> while still being type-safe. Think of <code>&lt;T&gt;</code> as a placeholder for "whatever type you give me."</p>
+
+<h3>The Problem Generics Solve</h3>
+
+<pre>
+<span class="cmt">// Without generics — works but loses type info</span>
+<span class="kw">function</span> <span class="fn">identity</span>(arg: <span class="type">any</span>): <span class="type">any</span> {
+  <span class="kw">return</span> arg;
+}
+<span class="kw">let</span> result = <span class="fn">identity</span>(<span class="str">"hello"</span>);  <span class="cmt">// result is 'any', not 'string'</span>
+
+<span class="cmt">// With generics — type-safe AND flexible</span>
+<span class="kw">function</span> <span class="fn">identity</span>&lt;<span class="type">T</span>&gt;(arg: <span class="type">T</span>): <span class="type">T</span> {
+  <span class="kw">return</span> arg;
+}
+<span class="kw">let</span> result = <span class="fn">identity</span>&lt;<span class="type">string</span>&gt;(<span class="str">"hello"</span>);  <span class="cmt">// result is 'string'</span>
+<span class="kw">let</span> num = <span class="fn">identity</span>&lt;<span class="type">number</span>&gt;(<span class="num">42</span>);         <span class="cmt">// num is 'number'</span>
+</pre>
+
+<h3>Generic Interface</h3>
+
+<pre>
+<span class="kw">interface</span> <span class="type">ApiResponse</span>&lt;<span class="type">T</span>&gt; {
+  data: <span class="type">T</span>;
+  status: <span class="type">number</span>;
+  message: <span class="type">string</span>;
+}
+
+<span class="kw">let</span> userResponse: <span class="type">ApiResponse</span>&lt;<span class="type">string</span>&gt; = {
+  data: <span class="str">"Darshan"</span>,
+  status: <span class="num">200</span>,
+  message: <span class="str">"OK"</span>
+};
+
+<span class="kw">let</span> numResponse: <span class="type">ApiResponse</span>&lt;<span class="type">number</span>[]&gt; = {
+  data: [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>],
+  status: <span class="num">200</span>,
+  message: <span class="str">"OK"</span>
+};
+</pre>
+
+<h3>Generic Class</h3>
+
+<pre>
+<span class="kw">class</span> <span class="type">Box</span>&lt;<span class="type">T</span>&gt; {
+  <span class="kw">private</span> content: <span class="type">T</span>;
+
+  <span class="kw">constructor</span>(value: <span class="type">T</span>) {
+    <span class="kw">this</span>.content = value;
+  }
+
+  <span class="fn">getValue</span>(): <span class="type">T</span> {
+    <span class="kw">return</span> <span class="kw">this</span>.content;
+  }
+}
+
+<span class="kw">let</span> stringBox = <span class="kw">new</span> <span class="type">Box</span>&lt;<span class="type">string</span>&gt;(<span class="str">"Hello"</span>);
+<span class="kw">let</span> numberBox = <span class="kw">new</span> <span class="type">Box</span>&lt;<span class="type">number</span>&gt;(<span class="num">100</span>);
+</pre>
+
+<div class="box box-tip">
+<div class="label">Tip</div>
+<code>T</code> is just a convention. You can use any letter: <code>T</code> (Type), <code>K</code> (Key), <code>V</code> (Value), <code>E</code> (Element). The angle brackets <code>&lt;T&gt;</code> declare the generic type parameter.
+</div>
+
+<div class="box box-exam">
+<div class="label">Exam Tip</div>
+When you see <code>function identity&lt;T&gt;(arg: T): T</code>, read it as: "This function takes something of type T and returns the same type T." If called with <code>identity&lt;number&gt;(5)</code>, T becomes number, so it returns a number.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+
+<h2 id="type-guards">11. Type Guards and Narrowing</h2>
+
+<p>When a variable can be multiple types (union type), you need to <strong>narrow</strong> it down to a specific type before using type-specific operations.</p>
+
+<h3>typeof Guard</h3>
+
+<pre>
+<span class="kw">function</span> <span class="fn">print</span>(value: <span class="type">string</span> | <span class="type">number</span>) {
+  <span class="kw">if</span> (<span class="kw">typeof</span> value === <span class="str">"string"</span>) {
+    <span class="cmt">// TypeScript knows value is a string here</span>
+    console.<span class="fn">log</span>(value.<span class="fn">toUpperCase</span>());
+  } <span class="kw">else</span> {
+    <span class="cmt">// TypeScript knows value is a number here</span>
+    console.<span class="fn">log</span>(value.<span class="fn">toFixed</span>(<span class="num">2</span>));
+  }
+}
+</pre>
+
+<h3>instanceof Guard</h3>
+
+<pre>
+<span class="kw">class</span> <span class="type">Dog</span> { <span class="fn">bark</span>() { <span class="kw">return</span> <span class="str">"Woof!"</span>; } }
+<span class="kw">class</span> <span class="type">Cat</span> { <span class="fn">meow</span>() { <span class="kw">return</span> <span class="str">"Meow!"</span>; } }
+
+<span class="kw">function</span> <span class="fn">speak</span>(pet: <span class="type">Dog</span> | <span class="type">Cat</span>) {
+  <span class="kw">if</span> (pet <span class="kw">instanceof</span> <span class="type">Dog</span>) {
+    console.<span class="fn">log</span>(pet.<span class="fn">bark</span>());
+  } <span class="kw">else</span> {
+    console.<span class="fn">log</span>(pet.<span class="fn">meow</span>());
+  }
+}
+</pre>
+
+<h3>Type Assertions</h3>
+
+<p>When you know the type better than TypeScript does, use assertions to tell it:</p>
+
+<pre>
+<span class="cmt">// Two syntaxes — both do the same thing</span>
+<span class="kw">let</span> value: <span class="type">any</span> = <span class="str">"hello"</span>;
+
+<span class="cmt">// Syntax 1: as keyword (preferred)</span>
+<span class="kw">let</span> length: <span class="type">number</span> = (value <span class="kw">as</span> <span class="type">string</span>).length;
+
+<span class="cmt">// Syntax 2: angle bracket (cannot use in JSX/React)</span>
+<span class="kw">let</span> length: <span class="type">number</span> = (&lt;<span class="type">string</span>&gt;value).length;
+</pre>
+
+<h3>Non-null Assertion</h3>
+
+<pre>
+<span class="kw">let</span> element = document.<span class="fn">getElementById</span>(<span class="str">"app"</span>);  <span class="cmt">// type: HTMLElement | null</span>
+
+<span class="cmt">// Adding ! tells TypeScript: "Trust me, this is NOT null"</span>
+<span class="kw">let</span> el = document.<span class="fn">getElementById</span>(<span class="str">"app"</span>)!;  <span class="cmt">// type: HTMLElement</span>
+</pre>
+
+<div class="box box-warn">
+<div class="label">Warning</div>
+Type assertions don't do any runtime checking. If you assert <code>value as string</code> but value is actually a number, you'll get a runtime error. Use them only when you're truly sure of the type.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+
+<h2 id="utility-types">12. Utility Types</h2>
+
+<p>TypeScript provides built-in utility types that transform existing types. You don't need to memorize all of them, but know the common ones:</p>
+
+<table>
+<tr><th>Utility Type</th><th>What it does</th><th>Example</th></tr>
+<tr><td><code>Partial&lt;T&gt;</code></td><td>Makes ALL properties optional</td><td><code>Partial&lt;User&gt;</code> — can have some or no User fields</td></tr>
+<tr><td><code>Required&lt;T&gt;</code></td><td>Makes ALL properties required</td><td>Opposite of Partial</td></tr>
+<tr><td><code>Readonly&lt;T&gt;</code></td><td>Makes ALL properties readonly</td><td>Cannot modify any property</td></tr>
+<tr><td><code>Pick&lt;T, K&gt;</code></td><td>Selects only specified properties</td><td><code>Pick&lt;User, "name" | "age"&gt;</code></td></tr>
+<tr><td><code>Omit&lt;T, K&gt;</code></td><td>Removes specified properties</td><td><code>Omit&lt;User, "password"&gt;</code></td></tr>
+<tr><td><code>Record&lt;K, V&gt;</code></td><td>Creates object type with keys K and values V</td><td><code>Record&lt;string, number&gt;</code></td></tr>
+</table>
+
+<pre>
+<span class="kw">interface</span> <span class="type">User</span> {
+  name: <span class="type">string</span>;
+  age: <span class="type">number</span>;
+  email: <span class="type">string</span>;
+}
+
+<span class="cmt">// Partial — all properties become optional</span>
+<span class="kw">function</span> <span class="fn">updateUser</span>(user: <span class="type">Partial</span>&lt;<span class="type">User</span>&gt;) {
+  <span class="cmt">// Can pass { name: "X" } without age and email</span>
+}
+
+<span class="cmt">// Pick — only selected properties</span>
+<span class="kw">type</span> <span class="type">UserPreview</span> = <span class="type">Pick</span>&lt;<span class="type">User</span>, <span class="str">"name"</span> | <span class="str">"age"</span>&gt;;
+<span class="cmt">// UserPreview = { name: string; age: number; }  (no email)</span>
+
+<span class="cmt">// Omit — everything except specified</span>
+<span class="kw">type</span> <span class="type">PublicUser</span> = <span class="type">Omit</span>&lt;<span class="type">User</span>, <span class="str">"email"</span>&gt;;
+<span class="cmt">// PublicUser = { name: string; age: number; }  (email removed)</span>
+
+<span class="cmt">// Record — map of keys to values</span>
+<span class="kw">type</span> <span class="type">Scores</span> = <span class="type">Record</span>&lt;<span class="type">string</span>, <span class="type">number</span>&gt;;
+<span class="kw">let</span> marks: <span class="type">Scores</span> = { math: <span class="num">90</span>, science: <span class="num">85</span> };
+</pre>
+
+<div class="box box-exam">
+<div class="label">Exam Tip</div>
+<strong>Partial</strong> makes everything optional, <strong>Required</strong> makes everything mandatory. <strong>Pick</strong> keeps the listed properties, <strong>Omit</strong> removes them. Think: Pick = include list, Omit = exclude list.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+
+<h2 id="ts-vs-js">13. TypeScript vs JavaScript — Complete Comparison</h2>
+
+<table>
+<tr><th>Feature</th><th>JavaScript</th><th>TypeScript</th></tr>
+<tr><td>Type system</td><td>Dynamic (types checked at runtime)</td><td>Static (types checked at compile time)</td></tr>
+<tr><td>File extension</td><td><code>.js</code></td><td><code>.ts</code></td></tr>
+<tr><td>Type annotations</td><td>Not supported</td><td><code>let x: number = 5;</code></td></tr>
+<tr><td>Interfaces</td><td>Not available</td><td>Fully supported</td></tr>
+<tr><td>Enums</td><td>Not available</td><td>Fully supported</td></tr>
+<tr><td>Generics</td><td>Not available</td><td>Fully supported</td></tr>
+<tr><td>Access modifiers</td><td>Not available (ES2022 has #private)</td><td><code>public</code>, <code>private</code>, <code>protected</code></td></tr>
+<tr><td>Compilation</td><td>Interpreted directly by browser</td><td>Must compile to JS first (<code>tsc</code>)</td></tr>
+<tr><td>Error detection</td><td>Runtime only</td><td>Compile time + runtime</td></tr>
+<tr><td>Tooling</td><td>Good</td><td>Excellent (autocomplete, refactoring)</td></tr>
+<tr><td>Browser support</td><td>Native</td><td>Not native — compiles to JS</td></tr>
+<tr><td>Learning curve</td><td>Lower</td><td>Higher (must learn types)</td></tr>
+<tr><td>Superset?</td><td>—</td><td>Yes — all JS is valid TS</td></tr>
+<tr><td>Created by</td><td>Brendan Eich (Netscape, 1995)</td><td>Microsoft (2012)</td></tr>
+<tr><td>Used by Angular?</td><td>No (AngularJS used JS)</td><td>Yes — Angular requires TypeScript</td></tr>
+</table>
+
+<div class="box box-key">
+<div class="label">Key Takeaway</div>
+TypeScript adds compile-time safety, interfaces, enums, generics, and access modifiers — none of which exist in JavaScript. But TypeScript always compiles down to JavaScript in the end. Browsers never run TypeScript directly.
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+
+<h2 id="practice">14. Practice Questions</h2>
+
+<!-- Q1 -->
+<div class="practice">
+<div class="q-label">Question 1</div>
+<div class="question">TypeScript is a ___ of JavaScript.</div>
+<ol class="options">
+<li>Subset</li>
+<li>Superset</li>
+<li>Replacement</li>
+<li>Framework</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) Superset — TypeScript includes all of JavaScript plus additional features like static typing.</div>
+</div>
+
+<!-- Q2 -->
+<div class="practice">
+<div class="q-label">Question 2</div>
+<div class="question">What is the output of the following code?
+<pre>
+<span class="kw">enum</span> <span class="type">Fruit</span> { Apple, Banana, Cherry }
+console.<span class="fn">log</span>(Fruit.Cherry);
+</pre>
+</div>
+<ol class="options">
+<li>"Cherry"</li>
+<li>2</li>
+<li>3</li>
+<li>undefined</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) 2 — Numeric enums start at 0 by default. Apple=0, Banana=1, Cherry=2.</div>
+</div>
+
+<!-- Q3 -->
+<div class="practice">
+<div class="q-label">Question 3</div>
+<div class="question">Which TypeScript type should be used for a function that never returns (always throws an error)?</div>
+<ol class="options">
+<li>void</li>
+<li>null</li>
+<li>never</li>
+<li>undefined</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) never — Used for functions that never complete normally (throw errors or infinite loops). <code>void</code> is for functions that complete but return no value.</div>
+</div>
+
+<!-- Q4 -->
+<div class="practice">
+<div class="q-label">Question 4</div>
+<div class="question">What is wrong with this code?
+<pre>
+<span class="kw">interface</span> <span class="type">Car</span> {
+  <span class="kw">readonly</span> brand: <span class="type">string</span>;
+  model: <span class="type">string</span>;
+}
+<span class="kw">let</span> car: <span class="type">Car</span> = { brand: <span class="str">"Toyota"</span>, model: <span class="str">"Camry"</span> };
+car.brand = <span class="str">"Honda"</span>;
+</pre>
+</div>
+<ol class="options">
+<li>Cannot use readonly with interfaces</li>
+<li>brand is readonly and cannot be reassigned</li>
+<li>model should also be readonly</li>
+<li>No error — this is valid</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) brand is readonly and cannot be reassigned — Once a <code>readonly</code> property is set, it cannot be changed.</div>
+</div>
+
+<!-- Q5 -->
+<div class="practice">
+<div class="q-label">Question 5</div>
+<div class="question">What is the correct syntax for a tuple that holds a string and a number?</div>
+<ol class="options">
+<li><code>let t: (string | number) = ["hi", 5];</code></li>
+<li><code>let t: [string, number] = ["hi", 5];</code></li>
+<li><code>let t: string | number[] = ["hi", 5];</code></li>
+<li><code>let t: Array&lt;string, number&gt; = ["hi", 5];</code></li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) <code>[string, number]</code> — Tuples use square brackets with the types in order. This is different from a union array.</div>
+</div>
+
+<!-- Q6 -->
+<div class="practice">
+<div class="q-label">Question 6</div>
+<div class="question">What does the <code>?</code> mean in this interface?
+<pre>
+<span class="kw">interface</span> <span class="type">Product</span> {
+  name: <span class="type">string</span>;
+  price: <span class="type">number</span>;
+  description?: <span class="type">string</span>;
+}
+</pre>
+</div>
+<ol class="options">
+<li>description must be null</li>
+<li>description is optional — may or may not be present</li>
+<li>description is nullable</li>
+<li>description has a default value</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) description is optional — The <code>?</code> after a property name makes it optional. The object can be created with or without it.</div>
+</div>
+
+<!-- Q7 -->
+<div class="practice">
+<div class="q-label">Question 7</div>
+<div class="question">Which access modifier allows access from the class itself AND its subclasses, but NOT from outside?</div>
+<ol class="options">
+<li>public</li>
+<li>private</li>
+<li>protected</li>
+<li>readonly</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) protected — <code>public</code> = everywhere, <code>private</code> = same class only, <code>protected</code> = same class + child classes.</div>
+</div>
+
+<!-- Q8 -->
+<div class="practice">
+<div class="q-label">Question 8</div>
+<div class="question">What is the output type of this function?
+<pre>
+<span class="kw">function</span> <span class="fn">identity</span>&lt;<span class="type">T</span>&gt;(arg: <span class="type">T</span>): <span class="type">T</span> { <span class="kw">return</span> arg; }
+<span class="kw">let</span> result = <span class="fn">identity</span>&lt;<span class="type">number</span>&gt;(<span class="num">42</span>);
+</pre>
+</div>
+<ol class="options">
+<li>any</li>
+<li>string</li>
+<li>number</li>
+<li>T</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) number — When called with <code>&lt;number&gt;</code>, the generic T becomes number. So the function takes a number and returns a number.</div>
+</div>
+
+<!-- Q9 -->
+<div class="practice">
+<div class="q-label">Question 9</div>
+<div class="question">Which of the following is NOT a valid TypeScript basic type?</div>
+<ol class="options">
+<li>string</li>
+<li>float</li>
+<li>boolean</li>
+<li>never</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) float — TypeScript has <code>number</code> for all numeric values (both integers and decimals). There is no separate <code>float</code> or <code>int</code> type.</div>
+</div>
+
+<!-- Q10 -->
+<div class="practice">
+<div class="q-label">Question 10</div>
+<div class="question">What does <code>Partial&lt;User&gt;</code> do?</div>
+<ol class="options">
+<li>Makes all properties of User readonly</li>
+<li>Makes all properties of User required</li>
+<li>Makes all properties of User optional</li>
+<li>Removes all properties from User</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) Makes all properties of User optional — <code>Partial&lt;T&gt;</code> converts every property in T to optional (adds <code>?</code> to each one).</div>
+</div>
+
+<!-- Q11 -->
+<div class="practice">
+<div class="q-label">Question 11</div>
+<div class="question">What is the difference between <code>interface</code> and <code>type</code> in TypeScript?</div>
+<ol class="options">
+<li>They are completely identical</li>
+<li>Interfaces support declaration merging; types do not</li>
+<li>Types support extends; interfaces do not</li>
+<li>Interfaces can represent union types; types cannot</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) Interfaces support declaration merging; types do not — If you declare the same interface name twice, TypeScript merges them. Duplicate type names cause an error. Also, only types support union (|) syntax.</div>
+</div>
+
+<!-- Q12 -->
+<div class="practice">
+<div class="q-label">Question 12</div>
+<div class="question">What does this TypeScript code produce?
+<pre>
+<span class="kw">let</span> x: <span class="type">string</span> | <span class="type">number</span> = <span class="str">"hello"</span>;
+x = <span class="num">42</span>;
+x = <span class="kw">true</span>;
+</pre>
+</div>
+<ol class="options">
+<li>No error — all types are allowed</li>
+<li>Error at <code>x = 42</code></li>
+<li>Error at <code>x = true</code></li>
+<li>Error at the declaration</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) Error at <code>x = true</code> — The union type <code>string | number</code> allows only strings and numbers. <code>boolean</code> is not in the union, so <code>true</code> causes a compile error.</div>
+</div>
+
+<!-- Q13 -->
+<div class="practice">
+<div class="q-label">Question 13</div>
+<div class="question">What does the constructor shorthand do in this code?
+<pre>
+<span class="kw">class</span> <span class="type">Person</span> {
+  <span class="kw">constructor</span>(<span class="kw">public</span> name: <span class="type">string</span>, <span class="kw">private</span> age: <span class="type">number</span>) {}
+}
+</pre>
+</div>
+<ol class="options">
+<li>Creates local variables inside the constructor only</li>
+<li>Automatically creates class properties and assigns them</li>
+<li>Makes the class abstract</li>
+<li>This syntax is invalid</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) Automatically creates class properties and assigns them — Adding an access modifier (<code>public</code>, <code>private</code>, <code>protected</code>) in the constructor parameter automatically declares the property, creates it, and assigns the value. It's a shorthand.</div>
+</div>
+
+<!-- Q14 -->
+<div class="practice">
+<div class="q-label">Question 14</div>
+<div class="question">Which command compiles a TypeScript file to JavaScript?</div>
+<ol class="options">
+<li><code>node app.ts</code></li>
+<li><code>ts app.ts</code></li>
+<li><code>tsc app.ts</code></li>
+<li><code>npm run ts app.ts</code></li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) <code>tsc app.ts</code> — The TypeScript compiler command is <code>tsc</code>. It compiles <code>.ts</code> files into <code>.js</code> files.</div>
+</div>
+
+<!-- Q15 -->
+<div class="practice">
+<div class="q-label">Question 15</div>
+<div class="question">What does <code>extends</code> do in this interface?
+<pre>
+<span class="kw">interface</span> <span class="type">Animal</span> { name: <span class="type">string</span>; }
+<span class="kw">interface</span> <span class="type">Dog</span> <span class="kw">extends</span> <span class="type">Animal</span> { breed: <span class="type">string</span>; }
+</pre>
+</div>
+<ol class="options">
+<li>Dog replaces Animal</li>
+<li>Dog inherits all properties from Animal and adds its own</li>
+<li>Dog can only access breed, not name</li>
+<li>This syntax is not valid for interfaces</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="1">B) Dog inherits all properties from Animal and adds its own — <code>extends</code> means Dog has everything Animal has (name: string) PLUS its own properties (breed: string). Any object typed as Dog must have both.</div>
+</div>
+
+<!-- Q16 -->
+<div class="practice">
+<div class="q-label">Question 16</div>
+<div class="question">What is the default access modifier for class members in TypeScript?</div>
+<ol class="options">
+<li>private</li>
+<li>protected</li>
+<li>public</li>
+<li>readonly</li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) public — If you don't write any access modifier, the member is <code>public</code> by default. This means it can be accessed from anywhere.</div>
+</div>
+
+<!-- Q17 -->
+<div class="practice">
+<div class="q-label">Question 17</div>
+<div class="question">Which utility type creates an object type with keys of type K and values of type V?</div>
+<ol class="options">
+<li><code>Pick&lt;K, V&gt;</code></li>
+<li><code>Map&lt;K, V&gt;</code></li>
+<li><code>Record&lt;K, V&gt;</code></li>
+<li><code>Partial&lt;K, V&gt;</code></li>
+</ol>
+<button class="answer-btn" onclick="this.nextElementSibling.classList.toggle('show')">Show Answer</button>
+<div class="answer" data-correct="2">C) <code>Record&lt;K, V&gt;</code> — Creates a type where all keys are of type K and all values are of type V. Example: <code>Record&lt;string, number&gt;</code> means an object with string keys and number values.</div>
+</div>
+
+</section>
+  <div class="footer">
+    <a href="rest-json-xml.html">← REST / JSON / XML</a> |
+    <a href="angular.html">Angular →</a>
+  </div>
+</div>
+<button class="back-to-top">↑</button>
+<script src="../js/app.js"></script>
+</body>
+</html>
