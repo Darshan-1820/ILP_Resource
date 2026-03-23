@@ -200,7 +200,8 @@ app.post("/api/payment/create-order", authenticate, async (req, res) => {
     });
   } catch (err) {
     console.error("Razorpay order error:", err);
-    res.status(500).json({ error: "Failed to create payment order" });
+    const detail = err?.error?.description || err?.message || "Unknown error";
+    res.status(500).json({ error: `Failed to create payment order: ${detail}` });
   }
 });
 

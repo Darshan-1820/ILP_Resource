@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import {
   getAuth,
   onAuthStateChanged
@@ -6,7 +6,7 @@ import {
 import { firebaseConfig } from "./firebase-config.js";
 import { API_URL, PRICE } from "./config.js";
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 /* ── Device ID — persistent per browser ── */
@@ -41,12 +41,33 @@ function createPaywall(isLoggedIn) {
 
 /* ── Lock content after N free sections ── */
 function lockContent() {
-  // Find the section inside .main, or .main itself
-  const section = document.querySelector(".main section") || document.querySelector(".main");
-  if (!section) return;
+  const container = document.querySelector(".main section") || document.querySelector(".main");
+  if (!container) return;
 
-  // Get all h3 headings with IDs (these are section markers)
-  const headings = section.querySelectorAll(":scope > h3[id]");
+  // Strategy 1: flat h3 (with or without id) — most pages
+  let headings = container.querySelectorAll(":scope > h3");
+
+  // Strategy 2: nested <section> children that each contain an h3 (hackerrank-tips)
+  if (headings.length === 0) {
+    const childSections = container.querySelectorAll(":scope > section");
+    if (childSections.length > 2) {
+      const cutoff = childSections[2];
+      // Hide cutoff section and all following siblings
+      let el = cutoff;
+      while (el) {
+        const next = el.nextElementSibling;
+        if (el.tagName !== "SCRIPT") {
+          el.style.display = "none";
+          el.setAttribute("data-locked", "true");
+        }
+        el = next;
+      }
+      cutoff.parentNode.insertBefore(createPaywall(false), cutoff);
+      window._paywallReady = true;
+    }
+    return;
+  }
+
   if (headings.length <= 2) return; // too few sections to lock
 
   // The 3rd h3 is where we cut off
@@ -146,56 +167,6 @@ async function startPayment(user) {
   rzp.open();
 }
 
-/* ── Main: check auth state and lock/unlock ── */
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    try {
-      const token = await user.getIdToken();
-      const res = await fetch(`${API_URL}/api/user/status`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "X-Device-Id": getDeviceId(),
-        },
-      });
-
-      const data = await res.json();
-
-      if (data.paid) {
-        unlockContent();
-        return;
-      }
-    } catch (err) {
-      // Backend unreachable — show locked state
-      console.warn("Backend unreachable, showing locked content");
-    }
-
-    // User logged in but not paid — lock and show pay button
-    lockContent();
-    // Replace the paywall with one that has the pay button
-    const oldWall = document.getElementById("paywall");
-    if (oldWall) {
-      const newWall = createPaywall(true);
-      oldWall.replaceWith(newWall);
-    }
-
-    // Wire up pay button
-    document.getElementById("payBtn")?.addEventListener("click", () => startPayment(user));
-
-    // Register device
-    try {
-      const token = await user.getIdToken();
-      await fetch(`${API_URL}/api/auth/register-device`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({ deviceId: getDeviceId() }),
-      });
-    } catch (_) {}
-
-  } else {
-    // Not logged in — lock and show signup CTA
-    lockContent();
-  }
-});
+/* ── Main: paywall disabled — all content free for now ── */
+// TODO: Re-enable paywall once Razorpay account is fully activated
+// onAuthStateChanged(auth, async (user) => { ... });

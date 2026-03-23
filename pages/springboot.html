@@ -1146,9 +1146,9 @@ spring.jpa.properties.hibernate.dialect=<span class="str">org.hibernate.dialect.
 <script type="module" src="../js/paywall.js"></script>
 <script type="module">
   import { firebaseConfig } from '../js/firebase-config.js';
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  const app = initializeApp(firebaseConfig);
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
   const auth = getAuth(app);
   onAuthStateChanged(auth, (user) => {
     const panel = document.getElementById('userPanel');
