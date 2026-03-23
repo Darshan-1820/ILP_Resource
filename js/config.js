@@ -1,4 +1,4 @@
-// API base URL — change to production URL after deploying backend
-export const API_URL = "https://ilp-backend.onrender.com";
-export const RAZORPAY_KEY_ID = ""; // filled after Razorpay setup
+// API base URL
+export const API_URL = "https://ilp-resource.onrender.com";
+export const RAZORPAY_KEY_ID = "rzp_live_SUUviRuHykTXPC";
 export const PRICE = 199;
