@@ -24,7 +24,6 @@ function createPaywall(isLoggedIn) {
   const wall = document.createElement("div");
   wall.id = "paywall";
   wall.innerHTML = `
-    <div class="paywall-fade"></div>
     <div class="paywall-card">
       <div class="paywall-lock">🔒</div>
       <h3>Unlock Full Access</h3>
@@ -40,35 +39,40 @@ function createPaywall(isLoggedIn) {
   return wall;
 }
 
-/* ── Lock content after N sections ── */
+/* ── Lock content after N free sections ── */
 function lockContent() {
-  const mainContent = document.querySelector(".main section, .main");
-  if (!mainContent) return;
+  // Find the section inside .main, or .main itself
+  const section = document.querySelector(".main section") || document.querySelector(".main");
+  if (!section) return;
 
-  // Find all h3 sections — show first 2, lock the rest
-  const headings = mainContent.querySelectorAll("h3[id]");
-  if (headings.length <= 2) return; // too short to lock
+  // Get all h3 headings with IDs (these are section markers)
+  const headings = section.querySelectorAll(":scope > h3[id]");
+  if (headings.length <= 2) return; // too few sections to lock
 
-  // Find the 3rd h3 — everything from there is hidden
-  const cutoffElement = headings[2];
-  let lockFromHere = false;
-  const allChildren = Array.from(mainContent.children);
+  // The 3rd h3 is where we cut off
+  const cutoff = headings[2];
 
-  for (const child of allChildren) {
-    if (child === cutoffElement || (lockFromHere && child.tagName !== "SCRIPT")) {
-      lockFromHere = true;
-      child.classList.add("locked-content");
+  // Walk through ALL siblings starting from the cutoff and hide them
+  let el = cutoff;
+  while (el) {
+    const next = el.nextElementSibling;
+    if (el.tagName !== "SCRIPT") {
+      el.style.display = "none";
+      el.setAttribute("data-locked", "true");
     }
+    el = next;
   }
 
-  // Insert paywall right before the locked content
-  window._paywallInsertPoint = cutoffElement;
+  // Insert paywall before the cutoff
+  cutoff.parentNode.insertBefore(createPaywall(false), cutoff);
+  window._paywallReady = true;
 }
 
 /* ── Unlock content (paid user) ── */
 function unlockContent() {
-  document.querySelectorAll(".locked-content").forEach(el => {
-    el.classList.remove("locked-content");
+  document.querySelectorAll("[data-locked]").forEach(el => {
+    el.style.display = "";
+    el.removeAttribute("data-locked");
   });
   const wall = document.getElementById("paywall");
   if (wall) wall.remove();
@@ -165,13 +169,13 @@ onAuthStateChanged(auth, async (user) => {
       console.warn("Backend unreachable, showing locked content");
     }
 
-    // User logged in but not paid
+    // User logged in but not paid — lock and show pay button
     lockContent();
-    const wall = createPaywall(true);
-    if (window._paywallInsertPoint) {
-      window._paywallInsertPoint.parentNode.insertBefore(wall, window._paywallInsertPoint);
-    } else {
-      document.querySelector(".main")?.appendChild(wall);
+    // Replace the paywall with one that has the pay button
+    const oldWall = document.getElementById("paywall");
+    if (oldWall) {
+      const newWall = createPaywall(true);
+      oldWall.replaceWith(newWall);
     }
 
     // Wire up pay button
@@ -191,13 +195,7 @@ onAuthStateChanged(auth, async (user) => {
     } catch (_) {}
 
   } else {
-    // Not logged in — show teaser + signup CTA
+    // Not logged in — lock and show signup CTA
     lockContent();
-    const wall = createPaywall(false);
-    if (window._paywallInsertPoint) {
-      window._paywallInsertPoint.parentNode.insertBefore(wall, window._paywallInsertPoint);
-    } else {
-      document.querySelector(".main")?.appendChild(wall);
-    }
   }
 });
