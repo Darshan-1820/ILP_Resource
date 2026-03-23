@@ -202,6 +202,18 @@ body{
   letter-spacing:1.5px;padding:10px 12px 4px;font-weight:700;
 }
 
+/* ── SIGN IN BUTTON (sidebar bottom) ── */
+.sidebar-signin{
+  margin-top:auto;
+  display:block;text-align:center;
+  padding:10px 12px;border-radius:var(--radius-sm);
+  background:var(--accent-glow);color:var(--accent)!important;
+  font-size:13px;font-weight:600;text-decoration:none;
+  border:1px solid var(--border);transition:var(--transition);
+  position:sticky;bottom:0;
+}
+.sidebar-signin:hover{background:var(--accent);color:var(--bg)!important}
+
 /* ── USER PROFILE (sidebar bottom) ── */
 .sidebar-user{
   margin-top:auto;

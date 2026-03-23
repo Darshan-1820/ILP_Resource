@@ -54,6 +54,8 @@
   <div class="divider"></div>
   <a href="admin.html" class="sub" style="color:var(--text-dim)">Admin Dashboard</a>
 
+  <a href="login.html" class="sidebar-signin" id="signInBtn">Sign In</a>
+
   <div class="sidebar-user" id="userPanel" style="display:none">
     <div style="width:32px;height:32px;border-radius:50%;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--accent)" id="userAvatar">D</div>
     <div>
@@ -474,13 +476,16 @@
   // Auth state
   onAuthStateChanged(auth, (user) => {
     const panel = document.getElementById('userPanel');
+    const signInBtn = document.getElementById('signInBtn');
     if (user) {
       panel.style.display = 'flex';
+      if (signInBtn) signInBtn.style.display = 'none';
       document.getElementById('userName').textContent = user.displayName || 'Student';
       document.getElementById('userEmail').textContent = user.email;
       document.getElementById('userAvatar').textContent = (user.displayName || user.email)[0].toUpperCase();
     } else {
       panel.style.display = 'none';
+      if (signInBtn) signInBtn.style.display = 'block';
     }
   });
 
