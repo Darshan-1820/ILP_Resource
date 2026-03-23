@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed -n 1167,2102p)",
+      "Read(//tmp/**)",
+      "Bash(ls /c/Users/addar/Desktop/ILP_Resource/pages/*.html)",
+      "Bash(grep -c \"answer-btn\" /c/Users/addar/Desktop/ILP_Resource/pages/*.html)",
+      "Bash(start:*)",
+      "WebSearch",
+      "WebFetch(domain:www.hackerrank.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.quora.com)",
+      "WebFetch(domain:support.hackerrank.com)",
+      "WebFetch(domain:candidatesupport.hackerrank.com)",
+      "WebFetch(domain:geeksprogramming.com)",
+      "WebFetch(domain:www.mncanswers.site)",
+      "WebFetch(domain:gist.github.com)",
+      "WebFetch(domain:prashantsaini76.blogspot.com)",
+      "WebFetch(domain:medium.com)",
+      "WebFetch(domain:www.lodely.com)",
+      "WebFetch(domain:dailyjournal.gitbook.io)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(firebase --version)",
+      "Bash(firebase projects:list)",
+      "Bash(firebase deploy:*)",
+      "Bash(git commit:*)",
+      "Bash(firebase hosting:channel:list)",
+      "Bash(firebase:*)",
+      "Bash(gh run:*)",
+      "Bash(gcloud projects:*)",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//c/Users/addar/Desktop/ILP_Resource/**)",
+      "Bash(done)",
+      "Bash(do)",
+      "Bash(sed -i 's|</body>|<script type=\"\"module\"\" src=\"\"../js/auth.js\"\"></script>\\\\n</body>|' \"$f\")",
+      "Bash(npm install:*)",
+      "Bash(nslookup:*)",
+      "Bash(npx serve:*)"
+    ]
+  }
+}

@@ -27,6 +27,16 @@
   <a href="#modules">Modules</a>
   <a href="#angular-vs-react">Angular vs React</a>
   <a href="#practice-mcqs">Practice MCQs</a>
+
+  <a href="../login.html" class="sidebar-signin" id="signInBtn">Sign In</a>
+  <div class="sidebar-user" id="userPanel" style="display:none">
+    <div style="width:32px;height:32px;border-radius:50%;background:var(--accent-glow);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--accent)" id="userAvatar">D</div>
+    <div>
+      <div class="user-name" id="userName">User</div>
+      <div class="user-email" id="userEmail">user@email.com</div>
+    </div>
+    <button class="logout-btn" id="logoutBtn" title="Sign out">&#x23FB;</button>
+  </div>
 </nav>
 
 <div class="main">
@@ -1091,5 +1101,29 @@ ng generate service user
 <script src="../js/app.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script type="module" src="../js/paywall.js"></script>
+<script type="module">
+  import { firebaseConfig } from '../js/firebase-config.js';
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  onAuthStateChanged(auth, (user) => {
+    const panel = document.getElementById('userPanel');
+    const signInBtn = document.getElementById('signInBtn');
+    if (user) {
+      panel.style.display = 'flex';
+      if (signInBtn) signInBtn.style.display = 'none';
+      document.getElementById('userName').textContent = user.displayName || 'Student';
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('userAvatar').textContent = (user.displayName || user.email)[0].toUpperCase();
+    } else {
+      panel.style.display = 'none';
+      if (signInBtn) signInBtn.style.display = 'block';
+    }
+  });
+  document.getElementById('logoutBtn')?.addEventListener('click', () => {
+    signOut(auth).then(() => window.location.href = '../login.html');
+  });
+</script>
 </body>
 </html>
