@@ -49,7 +49,7 @@ function lockContent() {
   const headings = mainContent.querySelectorAll("h3[id]");
   if (headings.length <= 2) return; // too short to lock
 
-  // Find the 3rd h3 — everything from there is locked
+  // Find the 3rd h3 — everything from there is hidden
   const cutoffElement = headings[2];
   let lockFromHere = false;
   const allChildren = Array.from(mainContent.children);
@@ -60,6 +60,9 @@ function lockContent() {
       child.classList.add("locked-content");
     }
   }
+
+  // Insert paywall right before the locked content
+  window._paywallInsertPoint = cutoffElement;
 }
 
 /* ── Unlock content (paid user) ── */
@@ -165,7 +168,11 @@ onAuthStateChanged(auth, async (user) => {
     // User logged in but not paid
     lockContent();
     const wall = createPaywall(true);
-    document.querySelector(".main")?.appendChild(wall);
+    if (window._paywallInsertPoint) {
+      window._paywallInsertPoint.parentNode.insertBefore(wall, window._paywallInsertPoint);
+    } else {
+      document.querySelector(".main")?.appendChild(wall);
+    }
 
     // Wire up pay button
     document.getElementById("payBtn")?.addEventListener("click", () => startPayment(user));
@@ -187,6 +194,10 @@ onAuthStateChanged(auth, async (user) => {
     // Not logged in — show teaser + signup CTA
     lockContent();
     const wall = createPaywall(false);
-    document.querySelector(".main")?.appendChild(wall);
+    if (window._paywallInsertPoint) {
+      window._paywallInsertPoint.parentNode.insertBefore(wall, window._paywallInsertPoint);
+    } else {
+      document.querySelector(".main")?.appendChild(wall);
+    }
   }
 });

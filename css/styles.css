@@ -959,23 +959,15 @@ li{margin-bottom:5px;color:var(--text)}
 
 /* ── PAYWALL & CONTENT LOCKING ── */
 .locked-content{
-  position:relative;
-  user-select:none;
-  pointer-events:none;
+  display:none!important;
   filter:blur(5px);
   opacity:.5;
   transition:filter .3s,opacity .3s;
 }
 #paywall{
   position:relative;
-  margin-top:-120px;
   padding-top:40px;
   z-index:40;
-}
-.paywall-fade{
-  height:120px;
-  background:linear-gradient(to bottom,transparent,var(--bg-body));
-  pointer-events:none;
 }
 .paywall-card{
   background:var(--bg-card);
